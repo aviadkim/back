@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>יצירת קובץ צליל הפיכת דף</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            direction: rtl;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1e5db4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin: 10px;
+        }
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>יצירת קובץ צליל הפיכת דף</h1>
+    <p>לחץ על הכפתור למטה כדי ליצור את קובץ צליל הפיכת דף</p>
+    
+    <div>
+        <button id="createSound">צור קובץ צליל</button>
+        <button id="testSound">נגן צליל</button>
+    </div>
+    
+    <div id="status"></div>
+    
+    <audio id="audioPlayer" controls style="display: none; margin-top: 20px;"></audio>
+    
+    <script>
+        // קובץ צליל של הפיכת דף בקידוד base64
+        const pageTurnSoundBase64 = "//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2ooFollowingFolding0QPLR+HEksMpG6GcimvxcM1KlXdSaK2jnXzTMwOQ97WjEZNLYc1o20VIjBX0ZdZ+4mjPUQZKgLo5BVOvR8POd+OMzTQTwxOsV+9vl1zD3k3vovdUW5ZpOMkwZPk5k8BUOuTPaYeZ/YAA/p+PU/s8F8Db/Hu2tPBuX3dAAIgSqgzMj4AAAAAXAGiYGXA55QA+Sn5jmH3MUIRnGqqgGAAABUxg+SLBYkMZ0aP+eoXN6j7RYiS0AAgAACBAgkRlI1kMDAwMzELMgsyMDFJMjAxRD0xMDIyNDQ5KzEtNA0yMzAyOTYxNzc9MjIyNDc0Njc9MzQ0NzItMj8zSDUtNDgyNzIzNjJINDgvNjE4OTcxMzA0Pz4yNzIzMDA2MjQwNzczMD04MTA5MSs0PDw0ODQ8MTUxOTKJiYmZjaGxkNjQxAAAAP/bAEMABgQFBgUEBgYFBgcHBggKEAoKCQkKFA4PDBAXFBgYFxQWFhodJR8aGyMcFhYgLCAjJicpKikZHy0wLSgwJSgpKP/bAEMBBwcHCggKEwoKEygaFhooKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKP/CABEIABAADwMBIgACEQEDEQH/xAAVAAEBAAAAAAAAAAAAAAAAAAAFBv/EABUBAQEAAAAAAAAAAAAAAAAAAAAD/9oADAMBAAIQAxAAAAGXQG8S/wD/xAAZEAEAAwEBAAAAAAAAAAAAAAABAAIDEiH/2gAIAQEAAQUC32+GQvLFJlF//8QAFxEAAwEAAAAAAAAAAAAAAAAAAAEREv/aAAgBAwEBPwGMYrP/xAAVEQEBAAAAAAAAAAAAAAAAAAABEP/aAAgBAgEBPwGn/8QAGRAAAgMBAAAAAAAAAAAAAAAAAAERIRJB/9oACAEBAAY/AsXrHTH/xAAaEAACAgMAAAAAAAAAAAAAAAABEQAxIUFR/9oACAEBAAE/IYCCQZoeawI4Pd3DMb//2gAMAwEAAgADAAAAEB8//8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARMf/aAAgBAwEBPxDTG1i//8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARMf/aAAgBAgEBPxBkzRL/xAAaEAEAAwEBAQAAAAAAAAAAAAABABEhMUGR/9oACAEBAAE/ENFYIwVdbBApNy+Ej7MsLBcSGtVFQSBD/9k=";
+        
+        // פונקציה ליצירת קובץ הצליל
+        document.getElementById('createSound').addEventListener('click', function() {
+            try {
+                // המרת ה-base64 לבלוב
+                const byteCharacters = atob(pageTurnSoundBase64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], {type: 'audio/mp3'});
+                
+                // יצירת קישור להורדה
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'page-flip.mp3';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                
+                // ניקוי
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                document.getElementById('status').textContent = 'הצליל נוצר בהצלחה!';
+                document.getElementById('audioPlayer').src = url;
+                document.getElementById('audioPlayer').style.display = 'block';
+            } catch (error) {
+                document.getElementById('status').textContent = 'שגיאה: ' + error.message;
+            }
+        });
+        
+        // נגינת הצליל
+        document.getElementById('testSound').addEventListener('click', function() {
+            const audio = document.getElementById('audioPlayer');
+            if (audio.src) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                document.getElementById('status').textContent = 'אנא צור את קובץ הצליל קודם';
+            }
+        });
+    </script>
+</body>
+</html> 

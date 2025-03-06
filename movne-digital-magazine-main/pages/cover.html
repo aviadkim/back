@@ -1,0 +1,118 @@
+<!-- cover.html - עמוד שער המגזין -->
+<div class="cover-page">
+  <!-- תמונת רקע -->
+  <div class="cover-image">
+    <img src="../img/backgrounds/financial-city.jpg" alt="רקע פיננסי" class="cover-img" onerror="this.onerror=null; this.src=''; this.style.backgroundColor='#142136';">
+  </div>
+  
+  <!-- שכבת אפקט שקיפות -->
+  <div class="cover-overlay"></div>
+  
+  <!-- לוגו החברה -->
+  <div class="logo-container">
+    <img src="../img/logo/movne_profile_800px-03.jpg" alt="movne" class="logo" onerror="this.onerror=null; this.style.display='none'; this.parentNode.innerHTML += '<div style=\'font-size: 2rem; color: white; font-weight: bold;\'>MOVNE</div>';">
+  </div>
+  
+  <!-- כותרות המגזין -->
+  <div class="title-container">
+    <h2 class="subtitle">מוצרים מובנים - איזון בין בטחון לצמיחה פיננסית</h2>
+  </div>
+  
+  <!-- תחתית העמוד -->
+  <div class="cover-footer">
+    <div class="edition-info">מהדורה 1 | 2025</div>
+  </div>
+</div>
+
+<style>
+  .cover-page {
+    background-color: #142136;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .cover-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  
+  .cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.6;
+  }
+  
+  .cover-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(20, 33, 54, 0.9) 0%, rgba(23, 74, 255, 0.7) 100%);
+    z-index: 1;
+  }
+  
+  .logo-container {
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    padding-top: 15%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logo {
+    max-width: 250px;
+    width: 70%;
+    height: auto;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+    animation: fadeIn 1.5s ease-in-out;
+    border-radius: 10px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .title-container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    margin-top: 60px;
+    padding: 0 10%;
+  }
+  
+  .subtitle {
+    font-family: 'Assistant', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-top: 30px;
+    opacity: 0.9;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .cover-footer {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 2;
+    color: white;
+  }
+  
+  .edition-info {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+</style>

@@ -1,0 +1,179 @@
+<!-- usage.html - עמוד הוראות שימוש במגזין הדיגיטלי -->
+<div class="page-content">
+  <!-- לוגו בצד שמאל -->
+  <div class="corner-logo">
+    <img src="img/logo/movne_profile_800px-03.jpg" alt="מובנה" class="small-corner-logo">
+  </div>
+
+  <div class="page-header">
+    <h1>איך להשתמש במגזין</h1>
+    <h2>הוראות וטיפים</h2>
+  </div>
+  
+  <div class="page-body">
+    <div class="usage-section">
+      <h3>ניווט בין עמודים</h3>
+      <div class="usage-grid">
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-hand-point-up"></i></div>
+          <div class="usage-content">
+            <h4>הפיכת דף בפינות</h4>
+            <p>לחץ על פינות העמוד התחתונות כדי לדפדף בין עמודי המגזין. הפינה השמאלית תקדם לעמוד הבא, והפינה הימנית תחזיר לעמוד הקודם.</p>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-arrow-right"></i><i class="fas fa-arrow-left"></i></div>
+          <div class="usage-content">
+            <h4>כפתורי ניווט</h4>
+            <p>השתמש בכפתורי "הבא" ו"הקודם" בחלק העליון של המסך לניווט בין העמודים.</p>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-keyboard"></i></div>
+          <div class="usage-content">
+            <h4>מקלדת</h4>
+            <p>ניתן להשתמש במקשי החצים (שמאלה/ימינה) לניווט בין העמודים, ובמקש Home לחזרה לעמוד הראשון.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="usage-section">
+      <h3>תכונות מיוחדות</h3>
+      <div class="usage-grid">
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-search-plus"></i></div>
+          <div class="usage-content">
+            <h4>הגדלה והקטנה</h4>
+            <p>השתמש בכפתורי הזום (+ ו-) להגדלה או הקטנה של תצוגת המגזין.</p>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-expand"></i></div>
+          <div class="usage-content">
+            <h4>מסך מלא</h4>
+            <p>לחץ על כפתור המסך המלא לצפייה במגזין במצב מסך מלא.</p>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-icon"><i class="fas fa-home"></i></div>
+          <div class="usage-content">
+            <h4>חזרה לשער</h4>
+            <p>לחץ על כפתור הבית בכל עת כדי לחזור לעמוד השער של המגזין.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="usage-note">
+      <h3>חוויית קריאה משופרת</h3>
+      <p>המגזין הדיגיטלי שלנו מציע חוויית קריאה המדמה דפדוף בין דפי מגזין אמיתי, כולל אפקט חזותי וקולי של הפיכת דפים. בכל עמוד תוכלו למצוא את לוגו מובנה בפינה העליונה, ולדפדף בין העמודים בצורה אינטואיטיבית.</p>
+    </div>
+  </div>
+  
+  <div class="page-footer">
+    <div class="page-number">13</div>
+  </div>
+</div>
+
+<style>
+  .usage-section {
+    margin-bottom: 30px;
+  }
+  
+  .usage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 15px;
+  }
+  
+  .usage-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    align-items: flex-start;
+  }
+  
+  .usage-icon {
+    background-color: var(--secondary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .usage-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('img/logo/animated/movne_profile_800px-04.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+    z-index: 0;
+  }
+  
+  .usage-icon i {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .usage-icon i + i {
+    margin-right: -8px;
+    margin-left: 2px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .usage-content {
+    flex-grow: 1;
+  }
+  
+  .usage-content h4 {
+    font-family: 'Heebo', sans-serif;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+  }
+  
+  .usage-content p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--dark-gray);
+  }
+  
+  .usage-note {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgba(51, 108, 208, 0.1);
+    border-right: 4px solid var(--primary-color);
+    border-radius: 4px;
+  }
+  
+  .usage-note h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+  
+  .usage-note p {
+    line-height: 1.5;
+  }
+</style> 
