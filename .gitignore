@@ -1,0 +1,106 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node modules
+node_modules/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# Distribution / packaging
+.env
+
+# Results files (too large for git)
+*.json
+!package.json
+!package-lock.json
+
+# Virtual environment
+venv/
+ENV/
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+
+# Caches
+.cache/
+.pytest_cache/
+
+# Dependencies
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Build outputs
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Storage
+storage/
+data/
+
+# Test files
+test_output/
+test_files/
+test_documents/
+
+# Models
+models/
+
+# OS
+.DS_Store
+Thumbs.db 
