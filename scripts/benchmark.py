@@ -19,9 +19,11 @@ import pandas as pd
 
 # ייבוא הסקריפטים הישנים והחדשים
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from scripts.process_document import process_document  # הגרסה הישנה
+# ייבוא פונקציות מהגרסה הישנה
+from scripts.process_document import extract_tables_from_image, extract_securities
+# ייבוא פונקציות מהגרסה החדשה
 from scripts.improved_table_extraction import extract_tables_hybrid
-from scripts.improved_securities_extraction import extract_securities_hybrid
+from scripts.improved_securities_extraction import extract_securities_hybrid, extract_text_from_image
 
 # קבצי מבחן מתויגים ידנית - רשימה לדוגמה של קבצים שיש להם תיוג ידני
 BENCHMARK_FILES = {
@@ -62,11 +64,11 @@ def evaluate_table_extraction(img_path, ground_truth=None):
     # בדיקת הגרסה הישנה
     start_time = time.time()
     try:
-        old_result = process_document(img_path, extract_tables=True, extract_securities=False)
-        old_tables = len(old_result.get("tables", []))
+        old_tables = extract_tables_from_image(img, page_number=0)
+        old_tables_count = len(old_tables)
     except Exception as e:
         print(f"שגיאה בהרצת הגרסה הישנה: {str(e)}")
-        old_tables = 0
+        old_tables_count = 0
     old_time = time.time() - start_time
     
     # בדיקת הגרסה החדשה
@@ -80,14 +82,14 @@ def evaluate_table_extraction(img_path, ground_truth=None):
     new_time = time.time() - start_time
     
     # תוצאות
-    results["old_version"]["tables"] = old_tables
+    results["old_version"]["tables"] = old_tables_count
     results["old_version"]["time"] = old_time
     results["new_version"]["tables"] = new_tables_count
     results["new_version"]["time"] = new_time
     
     # חישוב דיוק אם יש אמת מידה (ground truth)
     if ground_truth is not None:
-        results["old_version"]["accuracy"] = old_tables / ground_truth if ground_truth > 0 else 0
+        results["old_version"]["accuracy"] = old_tables_count / ground_truth if ground_truth > 0 else 0
         results["new_version"]["accuracy"] = new_tables_count / ground_truth if ground_truth > 0 else 0
     
     return results
@@ -116,11 +118,13 @@ def evaluate_securities_extraction(img_path, ground_truth=None, ground_truth_sec
         print(f"שגיאה: לא ניתן לטעון את התמונה מהנתיב {img_path}")
         return results
     
+    # חילוץ טקסט מהתמונה לשימוש בגרסה הישנה
+    text = extract_text_from_image(img)
+    
     # בדיקת הגרסה הישנה
     start_time = time.time()
     try:
-        old_result = process_document(img_path, extract_tables=False, extract_securities=True)
-        old_securities = old_result.get("securities", [])
+        old_securities = extract_securities(text, tables=None, img=img)
         old_securities_count = len(old_securities)
         old_isins = [s.get("isin") for s in old_securities if s.get("isin")]
     except Exception as e:
@@ -175,6 +179,33 @@ def evaluate_securities_extraction(img_path, ground_truth=None, ground_truth_sec
     
     return results
 
+def convert_pdf_to_images(pdf_path, output_dir):
+    """המרת PDF לתמונות"""
+    print(f"ממיר PDF לתמונות: {pdf_path}")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    try:
+        from pdf2image import convert_from_path
+        
+        # זיהוי נתיב ל-Poppler
+        poppler_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                                               "test_documents", "poppler-23.11.0", "Library", "bin"))
+        
+        # המרת PDF לתמונות
+        images = convert_from_path(pdf_path, poppler_path=poppler_path)
+        
+        # שמירת התמונות
+        image_paths = []
+        for i, img in enumerate(images):
+            img_path = os.path.join(output_dir, f"{Path(pdf_path).stem}_page_{i+1}.png")
+            img.save(img_path, "PNG")
+            image_paths.append(img_path)
+            
+        return image_paths
+    except Exception as e:
+        print(f"שגיאה בהמרת PDF לתמונות: {str(e)}")
+        return []
+
 def run_benchmark():
     """
     הרצת הבנצ'מרק על כל קבצי המבחן
@@ -194,6 +225,10 @@ def run_benchmark():
         print("שגיאה: לא הוגדרו קבצי מבחן. יש להגדיר קבצי מבחן ב-BENCHMARK_FILES.")
         sys.exit(1)
     
+    # יצירת תיקיית temp
+    temp_dir = "benchmark_temp"
+    os.makedirs(temp_dir, exist_ok=True)
+    
     # עיבוד כל קובץ מבחן
     for file_path, ground_truth in BENCHMARK_FILES.items():
         file_name = os.path.basename(file_path)
@@ -204,24 +239,14 @@ def run_benchmark():
             print(f"שגיאה: הקובץ {file_path} לא נמצא.")
             continue
         
-        # המרה ל-PNG אם צריך
+        # המרה לתמונות אם צריך
         if file_path.lower().endswith('.pdf'):
-            # המרה לתמונה באמצעות הסקריפט הקיים
-            print("ממיר PDF לתמונה...")
-            try:
-                result = subprocess.run(
-                    [sys.executable, "scripts/analyze_bank_statement.py", file_path, "--output_dir", "benchmark_temp", "--no-analyze"],
-                    capture_output=True, text=True, check=True
-                )
-                # מציאת קובץ התמונה שנוצר
-                images = list(Path("benchmark_temp").glob(f"{os.path.splitext(file_name)[0]}*.png"))
-                if not images:
-                    print("שגיאה: לא נוצרו תמונות מה-PDF.")
-                    continue
-                img_path = str(images[0])
-            except Exception as e:
-                print(f"שגיאה בהמרת ה-PDF: {str(e)}")
+            # המרה לתמונה באמצעות הפונקציה המותאמת
+            image_paths = convert_pdf_to_images(file_path, temp_dir)
+            if not image_paths:
+                print("שגיאה: לא נוצרו תמונות מה-PDF.")
                 continue
+            img_path = image_paths[0]  # שימוש בעמוד ראשון
         else:
             img_path = file_path
         
