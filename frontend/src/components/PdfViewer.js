@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress, Button, Grid, Paper, Divider, Chip, Tab, Tabs } from '@mui/material';
+import { Box, Typography, CircularProgress, Button, Grid, Paper, Divider, Chip, Tab, Tabs, IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
@@ -11,7 +11,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import InfoIcon from '@mui/icons-material/Info';
+import ChatIcon from '@mui/icons-material/Chat';
+import { ChevronRight, ChevronLeft, Close } from '@mui/icons-material';
 import api from '../services/api';
+import SmartTemplateBuilder from './SmartTemplateBuilder';
+import SmartPdfBot from './SmartPdfBot';
 
 // הגדרת Worker ל-PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -26,24 +30,23 @@ const PdfViewer = ({ pdfFile, documentId }) => {
   const [analysisResults, setAnalysisResults] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [selectedTable, setSelectedTable] = useState(null);
+  const [error, setError] = useState(null);
+  const [showTemplateBuilder, setShowTemplateBuilder] = useState(false);
+  const [showBot, setShowBot] = useState(false);
+  const [extractedText, setExtractedText] = useState('');
   
   // טעינת קובץ ה-PDF
   useEffect(() => {
     const loadPdf = async () => {
       try {
         if (pdfFile instanceof Blob) {
-          // אם זה כבר Blob, השתמש בו ישירות
           setPdfBlob(pdfFile);
           setIsLoading(false);
         } else if (documentId) {
-          // אם יש מזהה מסמך, טען מהשרת
-          const response = await api.get(`/documents/${documentId}/download`, {
-            responseType: 'blob'
-          });
+          const response = await api.documents.download(documentId);
           setPdfBlob(response.data);
           setIsLoading(false);
         } else if (pdfFile) {
-          // אם זה URL או נתיב, טען את הקובץ
           const response = await fetch(pdfFile);
           const blob = await response.blob();
           setPdfBlob(blob);
@@ -51,6 +54,7 @@ const PdfViewer = ({ pdfFile, documentId }) => {
         }
       } catch (error) {
         console.error('Error loading PDF:', error);
+        setError('שגיאה בטעינת המסמך');
         setIsLoading(false);
       }
     };
@@ -86,23 +90,24 @@ const PdfViewer = ({ pdfFile, documentId }) => {
     if (!pdfBlob) return;
     
     setIsAnalyzing(true);
+    setError(null);
     
     try {
-      const formData = new FormData();
-      formData.append('file', pdfBlob, 'document.pdf');
-      formData.append('pages', pageNumber);
+      const response = await api.analyzePdf(
+        new File([pdfBlob], 'document.pdf', { type: 'application/pdf' }),
+        pageNumber
+      );
+
+      setAnalysisResults(response);
+      setActiveTab(1);
       
-      const response = await api.post('/pdf/analyze', formData);
-      setAnalysisResults(response.data);
-      setActiveTab(1); // עבור ללשונית הניתוח
-      
-      // אם יש טבלאות בתוצאות, בחר את הראשונה
       const pageKey = String(pageNumber);
-      if (response.data.pages[pageKey]?.tables?.length > 0) {
-        setSelectedTable(response.data.pages[pageKey].tables[0]);
+      if (response.pages[pageKey]?.tables?.length > 0) {
+        setSelectedTable(response.pages[pageKey].tables[0]);
       }
     } catch (error) {
       console.error('Error analyzing PDF:', error);
+      setError(error.response?.data?.detail || 'שגיאה בניתוח המסמך');
     } finally {
       setIsAnalyzing(false);
     }
@@ -130,6 +135,39 @@ const PdfViewer = ({ pdfFile, documentId }) => {
     
     return (
       <Box>
+        {/* טבלת אגרות חוב */}
+        {pageData.organized_bonds && pageData.organized_bonds.length > 0 && (
+          <Box mb={4}>
+            <Typography variant="h6" gutterBottom>
+              נתוני אגרות חוב
+            </Typography>
+            <Paper variant="outlined" sx={{ overflow: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>ISIN</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>Valorn</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>Maturity</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>Coupon</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>Amount (USD)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageData.organized_bonds.map((bond, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{bond.isin}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{bond.valorn}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{bond.maturity}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{bond.coupon}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{bond.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Paper>
+          </Box>
+        )}
+
         {/* מידע פיננסי */}
         <Typography variant="h6" gutterBottom>
           מידע פיננסי
@@ -332,6 +370,55 @@ const PdfViewer = ({ pdfFile, documentId }) => {
     );
   };
   
+  // פונקציה לחילוץ טקסט מהמסמך
+  const extractFullText = async () => {
+    if (!pdfBlob) return;
+    
+    try {
+      const response = await api.pdfAnalysisApi.extractText(
+        new File([pdfBlob], 'document.pdf', { type: 'application/pdf' })
+      );
+      setExtractedText(response.text);
+      setShowBot(true);
+    } catch (error) {
+      console.error('Error extracting text:', error);
+      setError('שגיאה בחילוץ טקסט מהמסמך');
+    }
+  };
+  
+  // הוספת כפתורי ניתוח
+  const renderAnalysisButtons = () => (
+    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+      <Button
+        onClick={analyzePage}
+        startIcon={<AnalyticsIcon />}
+        variant="contained"
+        color="primary"
+        disabled={isAnalyzing}
+      >
+        {isAnalyzing ? 'מנתח...' : 'נתח עמוד'}
+      </Button>
+      
+      <Button
+        onClick={() => setShowTemplateBuilder(true)}
+        startIcon={<TableChartIcon />}
+        variant="outlined"
+        color="primary"
+      >
+        בנה תבנית חכמה
+      </Button>
+
+      <Button
+        onClick={extractFullText}
+        startIcon={<ChatIcon />}
+        variant="outlined"
+        color="secondary"
+      >
+        פתח בוט חכם
+      </Button>
+    </Box>
+  );
+  
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
@@ -341,100 +428,62 @@ const PdfViewer = ({ pdfFile, documentId }) => {
   }
   
   return (
-    <Box>
-      {/* פקדי ניווט ושליטה */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container alignItems="center" spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box display="flex" alignItems="center">
-              <Button 
-                onClick={goToPrevPage} 
-                disabled={pageNumber <= 1}
-                startIcon={<NavigateBeforeIcon />}
-                size="small"
-                sx={{ ml: 1 }}
-              >
-                הקודם
-              </Button>
-              
-              <Typography variant="body2" mx={2} sx={{ minWidth: 80, textAlign: 'center' }}>
-                עמוד {pageNumber} מתוך {numPages || '?'}
-              </Typography>
-              
-              <Button 
-                onClick={goToNextPage} 
-                disabled={pageNumber >= numPages}
-                endIcon={<NavigateNextIcon />}
-                size="small"
-                sx={{ mr: 1 }}
-              >
-                הבא
-              </Button>
-            </Box>
-          </Grid>
+    <Paper elevation={3} sx={{ p: 2, my: 2 }}>
+      {error && (
+        <Paper sx={{ p: 2, mb: 2, bgcolor: 'error.light' }}>
+          <Typography color="error">{error}</Typography>
+        </Paper>
+      )}
+      
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ mb: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Button onClick={zoomOut} startIcon={<ZoomOutIcon />} variant="outlined" size="small">
+            הקטן
+          </Button>
+          <Typography variant="body2">
+            {Math.round(scale * 100)}%
+          </Typography>
+          <Button onClick={zoomIn} startIcon={<ZoomInIcon />} variant="outlined" size="small">
+            הגדל
+          </Button>
+          {renderAnalysisButtons()}
+        </Box>
+
+        <Document
+          file={pdfBlob}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={<Typography>טוען מסמך...</Typography>}
+          error={<Typography color="error">שגיאה בטעינת המסמך</Typography>}
+        >
+          <Page 
+            pageNumber={pageNumber} 
+            scale={scale}
+            loading={<Typography>טוען עמוד...</Typography>}
+          />
+        </Document>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <IconButton 
+            onClick={goToPrevPage} 
+            disabled={pageNumber <= 1}
+          >
+            <ChevronLeft />
+          </IconButton>
           
-          <Grid item xs={12} md={6}>
-            <Box display="flex" alignItems="center" justifyContent="flex-end">
-              <Button onClick={zoomOut} startIcon={<ZoomOutIcon />} size="small">
-                הקטן
-              </Button>
-              
-              <Typography variant="body2" mx={1}>
-                {Math.round(scale * 100)}%
-              </Typography>
-              
-              <Button onClick={zoomIn} endIcon={<ZoomInIcon />} size="small">
-                הגדל
-              </Button>
-              
-              <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
-              
-              <Button 
-                color="primary" 
-                variant="contained" 
-                startIcon={<AnalyticsIcon />}
-                onClick={analyzePage}
-                disabled={isAnalyzing}
-                size="small"
-              >
-                {isAnalyzing ? 'מנתח...' : 'נתח עמוד'}
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
+          <Typography variant="body2" sx={{ mx: 2 }}>
+            עמוד {pageNumber} מתוך {numPages}
+          </Typography>
+          
+          <IconButton 
+            onClick={goToNextPage} 
+            disabled={pageNumber >= numPages}
+          >
+            <ChevronRight />
+          </IconButton>
+        </Box>
+      </Box>
       
       <Grid container spacing={3}>
-        {/* תצוגת המסמך */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-            {pdfBlob ? (
-              <Document
-                file={pdfBlob}
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading={<CircularProgress />}
-                error={
-                  <Typography color="error">
-                    שגיאה בטעינת המסמך. ייתכן שהפורמט אינו נתמך.
-                  </Typography>
-                }
-              >
-                <Page 
-                  pageNumber={pageNumber}
-                  scale={scale}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
-                  loading={<CircularProgress />}
-                />
-              </Document>
-            ) : (
-              <Typography color="text.secondary">
-                לא נבחר קובץ PDF
-              </Typography>
-            )}
-          </Paper>
-        </Grid>
-        
         {/* תוצאות ניתוח */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
@@ -525,7 +574,65 @@ const PdfViewer = ({ pdfFile, documentId }) => {
           </Paper>
         </Grid>
       </Grid>
-    </Box>
+
+      {/* הוספת דיאלוג לבונה התבניות */}
+      <Dialog
+        open={showTemplateBuilder}
+        onClose={() => setShowTemplateBuilder(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>בניית תבנית חכמה</DialogTitle>
+        <DialogContent>
+          <SmartTemplateBuilder
+            pdfFile={pdfBlob}
+            onTemplateCreate={(template) => {
+              setShowTemplateBuilder(false);
+              // כאן תוכל להוסיף לוגיקה נוספת אחרי יצירת התבנית
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* הוספת דיאלוג לבוט החכם */}
+      <Dialog
+        open={showBot}
+        onClose={() => setShowBot(false)}
+        maxWidth="md"
+        fullWidth
+        sx={{ '& .MuiDialog-paper': { height: '80vh' } }}
+      >
+        <DialogTitle>
+          בוט חכם לניתוח PDF
+          <IconButton
+            aria-label="close"
+            onClick={() => setShowBot(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <SmartPdfBot
+            pdfText={extractedText}
+            onCreateTable={(table) => {
+              // כאן אפשר להוסיף את הטבלה לתצוגה הראשית
+              const pageKey = String(pageNumber);
+              setAnalysisResults(prev => ({
+                ...prev,
+                pages: {
+                  ...prev?.pages,
+                  [pageKey]: {
+                    ...prev?.pages?.[pageKey],
+                    tables: [...(prev?.pages?.[pageKey]?.tables || []), table]
+                  }
+                }
+              }));
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    </Paper>
   );
 };
 

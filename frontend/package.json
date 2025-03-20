@@ -4,13 +4,14 @@
   "private": true,
   "dependencies": {
     "@emotion/cache": "^11.11.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.16",
-    "axios": "^1.6.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^5.17.1",
+    "@mui/material": "^5.17.1",
+    "axios": "^1.8.4",
     "date-fns": "^2.30.0",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-pdf": "^7.5.1",
     "react-scripts": "5.0.1",
@@ -42,4 +43,4 @@
     ]
   },
   "proxy": "http://localhost:8000"
-} 
+}

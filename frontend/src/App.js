@@ -30,7 +30,8 @@ import {
   Menu as MenuIcon,
   Assessment as AssessmentIcon,
   Home as HomeIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  UploadFile as UploadIcon
 } from '@mui/icons-material';
 import { rtlCache } from './rtlConfig';
 import PdfViewer from './components/PdfViewer';
@@ -76,29 +77,29 @@ function App() {
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeView, setActiveView] = useState('viewer');
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   // טיפול בהעלאת קובץ
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
+    const uploadedFile = event.target.files[0];
     
-    if (file && file.type === 'application/pdf') {
-      setSelectedFile(file);
+    if (uploadedFile && uploadedFile.type === 'application/pdf') {
+      setSelectedFile(uploadedFile);
       setAnalysisResults(null);
+      setError(null);
       
       // הצגת הודעה למשתמש
       setSnackbar({
         open: true,
-        message: `הקובץ "${file.name}" נטען בהצלחה`,
+        message: `הקובץ "${uploadedFile.name}" נטען בהצלחה`,
         severity: 'success'
       });
     } else {
-      setSnackbar({
-        open: true,
-        message: 'אנא בחר קובץ PDF תקין',
-        severity: 'error'
-      });
+      setError('נא להעלות קובץ PDF בלבד');
     }
   };
   

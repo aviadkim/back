@@ -57,19 +57,69 @@ api.interceptors.response.use(
 // מודול עם כל הפונקציות לניתוח PDF
 const pdfAnalysisApi = {
   // ניתוח PDF
-  analyzePdf: (file, pages) => {
+  analyzePdf: async (file, page) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('page_num', page.toString());
+    formData.append('extract_tables', 'true');
+    formData.append('extract_financial_data', 'true');
+    formData.append('parse_bonds', 'true');
+    formData.append('use_new_version', 'true');
     
-    if (pages) {
-      formData.append('pages', pages);
-    }
-    
-    return api.post('/pdf/analyze', formData, {
+    const response = await api.post('/pdf/analyze', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+
+    // עיבוד נוסף של התוצאות - ארגון הנתונים בטבלה
+    const result = response.data;
+    if (result.pages && result.pages[page]) {
+      const pageData = result.pages[page];
+      
+      // ארגון נתוני אגרות החוב בטבלה
+      if (pageData.text) {
+        const bonds = [];
+        const lines = pageData.text.split('\n');
+        
+        let currentBond = {};
+        for (const line of lines) {
+          // חיפוש מידע על אגרות חוב
+          if (line.includes('ISIN:')) {
+            if (Object.keys(currentBond).length > 0) {
+              bonds.push(currentBond);
+            }
+            currentBond = {
+              isin: line.match(/ISIN: ([\w\d]+)/)?.[1],
+              valorn: line.match(/Valorn\.: (\d+)/)?.[1]
+            };
+          }
+          
+          // חיפוש פרטים נוספים
+          if (currentBond.isin) {
+            if (line.includes('Maturity:')) {
+              currentBond.maturity = line.match(/Maturity: ([\d\.]+)/)?.[1];
+            }
+            if (line.includes('Coupon:')) {
+              currentBond.coupon = line.match(/Coupon: ([\d\.]+)/)?.[1];
+            }
+            if (line.includes('USD')) {
+              const amounts = line.match(/USD ([\d,\']+)/);
+              if (amounts) {
+                currentBond.amount = amounts[1];
+              }
+            }
+          }
+        }
+        
+        // הוספת הטבלה המאורגנת לתוצאות
+        if (bonds.length > 0) {
+          pageData.organized_bonds = bonds;
+        }
+      }
+    }
+    
+    return result;
   },
   
   // חילוץ טקסט מ-PDF
@@ -141,24 +191,24 @@ const documentsApi = {
   },
   
   // העלאת מסמך חדש
-  upload: (file, metadata = {}) => {
+  upload: async (file, metadata = {}) => {
     const formData = new FormData();
     formData.append('file', file);
     
-    // הוספת מטא-דאטה אם קיים
     if (Object.keys(metadata).length > 0) {
       formData.append('metadata', JSON.stringify(metadata));
     }
     
-    return api.post('/documents/upload', formData, {
+    const response = await api.post('/documents/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
   },
   
   // הורדת קובץ PDF
-  download: (id) => {
+  download: async (id) => {
     return api.get(`/documents/${id}/download`, {
       responseType: 'blob',
     });
@@ -175,6 +225,81 @@ const documentsApi = {
   },
 };
 
+// מודול לניהול תבניות חכמות
+const templatesApi = {
+  // סריקת כותרות מהמסמך
+  scanHeaders: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('scan_headers', 'true');
+    
+    const response = await api.post('/pdf/scan-headers', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // שמירת תבנית חדשה
+  saveTemplate: async (template) => {
+    return api.post('/templates', template);
+  },
+
+  // קבלת כל התבניות השמורות
+  getTemplates: async () => {
+    return api.get('/templates');
+  },
+
+  // הפעלת תבנית על מסמך
+  applyTemplate: async (file, templateId) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('template_id', templateId);
+    
+    const response = await api.post('/pdf/apply-template', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // עדכון תבנית קיימת
+  updateTemplate: async (templateId, template) => {
+    return api.put(`/templates/${templateId}`, template);
+  },
+
+  // מחיקת תבנית
+  deleteTemplate: async (templateId) => {
+    return api.delete(`/templates/${templateId}`);
+  }
+};
+
+// מודול לניהול הצ'אט החכם
+export const chatApi = {
+  // שליחת הודעה לבוט
+  sendMessage: async (message, context) => {
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('context', context);
+    const response = await api.post('/chat/message', formData);
+    return response.data;
+  },
+
+  // קבלת היסטוריית שיחה
+  getHistory: async () => {
+    const response = await api.get('/chat/history');
+    return response.data;
+  },
+
+  // מחיקת היסטוריית שיחה
+  clearHistory: async () => {
+    const response = await api.delete('/chat/history');
+    return response.data;
+  }
+};
+
 // יצוא של כל המודולים
 export default {
   // ניתוח PDF
@@ -182,6 +307,12 @@ export default {
   
   // ניהול מסמכים
   documents: documentsApi,
+  
+  // ניהול תבניות
+  templates: templatesApi,
+  
+  // מודול הצ'אט
+  chat: chatApi,
   
   // גישה ישירה למופע axios המוגדר
   instance: api,
@@ -204,4 +335,31 @@ export default {
       },
     });
   },
+};
+
+export const uploadDocument = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  try {
+    const response = await api.post('/documents/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'שגיאה בהעלאת המסמך');
+  }
+};
+
+export const analyzePage = async (documentId, pageNumber) => {
+  try {
+    const response = await api.post(`/documents/${documentId}/analyze`, {
+      pageNumber
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'שגיאה בניתוח העמוד');
+  }
 }; 
