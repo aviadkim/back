@@ -640,7 +640,6 @@ class FinancialAgent(BaseAgent):
         }
         
         # Add compared documents
-        for doc_id, comp_doc in comparison_docs. # Add compared documents
         for doc_id, comp_doc in comparison_docs.items():
             report["comparative"]["documents"].append(comp_doc.get("file_path", doc_id))
         
