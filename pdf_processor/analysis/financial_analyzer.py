@@ -376,8 +376,6 @@ class FinancialAnalyzer:
                 for i, assets in enumerate(analysis['total_assets']):
                     if assets != 0 and not pd.isna(assets) and not pd.isna(analysis['total_liabilities'][i]):
                         ratio = (analysis['total_liabilities'][i] / assets)
-                        debt_to_assets.RetryClaude hit the max length for a message and has paused its response. You can write Continue to keep the chat going.# Continuing from where we left off in financial_analyzer.py:
-                        ratio = (analysis['total_liabilities'][i] / assets)
                         debt_to_assets.append(round(ratio, 2))
                     else:
                         debt_to_assets.append(None)
