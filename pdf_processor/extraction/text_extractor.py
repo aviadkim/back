@@ -1,6 +1,9 @@
-import fitz  # PyMuPDF
+import PyPDF2
+import pdf2image
+import pytesseract
 import re
 import logging
+import os
 from typing import Dict, List, Tuple, Any, Optional
 
 class PDFTextExtractor:
@@ -30,75 +33,77 @@ class PDFTextExtractor:
         """
         document = {}
         try:
-            doc = fitz.open(pdf_path)
-            for page_num, page in enumerate(doc):
-                page_data = self._process_page(page)
-                document[page_num] = page_data
+            # First try direct text extraction with PyPDF2
+            with open(pdf_path, 'rb') as file:
+                reader = PyPDF2.PdfReader(file)
+                page_count = len(reader.pages)
+                
+                for page_num in range(page_count):
+                    page = reader.pages[page_num]
+                    text = page.extract_text()
+                    
+                    # If text extraction yields little or no text, use OCR
+                    if not text or len(text.strip()) < 50:
+                        # Convert PDF page to image and use OCR
+                        page_images = pdf2image.convert_from_path(
+                            pdf_path, 
+                            first_page=page_num+1, 
+                            last_page=page_num+1
+                        )
+                        if page_images:
+                            text = pytesseract.image_to_string(
+                                page_images[0], 
+                                lang=self.language
+                            )
+                    
+                    # Extract page dimensions
+                    page_box = page.mediabox
+                    width = float(page_box.width)
+                    height = float(page_box.height)
+                    
+                    # Process text into blocks (simplified)
+                    blocks = self._process_text_to_blocks(text)
+                    
+                    document[page_num] = {
+                        "text": text,
+                        "blocks": blocks,
+                        "images": [],  # Placeholder for image extraction
+                        "dimensions": {
+                            "width": width,
+                            "height": height
+                        }
+                    }
+                
             return document
         except Exception as e:
             self.logger.error(f"Failed to extract text from {pdf_path}: {str(e)}")
             raise
     
-    def _process_page(self, page: fitz.Page) -> Dict[str, Any]:
-        """Process a single page from the PDF.
+    def _process_text_to_blocks(self, text: str) -> List[Dict[str, Any]]:
+        """Process a text string into blocks based on paragraphs.
         
         Args:
-            page: PyMuPDF page object
+            text: Text content to process
             
         Returns:
-            Dictionary containing page content and metadata
+            List of dictionaries containing block data
         """
-        # Extract text blocks with their positions
-        text_blocks = page.get_text("blocks")
+        blocks = []
+        if not text:
+            return blocks
+            
+        # Split text into paragraphs by double newlines
+        paragraphs = text.split('\n\n')
         
-        # Get page dimensions
-        page_width, page_height = page.rect.width, page.rect.height
-        
-        # Extract images if present
-        images = self._extract_images(page)
-        
-        # Format as structured data
-        return {
-            "text": page.get_text(),
-            "blocks": [
-                {
-                    "text": block[4],
-                    "bbox": block[:4],
+        for i, paragraph in enumerate(paragraphs):
+            if paragraph.strip():
+                blocks.append({
+                    "text": paragraph.strip(),
+                    "bbox": [0, i*50, 500, (i+1)*50],  # Placeholder coordinates
                     "block_type": "text"
-                }
-                for block in text_blocks
-            ],
-            "images": images,
-            "dimensions": {
-                "width": page_width,
-                "height": page_height
-            }
-        }
-    
-    def _extract_images(self, page: fitz.Page) -> List[Dict[str, Any]]:
-        """Extract images from the page with their positions.
-        
-        Args:
-            page: PyMuPDF page object
-            
-        Returns:
-            List of dictionaries containing image metadata
-        """
-        images = []
-        img_list = page.get_images(full=True)
-        
-        for img_index, img in enumerate(img_list):
-            xref = img[0]
-            base_image = page.parent.extract_image(xref)
-            if base_image:
-                images.append({
-                    "index": img_index,
-                    "bbox": img[1:5],
-                    "size": (base_image["width"], base_image["height"]),
-                    "format": base_image["ext"]
                 })
                 
-        return images
+        return blocks
     
     def is_potentially_financial(self, text: str) -> bool:
         """Determine if text likely contains financial information.

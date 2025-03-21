@@ -1,17 +1,18 @@
-import fitz  # PyMuPDF
-import numpy as np
-import cv2
+import PyPDF2
+import pdf2image
+import pytesseract
 import pandas as pd
 from typing import List, Dict, Any, Tuple, Optional
 import logging
 import tempfile
 import os
+import re
 
 class TableExtractor:
     """Extract and structure tabular data from PDF documents.
     
     This class handles the detection and extraction of tables from
-    PDFs using both heuristic and visual approaches.
+    PDFs using text-based approaches.
     """
     
     def __init__(self):
@@ -30,220 +31,150 @@ class TableExtractor:
         result = {}
         
         try:
-            doc = fitz.open(pdf_path)
-            pages_to_process = page_numbers if page_numbers is not None else range(len(doc))
-            
-            for page_num in pages_to_process:
-                if page_num >= len(doc):
-                    continue
+            # Open the PDF file
+            with open(pdf_path, 'rb') as file:
+                reader = PyPDF2.PdfReader(file)
+                total_pages = len(reader.pages)
+                
+                # Determine which pages to process
+                pages_to_process = page_numbers if page_numbers is not None else range(total_pages)
+                
+                for page_num in pages_to_process:
+                    if page_num >= total_pages:
+                        continue
+                        
+                    # Extract tables from the page
+                    page = reader.pages[page_num]
+                    tables = self._extract_page_tables(page, pdf_path, page_num)
                     
-                page = doc[page_num]
-                tables = self._extract_page_tables(page)
-                if tables:
-                    result[page_num] = tables
+                    if tables:
+                        result[page_num] = tables
                     
             return result
         except Exception as e:
             self.logger.error(f"Failed to extract tables from {pdf_path}: {str(e)}")
             raise
     
-    def _extract_page_tables(self, page: fitz.Page) -> List[Dict[str, Any]]:
+    def _extract_page_tables(self, page: PyPDF2.PageObject, pdf_path: str, page_num: int) -> List[Dict[str, Any]]:
         """Extract tables from a single page.
         
         Args:
-            page: PyMuPDF page object
+            page: PyPDF2 PageObject
+            pdf_path: Path to the PDF file
+            page_num: Page number
             
         Returns:
             List of dictionaries containing table data and metadata
         """
-        # Extract tables using multiple approaches and combine results
         tables = []
         
-        # First try the built-in table extraction (for structured PDFs)
-        structured_tables = self._extract_structured_tables(page)
-        if structured_tables:
-            tables.extend(structured_tables)
+        # Extract text from the page
+        text = page.extract_text()
+        
+        # If direct text extraction yields little text, use OCR
+        if not text or len(text.strip()) < 100:
+            # Convert PDF page to image
+            images = pdf2image.convert_from_path(
+                pdf_path,
+                first_page=page_num+1,
+                last_page=page_num+1
+            )
             
-        # If no tables found with built-in extraction, try visual approach
-        if not tables:
-            visual_tables = self._extract_visual_tables(page)
-            if visual_tables:
-                tables.extend(visual_tables)
+            if images:
+                # Use OCR with table configuration
+                text = pytesseract.image_to_string(
+                    images[0],
+                    config='--psm 6'  # Assume a single uniform block of text
+                )
+        
+        # Now analyze text for table-like structures
+        tables_data = self._identify_tables_in_text(text)
+        
+        # Format tables
+        for idx, table_data in enumerate(tables_data):
+            table = {
+                "id": idx,
+                "bbox": [0, 0, 0, 0],  # Placeholder coordinates
+                "header": table_data.get("header", []),
+                "rows": table_data.get("rows", []),
+                "row_count": len(table_data.get("rows", [])) + (1 if table_data.get("header") else 0),
+                "col_count": len(table_data.get("header", [])) if table_data.get("header") else 
+                            (len(table_data.get("rows", [[]])[0]) if table_data.get("rows") else 0),
+                "extraction_method": "text"
+            }
+            
+            tables.append(table)
                 
         return tables
     
-    def _extract_structured_tables(self, page: fitz.Page) -> List[Dict[str, Any]]:
-        """Extract tables using built-in table extraction.
+    def _identify_tables_in_text(self, text: str) -> List[Dict[str, Any]]:
+        """Identify potential tables in text.
         
         Args:
-            page: PyMuPDF page object
+            text: Text content to analyze
             
         Returns:
-            List of dictionaries containing structured table data
+            List of potential tables with headers and rows
         """
-        tables = []
-        
-        # Extract tables using PyMuPDF's built-in extraction
-        tab = page.find_tables()
-        if tab and tab.tables:
-            for idx, table in enumerate(tab.tables):
-                rows = []
-                header = []
-                
-                # Extract header if available
-                if len(table.rows) > 0:
-                    header = [cell.text.strip() for cell in table.rows[0].cells]
-                
-                # Extract data rows
-                for row_idx, row in enumerate(table.rows):
-                    if row_idx == 0 and header:  # Skip header row
-                        continue
-                        
-                    row_data = [cell.text.strip() for cell in row.cells]
-                    rows.append(row_data)
-                
-                # Create structured table data
-                table_data = {
-                    "id": idx,
-                    "bbox": [table.rect.x0, table.rect.y0, table.rect.x1, table.rect.y1],
-                    "header": header,
-                    "rows": rows,
-                    "row_count": len(rows) + (1 if header else 0),
-                    "col_count": len(header) if header else (len(rows[0]) if rows else 0),
-                    "extraction_method": "structured"
-                }
-                
-                tables.append(table_data)
-                
-        return tables
-    
-    def _extract_visual_tables(self, page: fitz.Page) -> List[Dict[str, Any]]:
-        """Extract tables using image processing techniques.
-        
-        Args:
-            page: PyMuPDF page object
-            
-        Returns:
-            List of dictionaries containing table data extracted visually
-        """
-        tables = []
-        
-        try:
-            # Render page to image for visual processing
-            zoom = 2  # Higher zoom for better resolution
-            mat = fitz.Matrix(zoom, zoom)
-            pix = page.get_pixmap(matrix=mat)
-            
-            # Save to a temporary file
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
-                tmp_filename = tmp.name
-                pix.save(tmp_filename)
-            
-            # Load with OpenCV
-            img = cv2.imread(tmp_filename)
-            
-            # Clean up temp file
-            os.unlink(tmp_filename)
-            
-            if img is None:
-                return []
-            
-            # Convert to grayscale
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            
-            # Apply threshold
-            _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
-            
-            # Detect horizontal lines
-            horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1))
-            horizontal_lines = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel)
-            
-            # Detect vertical lines
-            vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 40))
-            vertical_lines = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, vertical_kernel)
-            
-            # Combine lines
-            combined = cv2.add(horizontal_lines, vertical_lines)
-            
-            # Find contours
-            contours, _ = cv2.findContours(combined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            
-            # Filter contours by area to find table boundaries
-            min_area = 20000  # Minimum area to consider as a table
-            for idx, contour in enumerate(contours):
-                area = cv2.contourArea(contour)
-                if area > min_area:
-                    x, y, w, h = cv2.boundingRect(contour)
-                    
-                    # Convert coordinates back to PDF space
-                    x0, y0 = x / zoom, y / zoom
-                    x1, y1 = (x + w) / zoom, (y + h) / zoom
-                    
-                    # Extract text within these bounds
-                    table_rect = fitz.Rect(x0, y0, x1, y1)
-                    text_blocks = [b for b in page.get_text("blocks") 
-                                  if fitz.Rect(b[:4]).intersects(table_rect)]
-                    
-                    # Try to organize into rows and columns using y-coordinates
-                    rows = self._organize_blocks_into_rows(text_blocks)
-                    
-                    if rows:
-                        table_data = {
-                            "id": idx,
-                            "bbox": [x0, y0, x1, y1],
-                            "header": rows[0] if rows else [],
-                            "rows": rows[1:] if len(rows) > 1 else [],
-                            "row_count": len(rows),
-                            "col_count": len(rows[0]) if rows and rows[0] else 0,
-                            "extraction_method": "visual"
-                        }
-                        
-                        tables.append(table_data)
-            
-        except Exception as e:
-            self.logger.error(f"Error in visual table extraction: {str(e)}")
-            
-        return tables
-    
-    def _organize_blocks_into_rows(self, blocks: List[List]) -> List[List[str]]:
-        """Organize text blocks into rows based on y-coordinates.
-        
-        Args:
-            blocks: List of text blocks with coordinates
-            
-        Returns:
-            List of rows, each containing cell text
-        """
-        if not blocks:
+        if not text:
             return []
             
-        # Sort blocks by y-coordinate (top to bottom)
-        blocks_sorted = sorted(blocks, key=lambda b: b[1])  # Sort by y0
+        tables = []
+        lines = text.split('\n')
         
-        # Group blocks by similar y-coordinates to form rows
-        rows = []
-        current_row = []
-        current_y = blocks_sorted[0][1]
-        y_threshold = 10  # Threshold for considering blocks in the same row
-        
-        for block in blocks_sorted:
-            if abs(block[1] - current_y) <= y_threshold:
-                current_row.append(block)
-            else:
-                # Start a new row
-                if current_row:
-                    # Sort blocks in the row by x-coordinate (left to right)
-                    current_row.sort(key=lambda b: b[0])
-                    rows.append([b[4] for b in current_row])  # Extract text
-                current_row = [block]
-                current_y = block[1]
-        
-        # Add the last row
-        if current_row:
-            current_row.sort(key=lambda b: b[0])
-            rows.append([b[4] for b in current_row])
+        # Simple heuristic: Look for consistent separator patterns or columnar alignment
+        current_table = None
+        for i, line in enumerate(lines):
+            line = line.strip()
             
-        return rows
+            # Skip empty lines
+            if not line:
+                # End of table?
+                if current_table and current_table["rows"]:
+                    tables.append(current_table)
+                    current_table = None
+                continue
+            
+            # Check if this line could be a header (contains multiple words separated by 2+ spaces)
+            words = line.split()
+            if len(words) >= 3 and '  ' in line:
+                # This might be a header or a new table row
+                if current_table is None:
+                    # Start a new table
+                    current_table = {
+                        "header": self._split_line_into_columns(line),
+                        "rows": []
+                    }
+                else:
+                    # Add as a row to current table
+                    current_table["rows"].append(self._split_line_into_columns(line))
+            elif current_table:
+                # This line might be part of a table row
+                current_table["rows"].append(self._split_line_into_columns(line))
+        
+        # Add the last table if it exists
+        if current_table and current_table["rows"]:
+            tables.append(current_table)
+            
+        return tables
+    
+    def _split_line_into_columns(self, line: str) -> List[str]:
+        """Split a line of text into columns.
+        
+        Args:
+            line: Line of text
+            
+        Returns:
+            List of column values
+        """
+        # First try splitting by multiple spaces
+        if '  ' in line:
+            # Replace 2+ spaces with a special marker
+            marked_line = re.sub(r'  +', ' ||| ', line)
+            return [col.strip() for col in marked_line.split(' ||| ')]
+        
+        # Fallback: just split by whitespace
+        return line.split()
     
     def convert_to_dataframe(self, table: Dict[str, Any]) -> pd.DataFrame:
         """Convert a table dictionary to a pandas DataFrame.
