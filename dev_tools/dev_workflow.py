@@ -1062,7 +1062,7 @@ if __name__ == "__main__":
                 component_name = file_name.replace(file_ext, '')
 
                 if is_typescript:
-                    return f'''import React, {{ useState, useEffect }} from 'react';
+                    template = f'''import React, {{ useState, useEffect }} from 'react';
 
 interface {component_name}Props {{
   title?: string;
@@ -1084,10 +1084,8 @@ const {component_name}: React.FC<{component_name}Props> = ({{ title = "Default T
   return (
     <div className="container">
       <h1>{{title}}</h1>
-      <div className="content">'''
-                    template += '''
-        {/* Component content goes here */}'''
-                    template += f'''
+      <div className="content">
+        {{/* Component content goes here */}}
         <p>This is the {component_name} component</p>
       </div>
     </div>
@@ -1096,8 +1094,9 @@ const {component_name}: React.FC<{component_name}Props> = ({{ title = "Default T
 
 export default {component_name};
 '''
+                    return template
                 else:
-                    return f'''import React, {{ useState, useEffect }} from 'react';
+                    template = f'''import React, {{ useState, useEffect }} from 'react';
 
 const {component_name} = ({{ title = "Default Title" }}) => {{
   const [data, setData] = useState([]);
@@ -1115,10 +1114,8 @@ const {component_name} = ({{ title = "Default Title" }}) => {{
   return (
     <div className="container">
       <h1>{{title}}</h1>
-      <div className="content">'''
-                    template += '''
-        {/* Component content goes here */}'''
-                    template += f'''
+      <div className="content">
+        {{/* Component content goes here */}}
         <p>This is the {component_name} component</p>
       </div>
     </div>
@@ -1127,6 +1124,7 @@ const {component_name} = ({{ title = "Default Title" }}) => {{
 
 export default {component_name};
 '''
+                    return template
 
             # Test files
             if 'test' in file_path.lower() or 'spec' in file_path.lower():

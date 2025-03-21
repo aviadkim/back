@@ -894,6 +894,118 @@ class AppDiagnostics:
                 self.report_data["issues_by_category"]["api"].append(issue)
                 self.report_data["issues_found"] += 1
     
+    def _try_start_app(self):
+        """Try to start the application for testing"""
+        logger.info("Attempting to start the application...")
+        
+        if not self.report_data.get("entry_point"):
+            logger.warning("No entry point detected, cannot start the application")
+            return False
+        
+        try:
+            # Different commands based on app type
+            if self.report_data["app_type"] in ["react", "vue", "next.js"]:
+                # For npm-based apps, parse the entry point
+                cmd_parts = self.report_data["entry_point"].split()
+                self.app_process = subprocess.Popen(
+                    cmd_parts,
+                    cwd=self.app_dir,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+            elif self.report_data["app_type"] == "express" or self.report_data["app_type"] == "node.js":
+                # For Node.js apps
+                self.app_process = subprocess.Popen(
+                    ["node", self.report_data["entry_point"]],
+                    cwd=self.app_dir,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+            elif self.report_data["app_type"] in ["flask", "fastapi"]:
+                # For Python web apps
+                self.app_process = subprocess.Popen(
+                    ["python", self.report_data["entry_point"]],
+                    cwd=self.app_dir,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+            elif self.report_data["app_type"] == "django":
+                # For Django
+                cmd_parts = self.report_data["entry_point"].split()
+                self.app_process = subprocess.Popen(
+                    cmd_parts,
+                    cwd=self.app_dir,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+            else:
+                logger.warning(f"Unsupported app type: {self.report_data['app_type']}")
+                return False
+            
+            # Wait a bit for the server to start
+            logger.info("Waiting for application to start...")
+            time.sleep(5)
+            
+            # Check if the process is still running
+            if self.app_process.poll() is not None:
+                # Process exited
+                stdout, stderr = self.app_process.communicate()
+                logger.error(f"Application failed to start. Exit code: {self.app_process.returncode}")
+                logger.error(f"STDOUT: {stdout}")
+                logger.error(f"STDERR: {stderr}")
+                
+                # Add to issues
+                issue = {
+                    "category": "startup",
+                    "severity": "critical",
+                    "message": f"Application failed to start. Exit code: {self.app_process.returncode}",
+                    "file": self.report_data.get("entry_point", "Unknown"),
+                    "details": f"STDOUT: {stdout}\nSTDERR: {stderr}",
+                    "fix": "Check the error messages and ensure all dependencies are installed."
+                }
+                self.issues.append(issue)
+                if "startup" not in self.report_data["issues_by_category"]:
+                    self.report_data["issues_by_category"]["startup"] = []
+                self.report_data["issues_by_category"]["startup"].append(issue)
+                self.report_data["issues_found"] += 1
+                return False
+            
+            # Check if the server is responding
+            if self.server_url:
+                try:
+                    response = requests.get(self.server_url, timeout=5)
+                    logger.info(f"Application started successfully. Status code: {response.status_code}")
+                    return True
+                except requests.exceptions.RequestException as e:
+                    logger.warning(f"Application may have started but is not responding: {str(e)}")
+                    return True  # Still return True since the process is running
+            
+            return True
+        except Exception as e:
+            logger.error(f"Error starting application: {str(e)}")
+            return False
+
+    def _stop_app(self):
+        """Stop the application if it's running"""
+        if self.app_process and self.app_process.poll() is None:
+            logger.info("Stopping application...")
+            try:
+                # Try gentle termination first
+                self.app_process.terminate()
+                time.sleep(2)
+                
+                # If still running, force kill
+                if self.app_process.poll() is None:
+                    self.app_process.kill()
+                
+                logger.info("Application stopped")
+            except Exception as e:
+                logger.error(f"Error stopping application: {str(e)}")
+
     def run_diagnostics(self):
         """Run all diagnostics tests"""
         logger.info("Starting application diagnostics...")

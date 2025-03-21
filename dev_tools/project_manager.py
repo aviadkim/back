@@ -26,27 +26,27 @@ class ProjectManager:
             "1": {
                 "name": "Project Analysis",
                 "description": "Analyze project structure and provide recommendations",
-                "script": "dev_tools/project_analyzer.py"
+                "script": "project_analyzer.py"
             },
             "2": {
                 "name": "App Diagnostics",
                 "description": "Diagnose application issues and connectivity problems",
-                "script": "dev_tools/app_diagnostics.py"
+                "script": "app_diagnostics.py"
             },
             "3": {
                 "name": "Performance Monitor",
                 "description": "Monitor application performance in real-time",
-                "script": "dev_tools/performance_monitor.py"
+                "script": "performance_monitor.py"
             },
             "4": {
                 "name": "Link & API Validator",
                 "description": "Check for broken links and API issues",
-                "script": "dev_tools/link_validator.py"
+                "script": "link_validator.py"
             },
             "5": {
                 "name": "Test Data Generator",
                 "description": "Generate test data for your application",
-                "script": "dev_tools/data_generator.py"
+                "script": "data_generator.py"
             },
             "6": {
                 "name": "Create New Feature",
@@ -76,7 +76,9 @@ class ProjectManager:
         print("\nAvailable tools:\n")
         
         for key, tool in self.tools.items():
-            print(f"{key}. {tool['name']} - {tool['description']}")
+            print(f"{key}. {tool['name']}")
+            print(f"   {tool['description']}")
+            print()
         
         print("0. Exit")
         print("=" * 60)
@@ -90,18 +92,15 @@ class ProjectManager:
             if choice == "0":
                 print("\nExiting Project Manager. Goodbye!")
                 break
-            elif choice in self.tools:
+            
+            if choice in self.tools:
                 tool = self.tools[choice]
-                print(f"\nRunning: {tool['name']}...")
+                print(f"\nRunning {tool['name']}...")
                 
-                if "function" in tool:
-                    # Call internal function
-                    tool["function"]()
-                elif "script" in tool:
-                    # Run external script
+                if "script" in tool:
                     self.run_script(tool["script"])
-                else:
-                    print("Error: Invalid tool configuration.")
+                elif "function" in tool:
+                    tool["function"]()
             else:
                 print("\nInvalid choice. Please try again.")
     
@@ -112,11 +111,11 @@ class ProjectManager:
         if os.path.exists(script_path):
             try:
                 subprocess.run([sys.executable, script_path], check=True)
-                print(f"\nFinished running {script_name}")
             except subprocess.CalledProcessError as e:
-                print(f"\nError running {script_name}: {e}")
+                print(f"Error running {script_name}: {e}")
         else:
-            print(f"\nError: Script {script_name} not found.")
+            print(f"Script not found: {script_path}")
+            print("Please make sure all tool scripts are in your project directory.")
     
     def run_tests(self):
         """Run all tests for the project"""
@@ -246,7 +245,7 @@ const {component_name} = () => {{
       
       {{data && (
         <div className="data-container">
-          {/* TODO: Render your data here */}
+          /* TODO: Render your data here */
           <pre>{{JSON.stringify(data, null, 2)}}</pre>
         </div>
       )}}
