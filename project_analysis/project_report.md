@@ -1,0 +1,4619 @@
+# Project Analysis Report
+Generated on: 2025-03-21 04:48:01
+
+## Project Overview
+- **Project Directory**: /workspaces/back
+- **Total Files**: 92870
+- **Total Directories**: 8245
+
+### File Distribution
+- **Backend**: 34 files
+- **Docs**: 2328 files
+- **Tests**: 248 files
+- **Other**: 6605 files
+- **Data**: 15421 files
+- **Frontend**: 68233 files
+- **Config**: 1 files
+
+## Technology Stack
+
+### Languages
+- C
+- C++
+- JavaScript
+- PHP
+- Python
+- TypeScript
+
+### Frameworks
+- Angular
+- Express
+- React
+- Spring
+- Vue.js
+
+### Databases
+- DynamoDB
+- Firebase
+- MongoDB
+- MySQL
+- PostgreSQL
+- Redis
+- SQLite
+
+### Build Tools
+- Babel
+- Gulp
+- NPM Scripts
+- Webpack
+
+### Package Managers
+- NPM
+- Pip
+- Yarn
+
+### Testing
+- Cypress
+- JUnit
+- Jasmine
+- Jest
+- Mocha
+- PyTest
+- RSpec
+- UnitTest
+
+## Git Information
+- **Current Branch**: master
+- **Total Commits**: 8
+
+### Recent Commits
+- `acd8826` v1.3: הוספת בוט חכם וניתוח מסמכים משופר
+- `cf3ef0c` גרסה 1.2.0: הוספת סקריפט pdf_mupdf_reader.py ופיתוח ממשק משתמש מבוסס React
+- `a2e51d5` עדכון pdf_mupdf_reader.py לגרסה 1.2 - שיפורים בזיהוי מבנה טבלאות ותבניות נתונים
+
+## Dependencies
+
+### Python Dependencies
+- **Total**: 20 packages
+
+**Key packages:**
+- opencv-python>=4.5.0: unspecified
+- numpy>=1.20.0: unspecified
+- pdf2image>=1.16.0: unspecified
+- pytesseract>=0.3.0: unspecified
+- python-dateutil>=2.8.2: unspecified
+- ... and 15 more
+
+### Npm Dependencies
+- **Total**: 1 packages
+
+**Key packages:**
+- vows: ^0.8.1
+
+## Recommendations
+
+### Medium Priority
+- **Consider refactoring project_analyzer.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/package-lock.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/src/App.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/src/services/api.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/src/components/PdfViewer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/src/components/SmartTemplateBuilder.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/.package-lock.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fastq/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fastq/queue.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fastq/test/test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn-jsx/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-mock/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-each/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/lib/core.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/lib/compile/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/lib/compile/codegen/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/lib/compile/validate/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/lib/compile/jtd/parse.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/dist/core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/dist/compile/codegen/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/dist/compile/validate/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-formats/node_modules/ajv/dist/compile/jtd/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-initial/lib/decls.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssjanus/src/cssjanus.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/readable-stream/lib/_stream_readable.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/readable-stream/lib/_stream_writable.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs/build/lib/command.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs/build/lib/yargs-factory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs/build/lib/validation.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs/build/lib/usage.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve/test/mock.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve/test/resolver_sync.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve/test/resolver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve/lib/async.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/jsonpath.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/test/query.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/generated/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/node_modules/esprima/esprima.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/node_modules/esprima/test/runner.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/node_modules/esprima/test/test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsonpath/node_modules/esprima/test/reflect.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-encoding/node_modules/iconv-lite/encodings/sbcs-data-generated.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-encoding/node_modules/iconv-lite/encodings/dbcs-codec.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-scope/lib/scope.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-scope/lib/referencer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@svgr/hast-util-to-babel-ast/lib/mappings.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@svgr/core/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/esprima/dist/esprima.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/follow-redirects/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@humanwhocodes/object-schema/src/object-schema.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@humanwhocodes/config-array/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@humanwhocodes/config-array/api.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssdb/cssdb.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/History.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/lib/response.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/lib/application.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/lib/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/lib/request.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/lib/router/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/express/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/glob/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/glob/glob.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/glob/sync.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs-parser/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yargs-parser/build/lib/yargs-parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/ModuleMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/watchers/NodeWatcher.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/watchers/WatchmanWatcher.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/crawlers/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-haste-map/build/crawlers/watchman.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-message-util/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsx-ast-utils/__tests__/src/hasProp-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsx-ast-utils/__tests__/src/getPropValue-babelparser-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsx-ast-utils/__tests__/src/getPropLiteralValue-flowparser-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsx-ast-utils/__tests__/src/getPropLiteralValue-babelparser-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsx-ast-utils/__tests__/src/getPropValue-flowparser-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/types.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/warnings-df54cb69.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/PlainValue-b8036b75.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/Schema-e94716c8.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/parse-cst.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/browser/dist/resolveSeq-492ab440.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/warnings-1000a372.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/Schema-88e323a7.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/Document-9b4560a1.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/resolveSeq-d03cb037.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/parse-cst.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yaml/dist/PlainValue-ec8e588e.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/make-dir/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/make-dir/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Document.spec.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Page.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Page.spec.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Thumbnail.spec.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Document.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Page/AnnotationLayer.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/src/Page/AnnotationLayer.spec.tsx into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/cjs/Document.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/cjs/Document.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/cjs/Page/AnnotationLayer.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/esm/Document.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/esm/Document.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-pdf/dist/esm/Page/AnnotationLayer.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/sha1.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/rsa.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/asn1.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/pbe.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/pkcs7asn1.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/jsbn.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/sha512.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/rc2.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/x509.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/prng.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/pkcs12.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/des.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/aes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/pkcs7.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/http.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/sha256.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/log.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/cipherModes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/ed25519.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/xhr.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/tls.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-forge/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv-keywords/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/lib/core.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/lib/compile/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/lib/compile/codegen/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/lib/compile/validate/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/lib/compile/jtd/parse.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/dist/core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/dist/compile/codegen/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/dist/compile/validate/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/node_modules/ajv/dist/compile/jtd/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/schema-utils/dist/ValidationError.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/types.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/APIPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/NormalModuleFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/buildChunkGraph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Watching.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/FlagDependencyUsagePlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ConstPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/TemplatedPathPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Module.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/RuntimeTemplate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ChunkGroup.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/FlagDependencyExportsPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Dependency.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ContextModuleFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ModuleInfoHeaderPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/SourceMapDevToolPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/RuntimePlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/NormalModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/CleanPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ContextModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ExternalModuleFactoryPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/WebpackOptionsApply.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ExportsInfo.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/MainTemplate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/CacheFacade.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ChunkGraph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Template.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/HotModuleReplacementPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ProgressPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ExternalModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ModuleFilenameHelpers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/FileSystemInfo.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/MultiCompiler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/DefinePlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Compiler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Chunk.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/RuntimeGlobals.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/Compilation.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ModuleGraph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/debug/ProfilingPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/SideEffectsFlagPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/InnerGraphPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/ModuleConcatenationPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/SplitChunksPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/InnerGraph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/AggressiveSplittingPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/RealContentHashPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/optimize/ConcatenatedModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/web/JsonpChunkLoadingRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/wasm-sync/WasmChunkLoadingRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/wasm-sync/WebAssemblyGenerator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/sharing/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/sharing/ConsumeSharedPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/sharing/ConsumeSharedRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/css/walkCssTokens.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/css/CssParser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/css/CssModulesPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/css/CssLoadingRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/config/normalization.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/config/defaults.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/config/target.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/config/browserslistTargetHandler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/CommonJsExportRequireDependency.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/ImportParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/CommonJsExportsParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/HarmonyImportSpecifierDependency.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/HarmonyImportDependencyParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/WorkerPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/AMDDefineDependencyParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/ImportMetaContextDependencyParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/CommonJsPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/HarmonyImportDependency.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/AMDRequireDependenciesBlockParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/HarmonyExportImportedSpecifierDependency.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/dependencies/CommonJsImportsParserPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/serialization/FileMiddleware.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/serialization/ObjectMiddleware.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/serialization/BinaryMiddleware.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/stats/StatsFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/stats/DefaultStatsFactoryPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/stats/DefaultStatsPresetPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/stats/DefaultStatsPrinterPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/node/ReadFileChunkLoadingRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/library/UmdLibraryPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/library/AbstractLibraryPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/library/AssignLibraryPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/cache/PackFileCacheStrategy.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/cache/ResolverCachePlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/registerExternalSerializer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/AsyncQueue.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/identifier.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/cleverMerge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/fs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/comparators.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/deterministicGrouping.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/runtime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/util/deprecation.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/rules/RuleSetCompiler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/ids/IdHelpers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/esm/ModuleChunkLoadingRuntimeModule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/schemes/HttpUriPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/hmr/LazyCompilationPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/hmr/JavascriptHotModuleReplacement.runtime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/hmr/HotModuleReplacement.runtime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/asset/AssetGenerator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/javascript/JavascriptModulesPlugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/javascript/BasicEvaluatedExpression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/lib/javascript/JavascriptParser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/node_modules/eslint-scope/lib/scope.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/node_modules/eslint-scope/lib/referencer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/node_modules/estraverse/estraverse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/schemas/WebpackOptions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack/schemas/plugins/container/ModuleFederationPlugin.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/domexception/node_modules/webidl-conversions/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/micromatch/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/micromatch/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn-globals/node_modules/acorn/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn-globals/node_modules/acorn/dist/acorn.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/source-map.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/overlay/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/to-regex-range/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/browserslist/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/browserslist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dev-utils/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dev-utils/WebpackDevServerUtils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dev-utils/launchEditor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fb-watchman/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/language-tags/lib/Tag.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/pluginutils/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/pluginutils/node_modules/@types/estree/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/pluginutils/dist/cjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/pluginutils/dist/es/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-babel/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-babel/dist/index.es.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-babel/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-node-resolve/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-node-resolve/dist/cjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rollup/plugin-node-resolve/dist/es/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mini-css-extract-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mini-css-extract-plugin/dist/loader.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mini-css-extract-plugin/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mini-css-extract-plugin/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-jasmine2/build/jasmine/Env.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-cli/build/cli/args.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-cli/build/cli/args.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-polyfill-corejs2/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-polyfill-corejs2/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/xml-name-validator/lib/generated-parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-module-utils/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-module-utils/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-entities/src/named-references.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minimatch/minimatch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axobject-query/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/lib/svgo/jsAPI.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/lib/svgo/coa.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/lib/svgo/js2svg.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/node_modules/css-select/lib/pseudos.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/node_modules/chalk/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/node_modules/color-convert/conversions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/plugins/_path.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/plugins/_collections.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/plugins/_transforms.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/plugins/convertTransform.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/svgo/plugins/convertPathData.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-broadcast-update/build/workbox-broadcast-update.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-worker/build/workers/ChildProcessWorker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-worker/build/workers/NodeThreadsWorker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-reduce-initial/src/data/fromInitial.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/open/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mapbox/node-pre-gyp/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mapbox/node-pre-gyp/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mapbox/node-pre-gyp/lib/node-pre-gyp.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mapbox/node-pre-gyp/lib/util/abi_crosswalk.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mapbox/node-pre-gyp/lib/util/versioning.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-testing-library/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-testing-library/node-utils/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-testing-library/create-testing-library-rule/detect-testing-library-utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-import-resolver-node/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-import-resolver-node/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fraction.js/bigfraction.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fraction.js/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fraction.js/fraction.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ts-interface-checker/dist/types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-precaching/src/PrecacheController.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-precaching/build/workbox-precaching.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/check-types/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/check-types/src/check-types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/scheduler/umd/scheduler-unstable_mock.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/scheduler/cjs/scheduler-unstable_mock.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/scheduler/cjs/scheduler.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@rushstack/eslint-patch/CHANGELOG.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/enhanced-resolve/types.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/enhanced-resolve/lib/ResolverFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/enhanced-resolve/lib/CachedInputFileSystem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/enhanced-resolve/lib/Resolver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/enhanced-resolve/lib/util/entrypoints.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/typebox.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/typebox.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/errors/errors.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/value/cast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/value/check.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/value/create.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/conditional/structural.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/guard/guard.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinclair/typebox/compiler/compiler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hpack.js/lib/hpack/static-table.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hpack.js/node_modules/readable-stream/lib/_stream_readable.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hpack.js/node_modules/readable-stream/lib/_stream_writable.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hpack.js/node_modules/safe-buffer/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hpack.js/tools/gen-huffman.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cosmiconfig/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-runtime/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/underscore/underscore.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/underscore/underscore-esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bser/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/exit/test/fixtures/1000-stdout.txt into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/exit/test/fixtures/1000-stderr.txt into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/exit/test/fixtures/1000-stdout-stderr.txt into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minizlib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minizlib/node_modules/yallist/yallist.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minizlib/node_modules/minipass/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minizlib/node_modules/minipass/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/big.js/big.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/upath/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/common-tags/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/qs/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/qs/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/qs/test/stringify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/qs/test/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/qs/lib/stringify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/lib/path.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/lib/stringifier.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/lib/svgo/jsAPI.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/lib/svgo/coa.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/_path.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/_collections.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/_applyTransforms.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/_transforms.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/inlineStyles.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/removeHiddenElems.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/convertTransform.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/svgo/plugins/convertPathData.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/data/patch.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/parser/create.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/common/List.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/definition-syntax/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/lexer/match.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/lexer/generic.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/lexer/match-graph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/lib/lexer/Lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/css-tree/dist/csstree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/api/inheritance.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/css/properties.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/css/syntaxes.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/css/properties.schema.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/css/at-rules.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/css/selectors.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/mdn-data/l10n/css.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/commander/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/commander/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/commander/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/commander/typings/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-svgo/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@xtuc/long/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@xtuc/long/src/long.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regjsgen/regjsgen.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/define-data-property/test/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/private-theming/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/icons-material/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/icons-material/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/icons-material/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/colorManipulator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/cssVars/createCssVarsProvider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/modern/colorManipulator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/modern/cssVars/createCssVarsProvider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/esm/colorManipulator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/esm/cssVars/createCssVarsProvider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/legacy/colorManipulator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/system/legacy/cssVars/createCssVarsProvider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/TextField/TextField.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/ButtonBase/TouchRipple.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/ButtonBase/ButtonBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/ListItem/ListItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/SpeedDial/SpeedDial.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Popper/BasePopper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Popover/Popover.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/PaginationItem/PaginationItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Drawer/Drawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Modal/Modal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Unstable_TrapFocus/FocusTrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Badge/Badge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/useAutocomplete/useAutocomplete.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/useAutocomplete/useAutocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Chip/Chip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Slider/useSlider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Slider/Slider.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Slider/Slider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Select/SelectInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Button/Button.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Alert/Alert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/InputBase/InputBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Collapse/Collapse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Menu/Menu.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/SwipeableDrawer/SwipeableDrawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Input/Input.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/TablePagination/TablePagination.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/LinearProgress/LinearProgress.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/styles/components.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/styles/experimental_extendTheme.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/styles/experimental_extendTheme.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/styles/createPalette.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/OutlinedInput/OutlinedInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/FilledInput/FilledInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Slide/Slide.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/locale/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Tooltip/Tooltip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/TextField/TextField.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/ButtonBase/TouchRipple.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/ButtonBase/ButtonBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/ListItem/ListItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/SpeedDial/SpeedDial.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/ButtonGroup/ButtonGroup.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Popper/BasePopper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Popover/Popover.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/PaginationItem/PaginationItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Drawer/Drawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Modal/Modal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Unstable_TrapFocus/FocusTrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Badge/Badge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/useAutocomplete/useAutocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Chip/Chip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Slider/useSlider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Slider/Slider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Select/SelectInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Button/Button.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Alert/Alert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/InputBase/InputBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Collapse/Collapse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Menu/Menu.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/SwipeableDrawer/SwipeableDrawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Input/Input.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/TablePagination/TablePagination.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/LinearProgress/LinearProgress.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/styles/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/styles/experimental_extendTheme.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/styles/createPalette.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Accordion/Accordion.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/OutlinedInput/OutlinedInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/FilledInput/FilledInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Slide/Slide.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/locale/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Tooltip/Tooltip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Dialog/Dialog.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Tabs/Tabs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Autocomplete/Autocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Grid/Grid.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Snackbar/Snackbar.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Rating/Rating.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/node/Switch/Switch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/TextField/TextField.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/ButtonBase/TouchRipple.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/ButtonBase/ButtonBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/ListItem/ListItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/SpeedDial/SpeedDial.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Popper/BasePopper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Popover/Popover.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/PaginationItem/PaginationItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Drawer/Drawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Modal/Modal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Unstable_TrapFocus/FocusTrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Badge/Badge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/useAutocomplete/useAutocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Chip/Chip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Slider/useSlider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Slider/Slider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Select/SelectInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Button/Button.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Alert/Alert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/InputBase/InputBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Collapse/Collapse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Menu/Menu.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/SwipeableDrawer/SwipeableDrawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Input/Input.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/TablePagination/TablePagination.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/LinearProgress/LinearProgress.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/styles/experimental_extendTheme.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/styles/createPalette.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/OutlinedInput/OutlinedInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/FilledInput/FilledInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Slide/Slide.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/locale/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Tooltip/Tooltip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Dialog/Dialog.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Tabs/Tabs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Autocomplete/Autocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Grid/Grid.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Snackbar/Snackbar.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Rating/Rating.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/modern/Switch/Switch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Dialog/Dialog.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Tabs/Tabs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Autocomplete/Autocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Autocomplete/Autocomplete.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Grid/Grid.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Snackbar/Snackbar.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/TextField/TextField.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/ButtonBase/ButtonBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/ListItem/ListItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/SpeedDial/SpeedDial.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Popper/BasePopper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Popover/Popover.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/PaginationItem/PaginationItem.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Drawer/Drawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Modal/Modal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Unstable_TrapFocus/FocusTrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Badge/Badge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/useAutocomplete/useAutocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Chip/Chip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Slider/useSlider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Slider/Slider.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Select/SelectInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Button/Button.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/FormControl/FormControl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Alert/Alert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/InputBase/InputBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Collapse/Collapse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Menu/Menu.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/SwipeableDrawer/SwipeableDrawer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Input/Input.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/TablePagination/TablePagination.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/styles/experimental_extendTheme.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Accordion/Accordion.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/OutlinedInput/OutlinedInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/FilledInput/FilledInput.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Slide/Slide.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/locale/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Tooltip/Tooltip.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Dialog/Dialog.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Tabs/Tabs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Autocomplete/Autocomplete.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Grid/Grid.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Snackbar/Snackbar.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Rating/Rating.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/legacy/Switch/Switch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Rating/Rating.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/material/Switch/Switch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/styled-engine/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/utils/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@mui/utils/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-minimizer-webpack-plugin/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/execa/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/execa/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chalk/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chalk/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/optionator/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/w3c-xmlserializer/lib/serialize.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tslib/tslib.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tslib/tslib.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tslib/tslib.es6.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash/core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash/lodash.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash/fp/_mapping.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash/fp/_baseConvert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-transform-react-remove-prop-types/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-transform-react-remove-prop-types/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash.sortby/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-preset-env/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-preset-env/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/events/events.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/arg/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/proxy-from-env/test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/punycode/punycode.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/punycode/punycode.es6.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mime-types/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-iterator-helpers/test/Iterator.prototype.filter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-iterator-helpers/test/Iterator.concat.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/finalhandler/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/finalhandler/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/finalhandler/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-visitor-keys/lib/visitor-keys.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-strategies/StrategyHandler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-strategies/src/StrategyHandler.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-strategies/build/workbox-strategies.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/scope.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/output.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/equivalent-to.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/propmangle.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/transform.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/ast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/minify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/mozilla-ast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/size.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/reduce-vars.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/inference.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/drop-unused.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/evaluate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/common.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/tighten-body.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/drop-side-effect-free.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/lib/compress/inline.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/node_modules/commander/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/node_modules/commander/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/node_modules/commander/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/node_modules/commander/typings/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/tools/domprops.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser/dist/bundle.min.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webidl-conversions/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/control-has-associated-label-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/aria-proptypes-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/no-noninteractive-element-interactions-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/role-supports-aria-props-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/no-interactive-element-to-noninteractive-role-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/no-noninteractive-element-to-interactive-role-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/anchor-is-valid-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jsx-a11y/__tests__/src/rules/no-static-element-interactions-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cjs-module-lexer/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cjs-module-lexer/lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/is-prop-valid/src/props.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/serialize/src/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/serialize/dist/emotion-serialize.development.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/serialize/dist/emotion-serialize.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/src/prefixer.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.browser.development.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.edge-light.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.browser.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.development.edge-light.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.development.edge-light.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.browser.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.edge-light.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.browser.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/cache/dist/emotion-cache.development.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/package.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-element-e8f4cc37.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.browser.development.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-element-010f37fa.development.edge-light.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.browser.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.development.edge-light.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.development.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.development.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/react/dist/emotion-react.development.edge-light.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/babel-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/babel-plugin/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/babel-plugin/dist/emotion-babel-plugin.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@emotion/babel-plugin/dist/emotion-babel-plugin.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/http-proxy-middleware/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pkgjs/parseargs/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pkgjs/parseargs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@pkgjs/parseargs/internal/primordials.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/parser/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/parser/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/generator/lib/printer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/generator/lib/buffer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/generator/lib/generators/expressions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/generator/lib/generators/typescript.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/generator/lib/generators/flow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-compilation-targets/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-compilation-targets/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/compat-data/data/corejs2-built-ins.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/compat-data/data/plugins.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-typescript/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-typescript/lib/enum.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-module-imports/lib/import-injector.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-classes/lib/transformClass.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/traverse/lib/scope/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/traverse/lib/path/family.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/traverse/lib/path/evaluation.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/traverse/lib/path/introspection.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/traverse/lib/path/conversion.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-react-jsx/lib/create-plugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/runtime/package.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/runtime/helpers/regeneratorRuntime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/runtime/helpers/esm/regeneratorRuntime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers-generated.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/applyDecs2301.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/applyDecs2203.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/decorate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/applyDecs2203R.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/regeneratorRuntime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helpers/lib/helpers/applyDecs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-module-transforms/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-module-transforms/lib/normalize-and-load-metadata.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-module-transforms/lib/rewrite-live-references.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-member-expression-to-functions/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-destructuring/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-regexp-features-plugin/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-regexp-features-plugin/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/eslint-parser/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/eslint-parser/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/lib/parser/util/missing-plugin-helper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/lib/config/config-chain.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/lib/config/full.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/lib/vendor/import-meta-resolve.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/core/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-object-rest-spread/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-class-features-plugin/lib/decorators.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-class-features-plugin/lib/fields.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-class-features-plugin/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-create-class-features-plugin/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/preset-env/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/preset-env/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/preset-env/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-modules-systemjs/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-runtime/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/plugin-transform-runtime/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/index-legacy.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/builders/generated/lowercase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/builders/generated/uppercase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/validators/generated/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/asserts/generated/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/definitions/core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/definitions/typescript.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/types/lib/definitions/flow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@babel/helper-replace-supers/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/lib/unpack.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/lib/write-entry.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/lib/header.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/lib/pack.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tar/node_modules/yallist/yallist.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/corePlugins.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/cli/build/plugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/lib/setupContextUtils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/lib/offsets.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/lib/generateRules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/css/preflight.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/util/colorNames.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/util/dataTypes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/lib/public/colors.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/corePlugins.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/cli/build/plugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/lib/setupContextUtils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/lib/offsets.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/lib/expandApplyAtRules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/lib/generateRules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/css/preflight.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/value-parser/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/util/formatVariantSelector.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/util/normalizeConfig.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/util/dataTypes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/util/pluginUtils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/src/public/colors.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/node_modules/lilconfig/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/stubs/config.full.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/types/config.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tailwindcss/types/generated/default-theme.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash.merge/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fast-glob/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-scripts/config/webpack.config.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-scripts/scripts/eject.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-scripts/scripts/init.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint-community/eslint-utils/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint-community/regexpp/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint-community/regexpp/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/postcss-selector-parser.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/API.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/dist/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/dist/selectors/container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-selector-parser/dist/selectors/attribute.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/get-intrinsic/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/diff-sequences/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/diff-sequences/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/lib/sender.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/lib/websocket.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/lib/receiver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/lib/websocket-server.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ws/lib/permessage-deflate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/semver/classes/range.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/semver/classes/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/url-parse/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/url-parse/dist/url-parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-pure/modules/web.structured-clone.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-pure/modules/web.url-search-params.constructor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-pure/modules/web.url.constructor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-pure/full/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/magic-string/dist/magic-string.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/magic-string/dist/magic-string.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/magic-string/dist/magic-string.es.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-js/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-js/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-js/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-js/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-js/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/braces/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/braces/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/async/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/async/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/async/auto.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/async/dist/async.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/stack-utils/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eastasianwidth/eastasianwidth.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/npmlog/log.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-core/src/models/messages/messages.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-core/build/workbox-core.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs-minipass/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs-minipass/node_modules/yallist/yallist.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs-minipass/node_modules/minipass/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs-minipass/node_modules/minipass/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/data/patch.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/common/List.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/definition-syntax/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/lexer/match.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/lexer/generic.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/lexer/match-graph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/lib/lexer/Lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-tree/dist/csstree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/parse5/lib/parser/open-element-stack.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/parse5/lib/parser/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/parse5/lib/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ignore/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ignore/legacy.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ignore/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regjsparser/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regjsparser/node_modules/jsesc/jsesc.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regjsparser/node_modules/jsesc/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pretty-error/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pretty-error/lib/PrettyError.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/api.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/attributes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLBodyElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/SVGSVGElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Range.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLAnchorElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLVideoElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLOptionsCollection.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLInputElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/XMLHttpRequestEventTarget.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Plugin.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLHRElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLCollection.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/FileReader.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Selection.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMeterElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLImageElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/StyleSheetList.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Storage.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLLinkElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLFormElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/PluginArray.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLSourceElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTableColElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLEmbedElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLOutputElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLObjectElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/FormData.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLFrameSetElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTextAreaElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/DOMStringMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLFieldSetElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTableRowElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/NodeList.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTableElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/SVGStringList.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/MouseEvent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/WebSocket.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTableSectionElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Location.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/KeyboardEvent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Headers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/MessageEvent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMarqueeElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/XMLHttpRequest.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTrackElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/MimeTypeArray.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLScriptElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/CharacterData.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/SVGElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLIFrameElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLAreaElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/DocumentFragment.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLSelectElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Document.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLButtonElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/StorageEvent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Event.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/DOMTokenList.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/FileList.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLFrameElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLTableCellElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/Element.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/NamedNodeMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLOptionElement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/selection/Selection-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/helpers/form-controls.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/helpers/create-element.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/websockets/WebSocket-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/xhr/XMLHttpRequest-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/xhr/xhr-utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLInputElement-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/nodes/Node-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/nodes/Element-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLHyperlinkElementUtils-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/living/range/Range-impl.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/browser/js-globals.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/browser/Window.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/browser/default-stylesheet.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/lib/jsdom/level3/xpath.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/node_modules/form-data/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/node_modules/form-data/lib/form_data.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/node_modules/whatwg-url/dist/url-state-machine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/node_modules/whatwg-url/dist/URLSearchParams.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsdom/node_modules/whatwg-url/dist/URL.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-what/lib/commonjs/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-what/lib/es/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/source-map-support.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map-support/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sass-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sass-loader/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sass-loader/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@trysound/sax/lib/sax.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/depd/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/http-proxy/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/http-proxy/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-runner/build/runTest.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-runner/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/data/prefixes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/processor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/supports.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/transition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/prefixes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/hacks/grid-utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/autoprefixer/lib/hacks/gradient.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/web/pdf_viewer.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/web/pdf_viewer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/build/pdf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/image_decoders/pdf.image_decoders.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/legacy/web/pdf_viewer.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/legacy/web/pdf_viewer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/legacy/build/pdf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/legacy/build/pdf.sandbox.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/legacy/image_decoders/pdf.image_decoders.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/types/web/pdf_viewer.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/types/src/display/api.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/types/src/display/editor/tools.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/types/src/display/editor/editor.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pdfjs-dist/types/src/shared/util.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/typings.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/_lib/format/formatters/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/fp/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/format/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/isMatch/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/docs/i18nContributionGuide.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/locale/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/locale/cs/_lib/formatDistance/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/locale/sl/_lib/formatDistance/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/esm/_lib/format/formatters/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/esm/format/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/esm/locale/sl/_lib/formatDistance/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/esm/parse/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/date-fns/parse/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/picomatch/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/picomatch/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/picomatch/lib/picomatch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/picomatch/lib/scan.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-diff/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-diff/build/joinAlignedDiffs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-diff/build/cleanupSemantic.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tough-cookie/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tough-cookie/lib/cookie.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/unicode-match-property-value-ecmascript/data/mappings.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/safer-buffer/tests.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tryer/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tryer/test/unit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/iconv-lite/encodings/utf32.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/iconv-lite/encodings/sbcs-data-generated.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/iconv-lite/encodings/dbcs-codec.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup-plugin-terser/node_modules/jest-worker/build/workers/ChildProcessWorker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup-plugin-terser/node_modules/jest-worker/build/workers/NodeThreadsWorker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-istanbul/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/object-hash/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/jest-message-util/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/emittery/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/emittery/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/emittery/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/pretty-format/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/pretty-format/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/@types/yargs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-watch-typeahead/node_modules/@jest/types/build/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/test/integration/jakefile.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/lib/rule.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/lib/jake.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/lib/api.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/lib/package_task.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jake/lib/task/task.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sax/lib/sax.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/helpers/caseFolding.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2024.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2020.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2016.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2017.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2023.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2015.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2019.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2021.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2022.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-abstract/operations/2018.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/language-subtag-registry/data/json/index.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/language-subtag-registry/data/json/region.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/language-subtag-registry/data/json/language.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lru-cache/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/lib/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/lib/adapters/http.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/lib/core/AxiosHeaders.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/dist/axios.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axios/dist/esm/axios.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/form-data/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/form-data/lib/form_data.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/psl/data/rules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ast-types-flow/lib/types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsesc/jsesc.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jsesc/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react-hooks/cjs/eslint-plugin-react-hooks.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jest/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jest/lib/rules/valid-expect-in-promise.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-jest/lib/rules/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerator-transform/lib/emit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerator-transform/src/visit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerator-transform/src/emit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve.exports/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/levn/lib/cast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsutils/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsutils/typeguard/2.8/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsutils/util/type.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsutils/util/usage.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsutils/util/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-static/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/keyv/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/dist/commonjs/walker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/dist/commonjs/processor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/dist/commonjs/glob.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/dist/esm/walker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/glob/dist/esm/glob.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minimatch/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minimatch/dist/commonjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minimatch/dist/commonjs/ast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minimatch/dist/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minimatch/dist/esm/ast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minipass/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minipass/dist/commonjs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minipass/dist/commonjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minipass/dist/esm/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/minipass/dist/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/commander/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/commander/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/commander/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/node_modules/commander/typings/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/CJSImportProcessor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/TokenProcessor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/tokenizer/readWordTree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/tokenizer/types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/traverser/statement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/traverser/expression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/plugins/typescript.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/plugins/flow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/parser/plugins/jsx/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/transformers/JSXTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/transformers/ESMImportTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/transformers/CJSImportTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/transformers/RootTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/util/getClassInfo.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/CJSImportProcessor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/TokenProcessor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/tokenizer/readWordTree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/tokenizer/types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/traverser/statement.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/traverser/expression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/plugins/typescript.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/plugins/flow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/parser/plugins/jsx/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/transformers/JSXTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/transformers/ESMImportTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/transformers/CJSImportTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/transformers/RootTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sucrase/dist/esm/util/getClassInfo.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/lib/v8-to-istanbul.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/source-map.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/v8-to-istanbul/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssom/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssom/lib/CSSValueExpression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/idb/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/idb/build/entry.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-compat/data.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-compat/modules.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-compat/modules-by-versions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js-compat/entries.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/hoopy/test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/color-convert/conversions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/node_modules/lru-cache/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/node_modules/lru-cache/dist/commonjs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/node_modules/lru-cache/dist/commonjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/node_modules/lru-cache/dist/esm/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/node_modules/lru-cache/dist/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/dist/commonjs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/dist/commonjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/dist/esm/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path-scurry/dist/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-index/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-index/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-index/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-index/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/serve-index/node_modules/depd/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-instrument/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-instrument/src/visitor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-instrument/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-instrument/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-loader/node_modules/schema-utils/dist/ValidationError.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/postcss-selector-parser.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/API.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/dist/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/dist/selectors/container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-local-by-default/node_modules/postcss-selector-parser/dist/selectors/attribute.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-streams/build/workbox-streams.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mime-db/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mime-db/db.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/raw-body/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/raw-body/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/raw-body/node_modules/iconv-lite/encodings/sbcs-data-generated.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/raw-body/node_modules/iconv-lite/encodings/dbcs-codec.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-background-sync/Queue.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-background-sync/src/Queue.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-background-sync/build/workbox-background-sync.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/filelist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/filelist/node_modules/minimatch/minimatch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/aria-query/lib/domMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/canvas/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/canvas/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/canvas/lib/DOMMatrix.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/canvas/types/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-transition-group/cjs/CSSTransition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-transition-group/cjs/Transition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-transition-group/esm/CSSTransition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-transition-group/esm/Transition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-transition-group/dist/react-transition-group.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fast-uri/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fast-uri/test/uri-js.test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fast-uri/test/parse.test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-reduce-transforms/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/safe-buffer/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/globals/globals.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/emojis-list/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ci-info/vendors.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs-extra/lib/remove/rimraf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/prop-types/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/prop-types/prop-types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/prop-types/factoryWithTypeCheckers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/src/types.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/src/schema/WebpackGenerateSWOptions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/src/schema/GenerateSWOptions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/webidl-conversions/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/@apideck/better-ajv-errors/src/index.test.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/fs-extra/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/fs-extra/lib/remove/rimraf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/lib/core.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/lib/compile/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/lib/compile/codegen/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/lib/compile/validate/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/lib/compile/jtd/parse.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/dist/core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/dist/compile/codegen/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/dist/compile/validate/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/ajv/dist/compile/jtd/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/whatwg-url/lib/url-state-machine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/whatwg-url/lib/URLSearchParams.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/whatwg-url/lib/URL.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/source-map.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/build/types.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/build/schema/WebpackGenerateSWOptions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-build/build/schema/GenerateSWOptions.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/http-parser-js/http-parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chokidar/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chokidar/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chokidar/lib/fsevents-handler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/chokidar/lib/nodefs-handler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/object-inspect/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/object-inspect/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jackspeak/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jackspeak/dist/commonjs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jackspeak/dist/commonjs/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jackspeak/dist/esm/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jackspeak/dist/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash.debounce/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-redux/lib/components/connectAdvanced.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-redux/src/components/connectAdvanced.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-redux/es/components/connectAdvanced.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-redux/dist/react-redux.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@nicolo-ribaudo/eslint-scope-5-internals/node_modules/eslint-scope/lib/scope.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@nicolo-ribaudo/eslint-scope-5-internals/node_modules/eslint-scope/lib/referencer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@nicolo-ribaudo/eslint-scope-5-internals/node_modules/estraverse/estraverse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-value-parser/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sanitize.css/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sanitize.css/sanitize.css into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv-keywords/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/uuid/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/neo-async/async.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/coa/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/coa/README.ru.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/coa/lib/cmd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/coa/node_modules/chalk/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/coa/node_modules/color-convert/conversions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-flowtype/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/optionator/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/prelude-ls/lib/List.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/escodegen/escodegen.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/estraverse/estraverse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/static-eval/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-snapshot/build/InlineSnapshots.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-snapshot/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-snapshot/build/printSnapshot.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-snapshot/build/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-snapshot/build/State.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn-walk/dist/walk.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/wbuf/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/wbuf/test/wbuf-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/object.assign/dist/browser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/doctrine/lib/doctrine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/doctrine/lib/typed.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/stream.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/connection.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/protocol/http2/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/protocol/http2/framer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/protocol/spdy/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy-transport/lib/spdy-transport/protocol/spdy/framer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-reports/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-reports/lib/html/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-reports/lib/html/annotator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/options.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rule-tester/flat-rule-tester.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rule-tester/rule-tester.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/apply-disable-directives.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/node-event-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/report-translator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/linter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/code-path-analysis/code-path-state.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/code-path-analysis/code-path-analyzer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/code-path-analysis/fork-context.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/linter/code-path-analysis/code-path.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/cli-engine/file-enumerator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/cli-engine/cli-engine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/cli-engine/formatters/html.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/config/flat-config-array.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/config/flat-config-schema.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/eslint/eslint-helpers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/eslint/flat-eslint.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/eslint/eslint.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-shadow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-useless-return.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/padded-blocks.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-extra-boolean-cast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/require-atomic-updates.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/id-match.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/lines-around-comment.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/indent-legacy.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/array-element-newline.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-unmodified-loop-condition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/semi.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/padding-line-between-statements.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/comma-style.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/object-shorthand.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-else-return.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/comma-dangle.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-underscore-dangle.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-constant-binary-expression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/capitalized-comments.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/camelcase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/prefer-destructuring.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-var.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/yoda.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/one-var.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-misleading-character-class.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/prefer-const.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/object-curly-newline.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/keyword-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-extra-parens.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/valid-jsdoc.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/quotes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-implicit-coercion.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/max-len.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-unused-vars.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/array-callback-return.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/prefer-arrow-callback.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/multiline-comment-style.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-useless-escape.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/prefer-regex-literals.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-restricted-imports.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/curly.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/space-unary-ops.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/indent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/spaced-comment.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/quote-props.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-use-before-define.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/logical-assignment-operators.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/accessor-pairs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/key-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/object-curly-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/no-this-before-super.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/constructor-super.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/rules/utils/ast-utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/shared/config-validator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/source-code/source-code.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/lib/source-code/token-store/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/globals/globals.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/type-fest/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/type-fest/source/tsconfig-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/type-fest/source/package-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/js-yaml/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/js-yaml/lib/loader.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/js-yaml/lib/dumper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/js-yaml/dist/js-yaml.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/argparse/argparse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint/node_modules/argparse/lib/textwrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/gensync/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/gensync/test/index.test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/state/reducer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/state/action-creators.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/view/use-sensor-marshal/use-sensor-marshal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/view/use-sensor-marshal/sensors/use-mouse-sensor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/view/use-sensor-marshal/sensors/use-touch-sensor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/src/view/draggable/connected-draggable.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.cjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/yallist/yallist.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/typescript.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es2015.core.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.dom.iterable.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/protocol.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/typesMap.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es2020.intl.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/tsserverlibrary.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.scripthost.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.webworker.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es5.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es2015.iterable.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.es2020.bigint.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/typescriptServices.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/lib.dom.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/tr/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/de/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/ja/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/pt-br/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/ko/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/zh-cn/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/cs/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/it/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/es/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/ru/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/pl/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/fr/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/typescript/lib/zh-tw/diagnosticMessages.generated.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/detect-port-alt/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/detect-port-alt/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/umd/popper-lite.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/umd/popper-base.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/umd/popper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/cjs/popper-lite.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/cjs/popper-base.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@popperjs/core/dist/cjs/popper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/content-disposition/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nwsapi/src/nwsapi.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/prelude-ls/lib/List.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/kind-of/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/emittery/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/emittery/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/emittery/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nan/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nan/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nan/tools/1to2.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nan/doc/methods.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nan/doc/maybe_types.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/json5/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/json5/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-expiration/src/ExpirationPlugin.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-expiration/build/workbox-expiration.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-window/Workbox.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-window/src/Workbox.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-window/build/workbox-window.dev.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pretty-format/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/pretty-format/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/api/inheritance.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/css/properties.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/css/syntaxes.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/css/properties.schema.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/css/at-rules.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/css/selectors.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/mdn-data/l10n/css.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fs.realpath/old.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-config/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-config/build/normalize.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-refresh/cjs/react-refresh-babel.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-refresh/cjs/react-refresh-runtime.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-minifier-terser/cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-minifier-terser/src/htmlparser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-minifier-terser/src/htmlminifier.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-calc/src/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-calc/src/lib/reducer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-calc/src/__tests__/convertUnit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-calc/src/__tests__/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/obuf/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-middleware/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-middleware/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/flat-cache/changelog.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash.memoize/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn/dist/acorn.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/acorn/dist/acorn.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/postcss-selector-parser.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/API.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/dist/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/dist/selectors/container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-modules-scope/node_modules/postcss-selector-parser/dist/selectors/attribute.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sockjs/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sockjs/lib/transport.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/sockjs/lib/webjs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/lib/redux.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/src/createStore.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/es/redux.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/redux/dist/redux.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-custom-properties/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/compression/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/compression/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/compression/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/compression/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/compression/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/uri-js/dist/esnext/uri.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/uri-js/dist/es5/uri.all.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/type-fest/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/type-fest/source/tsconfig-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/type-fest/source/package-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/lib/config-array-factory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/lib/cascading-config-array-factory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/lib/flat-compat.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/lib/config-array/config-array.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/lib/shared/config-validator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/globals/globals.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/type-fest/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/type-fest/source/tsconfig-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/type-fest/source/package-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/js-yaml/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/js-yaml/lib/loader.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/js-yaml/lib/dumper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/js-yaml/dist/js-yaml.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/argparse/argparse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@eslint/eslintrc/node_modules/argparse/lib/textwrap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/espree/lib/espree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/symbol-tree/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/symbol-tree/lib/SymbolTree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-normalize-string/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/data-urls/node_modules/whatwg-url/dist/url-state-machine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/data-urls/node_modules/whatwg-url/dist/URLSearchParams.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/data-urls/node_modules/whatwg-url/dist/URL.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/he/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/he/he.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tapable/lib/HookCodeFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/style-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/style-loader/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eventemitter3/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eventemitter3/umd/eventemitter3.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/watchpack/lib/DirectoryWatcher.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/watchpack/lib/watchpack.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/watchpack/lib/watchEventSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/bin/cli-flags.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/bin/process-arguments.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/lib/Server.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/lib/options.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/client/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/client/modules/logger/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/client/modules/sockjs-client/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/lib/sender.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/lib/websocket.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/lib/receiver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/lib/websocket-server.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/node_modules/ws/lib/permessage-deflate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/types/bin/cli-flags.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-dev-server/types/lib/Server.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-nested/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-loader/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/css-loader/dist/plugins/postcss-url-parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/harmony-reflect/reflect.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/send/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/send/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/send/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/send/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/send/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/spdy/test/server-test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-import/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/node.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/postcss.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/lazy-result.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/container.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss/lib/stringifier.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/prompts/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/lib/ajv.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/lib/ajv.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/lib/compile/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/lib/dotjs/properties.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/lib/dotjs/validate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ajv/dist/ajv.bundle.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/typescript-estree/dist/convert.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/typescript-estree/dist/node-utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/typescript-estree/dist/create-program/getWatchProgramsForProjects.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/no-parameter-properties.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/naming-convention.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/parameter-properties.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/type-annotation-spacing.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/no-type-alias.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/typedef.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/explicit-function-return-type.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/member-ordering.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/docs/rules/explicit-member-accessibility.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/util/collectUnusedVariables.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/util/getOperatorPrecedence.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-shadow.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/lines-around-comment.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/prefer-string-starts-ends-with.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/padding-line-between-statements.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/consistent-type-imports.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/strict-boolean-expressions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/naming-convention.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/unified-signatures.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/explicit-member-accessibility.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/prefer-optional-chain.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unused-vars.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/prefer-nullish-coalescing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/member-ordering.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-misused-promises.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/indent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-condition.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-use-before-define.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/key-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-redundant-type-constituents.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/explicit-module-boundary-types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/eslint-plugin/dist/rules/naming-convention-utils/validator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/scope-manager/dist/lib/webworker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/scope-manager/dist/lib/dom.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/scope-manager/dist/scope/ScopeBase.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/scope-manager/dist/referencer/Referencer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/scope-manager/dist/referencer/ClassVisitor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/node_modules/eslint-scope/lib/scope.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/node_modules/eslint-scope/lib/referencer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/node_modules/estraverse/estraverse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/_ts3.4/dist/ast-utils/helpers.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/_ts3.4/dist/ts-eslint/ESLint.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/_ts3.4/dist/ts-eslint/Linter.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/_ts3.4/dist/ts-eslint/SourceCode.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/_ts3.4/dist/ts-eslint/Rule.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/dist/ast-utils/helpers.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/dist/ts-eslint/ESLint.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/dist/ts-eslint/Linter.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/dist/ts-eslint/SourceCode.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/utils/dist/ts-eslint/Rule.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/types/_ts3.4/dist/generated/ast-spec.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@typescript-eslint/types/dist/generated/ast-spec.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerate/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerate/regenerate.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/test-exclude/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ansi-styles/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/promise/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minipass/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/minipass/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/graphemer/lib/Graphemer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-webpack-plugin/node_modules/jest-worker/build/workers/ChildProcessWorker.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-webpack-plugin/dist/linter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/lib/typescript-reporter/reporter/TypeScriptReporter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/node_modules/schema-utils/dist/ValidationError.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/node_modules/cosmiconfig/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/node_modules/fs-extra/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/node_modules/fs-extra/lib/remove/rimraf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/fork-ts-checker-webpack-plugin/node_modules/tapable/lib/HookCodeFactory.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/faye-websocket/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-merge-longhand/src/lib/decl/borders.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path2d-polyfill/dist/path2d-polyfill.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/path2d-polyfill/dist/path2d-polyfill.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/js-yaml/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/js-yaml/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/js-yaml/lib/js-yaml/loader.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/js-yaml/lib/js-yaml/dumper.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/js-yaml/dist/js-yaml.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/matchers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/asymmetricMatchers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/toThrowMatchers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/spyMatchers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/expect/build/types.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-resolve/build/resolver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerator-runtime/runtime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regexpu-core/rewrite-pattern.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regexpu-core/data/iu-foldings.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regexpu-core/data/i-bmp-mappings.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regexpu-core/data/iu-mappings.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/History.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/tokenizer/tokenize.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/validator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/configuration.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/level-1/optimize.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/configuration/can-override.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/configuration/break-up.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/level-2/restructure.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/level-2/properties/override-properties.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/optimizer/level-2/properties/merge-into-shorthands.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/lib/reader/read-sources.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/clean-css/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-loader/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-webpack-plugin/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/html-webpack-plugin/lib/cached-child-compiler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-url/lib/url-state-machine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/decimal.js/decimal.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/decimal.js/decimal.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-jest/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/update-browserslist-db/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-merge-rules/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js/modules/web.structured-clone.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js/modules/web.url-search-params.constructor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js/modules/web.url.constructor.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/core-js/full/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rimraf/rimraf.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/domhandler/lib/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@surma/rollup-plugin-off-main-thread/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/lodash.uniq/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/helper-wasm-bytecode/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/helper-wasm-bytecode/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-parser/lib/decoder.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-parser/esm/decoder.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wast-printer/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wast-printer/esm/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/lib/nodes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/lib/definitions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/lib/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/lib/transform/ast-module-to-module-context/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/esm/nodes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/esm/definitions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/ast/esm/transform/ast-module-to-module-context/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-gen/lib/encoder/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-gen/esm/encoder/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-edit/lib/apply.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/wasm-edit/esm/apply.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/leb128/lib/leb.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@webassemblyjs/leb128/esm/leb.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-routing/Router.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-routing/src/Router.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-routing/build/workbox-routing.dev.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tempy/node_modules/type-fest/readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tempy/node_modules/type-fest/source/tsconfig-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tempy/node_modules/type-fest/source/package-json.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/umd/react-dom-server-legacy.browser.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/umd/react-dom-server.browser.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/umd/react-dom-test-utils.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom-server-legacy.browser.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom-server.node.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom.profiling.min.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom.production.min.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom-test-utils.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/escodegen.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/escodegen/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/renderkid/lib/layout/Block.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/memfs/lib/volume.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/memfs/lib/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/memfs/lib/volume.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/websocket-extensions/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/websocket-extensions/lib/pipeline/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-matcher-utils/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ejs/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ejs/ejs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ejs/lib/ejs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/lib/types/urlencoded.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/node_modules/iconv-lite/encodings/sbcs-data-generated.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/body-parser/node_modules/iconv-lite/encodings/dbcs-codec.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/estraverse/estraverse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@istanbuljs/schema/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/nopt/lib/nopt.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@bcoe/v8-coverage/src/lib/merge.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@bcoe/v8-coverage/dist/lib/merge.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@bcoe/v8-coverage/dist/lib/_src/merge.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/CachedSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/ReplaceSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-manifest-plugin/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/dns-packet/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/dns-packet/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/browser/bluebird.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/browser/bluebird.core.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/release/promisify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/release/promise.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/release/debuggability.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bluebird/js/release/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-module-lexer/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/es-module-lexer/lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinonjs/fake-timers/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinonjs/fake-timers/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@sinonjs/fake-timers/src/fake-timers-src.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/commander/Readme.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/commander/lib/command.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/commander/lib/help.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/commander/typings/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-media-minmax/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-media-minmax/README-zh.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/simple-get/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/util/usedPropTypes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/util/ast.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/util/propTypes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/util/Components.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/no-unstable-nested-components.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/no-unused-state.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/sort-prop-types.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-curly-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/destructuring-assignment.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-sort-props.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-indent.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/boolean-prop-naming.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/no-invalid-html-attribute.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-no-literals.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-tag-spacing.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/sort-comp.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-closing-bracket-location.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-key.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/prefer-stateless-function.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/jsx-curly-brace-presence.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/lib/rules/no-unknown-property.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/resolve/test/mock.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/resolve/test/resolver_sync.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/resolve/test/resolver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/resolve/lib/async.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/doctrine/lib/doctrine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-react/node_modules/doctrine/lib/typed.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/HISTORY.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/integration.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/unit/walk.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/unit/streamify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/unit/eventify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/unit/match.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/test/unit/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/src/walk.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/bfj/src/eventify.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-fetch/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-fetch/fetch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/whatwg-fetch/dist/fetch.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-polyfill-corejs3/lib/built-in-definitions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-polyfill-corejs3/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-jest-hoist/build/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/LICENSE.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/rollup.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/es/shared/rollup.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/es/shared/watch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/shared/loadConfigFile.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/shared/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/shared/rollup.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/shared/watch-cli.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/rollup/dist/shared/watch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/lib/rules/no-duplicates.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/lib/rules/no-unused-modules.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/lib/rules/order.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/lib/rules/no-extraneous-dependencies.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/debug/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/debug/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/semver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/semver/semver.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/doctrine/lib/doctrine.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/node_modules/doctrine/lib/typed.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/eslint-plugin-import/docs/rules/order.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/colord/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react-app-polyfill/node_modules/regenerator-runtime/runtime.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jridgewell/source-map/dist/source-map.umd.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/postcss.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/lazy-result.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/postcss/lib/stringifier.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/resolve-url-loader/docs/advanced-features.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@isaacs/cliui/build/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/ipaddr.js/lib/ipaddr.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/axe.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/sri-history.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/el.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/zh_TW.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/de.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/ko.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/es.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/_template.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/pt_BR.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/ja.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/eu.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/it.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/pl.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/fr.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/zh_CN.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/da.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/no_NB.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/axe-core/locales/he.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/q/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/q/q.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/q/CHANGES.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/yargs/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/express/node_modules/@types/express-serve-static-core/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node-forge/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/estree/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/prettier/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/express-serve-static-core/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/ws/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/react-redux/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/babel__traverse/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/eslint/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/eslint/rules/ecmascript-6.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/eslint/rules/best-practices.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/eslint/rules/stylistic-issues.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/eslint/rules/possible-errors.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/vm.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/fs.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/module.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/repl.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/diagnostics_channel.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/dgram.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/cluster.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/http.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/v8.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/child_process.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/util.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/dns.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/perf_hooks.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/tls.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/os.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/events.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/test.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/crypto.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/zlib.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/readline.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/console.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/buffer.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/inspector.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/buffer.buffer.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/https.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/stream.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/sqlite.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/worker_threads.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/http2.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/process.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/globals.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/async_hooks.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/url.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/assert.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/net.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/fs/promises.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/ts5.6/buffer.buffer.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/stream/web.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/node/dns/promises.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/babel__core/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/json-schema/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/q/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/react/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@types/react/ts5.0/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-circus/build/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-circus/build/eventHandler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/loader-runner/lib/LoaderRunner.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-fetch/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-fetch/lib/index.es.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/node-fetch/lib/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/file-loader/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/file-loader/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/file-loader/node_modules/schema-utils/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/file-loader/node_modules/schema-utils/dist/ValidationError.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/saxes/saxes.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/saxes/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/saxes/saxes.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/websocket-driver/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/websocket-driver/lib/websocket/driver/hybi.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/immer/src/plugins/patches.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/immer/src/plugins/mapset.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/immer/compat/pre-3.7/dist/immer.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/immer/dist/immer.cjs.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/immer/dist/immer.umd.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser-webpack-plugin/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser-webpack-plugin/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/terser-webpack-plugin/dist/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/lib/parsers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/lib/CSSStyleDeclaration.test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/lib/allProperties.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/lib/properties.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/node_modules/cssom/lib/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cssstyle/node_modules/cssom/lib/CSSValueExpression.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/proxy-addr/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/proxy-addr/node_modules/ipaddr.js/lib/ipaddr.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-coverage/lib/file-coverage.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-sources/lib/ConcatSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-sources/lib/ReplaceSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-sources/lib/helpers/streamChunksOfCombinedSourceMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/webpack-sources/lib/helpers/streamChunksOfSourceMap.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cookie/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/cookie/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/argparse/lib/argument_parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/argparse/lib/action_container.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/argparse/lib/help/formatter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csstype/index.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/htmlparser2/lib/Tokenizer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/htmlparser2/lib/Parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsconfig-paths/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsconfig-paths/lib/__tests__/tsconfig-loader.test.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/tsconfig-paths/src/__tests__/tsconfig-loader.test.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/istanbul-lib-source-maps/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-macros/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/babel-plugin-macros/dist/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/gauge/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/esquery/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/esquery/dist/esquery.esm.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/esquery/dist/esquery.lite.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/esquery/dist/esquery.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react/umd/react.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react/cjs/react.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react/cjs/react-jsx-dev-runtime.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/react/cjs/react-jsx-runtime.development.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/electron-to-chromium/full-versions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/electron-to-chromium/full-chromium-versions.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/agent-base/src/index.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/graceful-fs/graceful-fs.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/graceful-fs/polyfills.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/build/utils.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/reporters/build/CoverageReporter.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/SearchSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/TestScheduler.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/SnapshotInteractiveMode.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/runJest.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/watch.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/core/build/cli/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/fake-timers/build/legacyFakeTimers.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/types/build/Config.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/transform/build/ScriptTransformer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/@jest/source-map/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/browser/dist/doc/Document.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/browser/dist/parse/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/browser/dist/parse/lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/browser/dist/stringify/stringifyString.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/dist/options.d.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/dist/doc/Document.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/dist/parse/parser.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/dist/parse/lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/yaml/dist/stringify/stringifyString.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/postcss-load-config/node_modules/lilconfig/src/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/lib/replace/color.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/lib/restructure/4-restructShorthand.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/lib/restructure/6-restructBlock.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/data/patch.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/parser/create.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/tokenizer/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/common/List.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/definition-syntax/parse.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/lexer/match.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/lexer/generic.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/lexer/match-graph.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/lib/lexer/Lexer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/css-tree/dist/csstree.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/api/inheritance.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/css/properties.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/css/syntaxes.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/css/properties.schema.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/css/at-rules.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/css/selectors.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/mdn-data/l10n/css.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/csso/dist/csso.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/regenerate-unicode-properties/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/type-detect/index.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/type-detect/type-detect.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/src/inject-manifest.ts into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/webpack-sources/lib/ReplaceSource.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/README.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/CHANGELOG.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/lib/source-map-consumer.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/lib/source-map-generator.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/lib/util.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/lib/source-node.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/dist/source-map.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring frontend/node_modules/workbox-webpack-plugin/node_modules/source-map/dist/source-map.debug.js into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring scripts/pdf_mupdf_reader.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring scripts/process_document.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring scripts/benchmark.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring models/ocr_results_page_10.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring models/ocr_results_page_9.json into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring test_documents/poppler-23.11.0/poppler-23.11.0/share/poppler/CMakeLists.txt into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+
+### Low Priority
+- **Consider using more configuration files to manage environment settings**
+  - *Why*: Multi-language projects benefit from clear configuration management
+- **Consider organizing code into a src/ directory and separating from configuration files**
+  - *Why*: Improved organization helps maintainability as projects grow
+
+## Recent Activity
+Files modified recently:
+- project_analyzer.py (2025-03-21 04:45:44)
+- run_agents.py (2025-03-20 20:31:11)
+- test_gemini.py (2025-03-20 20:02:15)
+- agent_scripts.py (2025-03-20 19:52:08)
+- accessibility_agent.py (2025-03-20 19:49:00)
