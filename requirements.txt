@@ -2,11 +2,16 @@
 PyPDF2==3.0.1
 pdf2image==1.16.3
 pytesseract==0.3.10
+PyMuPDF>=1.22.0  # Updated version
 
 # API and web framework
 fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
+Flask==2.0.1
+Flask-CORS==3.0.10
+Werkzeug==2.0.1
+python-dotenv==0.19.0
 
 # Data processing
 pandas==2.1.1
