@@ -1,7 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask import current_app, send_from_directory  # Separated imports
 import os
 import logging
 from agent_framework import AgentCoordinator
+from werkzeug.utils import secure_filename
+from services.document_analyzer import analyze_pdf
 
 document_routes = Blueprint('document_routes', __name__)
 logger = logging.getLogger(__name__)
@@ -117,17 +120,7 @@ def process_natural_language_query(document_id):
         
     except Exception as e:
         logger.error(f"שגיאה בעיבוד שאילתה בשפה טבעית: {str(e)}")
-        return jsonify({'error': str(e)}), 500from flask import Blueprint, request, jsonify, current_app, send_from_directory, current_app, send_from_directory
-from werkzeug.utils import secure_filename
-from services.document_analyzer import analyze_pdf
-import os
-
-document_routes = Blueprint('document_routes', __name__)
-
-ALLOWED_EXTENSIONS = {'pdf'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        return jsonify({'error': str(e)}), 500
 
 @document_routes.route('/api/documents/analyze', methods=['POST'])
 def analyze_document():
@@ -158,7 +151,6 @@ def analyze_document():
             'filename': filename,
             'analysis': analysis_result
         })
-        
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
