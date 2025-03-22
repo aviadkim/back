@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """
-Project Manager Assistant
-------------------------
+Project Manager Assistant v1.9
+----------------------------
 This script serves as your central dashboard for managing the project,
 integrating all the tools we've created and providing a unified interface.
+
+Updates in v1.9:
+- Added robust test framework detection and execution
+- Improved error handling and feedback
+- Added support for multiple test frameworks (pytest, unittest, jest, mocha)
+- Better handling of missing dependencies
 
 Usage:
 1. Run in your GitHub Codespace
@@ -22,6 +28,10 @@ import webbrowser
 class ProjectManager:
     def __init__(self):
         self.project_dir = os.getcwd()
+        
+        # Check for required dependencies
+        self.available_test_frameworks = self._check_test_frameworks()
+        
         self.tools = {
             "1": {
                 "name": "Project Analysis",
@@ -68,6 +78,37 @@ class ProjectManager:
         # Create reports directory
         os.makedirs("reports", exist_ok=True)
     
+    def _check_test_frameworks(self):
+        """Check which testing frameworks are available"""
+        frameworks = {
+            'pytest': False,
+            'unittest': False,
+            'jest': False,
+            'mocha': False
+        }
+        
+        # Check Python test frameworks
+        try:
+            import pytest
+            frameworks['pytest'] = True
+        except ImportError:
+            pass
+            
+        try:
+            import unittest
+            frameworks['unittest'] = True
+        except ImportError:
+            pass
+            
+        # Check JS test frameworks
+        if os.path.exists("package.json"):
+            if os.path.exists(os.path.join("node_modules", "jest")):
+                frameworks['jest'] = True
+            if os.path.exists(os.path.join("node_modules", "mocha")):
+                frameworks['mocha'] = True
+        
+        return frameworks
+
     def display_menu(self):
         """Display the main menu"""
         print("\n" + "=" * 60)
@@ -119,64 +160,141 @@ class ProjectManager:
     
     def run_tests(self):
         """Run all tests for the project"""
-        print("\nRunning tests...")
+        print("\nScanning for tests...")
         
-        # Look for test directories
+        # First check if any test framework is available
+        if not any(self.available_test_frameworks.values()):
+            print("\n⚠️  No testing frameworks detected. Please install required dependencies:")
+            print("\nFor Python tests, run one of:")
+            print("    pip install pytest")
+            print("    pip install pytest-cov  # for coverage reports")
+            print("\nFor JavaScript tests, run one of:")
+            print("    npm install --save-dev jest")
+            print("    npm install --save-dev mocha")
+            return False
+        
+        # First check if test directories exist
         test_dirs = []
-        for root, dirs, _ in os.walk(self.project_dir):
-            # Skip node_modules and other large directories
-            if any(skip in root for skip in ["node_modules", ".git", "__pycache__"]):
+        test_files = []
+        
+        for root, dirs, files in os.walk(self.project_dir):
+            # Skip virtual environments and cache directories
+            if any(skip in root for skip in ["node_modules", ".git", "__pycache__", "venv", "env", ".venv", ".pytest_cache"]):
                 continue
                 
-            if "tests" in dirs:
-                test_dirs.append(os.path.join(root, "tests"))
-            elif "test" in dirs:
-                test_dirs.append(os.path.join(root, "test"))
-            elif "__tests__" in dirs:
-                test_dirs.append(os.path.join(root, "__tests__"))
+            # Look for test files and directories
+            if any(name in dirs for name in ["tests", "test", "__tests__"]):
+                test_dirs.append(root)
+            
+            # Look for individual test files
+            for file in files:
+                if file.startswith("test_") or file.endswith("_test.py") or file.endswith(".test.js"):
+                    test_files.append(os.path.join(root, file))
         
-        if not test_dirs:
-            print("No test directories found.")
-            return
+        if not test_dirs and not test_files:
+            print("⚠️  No test files or directories found.")
+            return False
         
-        print(f"Found {len(test_dirs)} test directories:")
-        for test_dir in test_dirs:
-            print(f"- {os.path.relpath(test_dir, self.project_dir)}")
+        print(f"\nFound {len(test_dirs)} test directories and {len(test_files)} test files.")
         
-        # Try to determine test framework
-        has_jest = os.path.exists(os.path.join(self.project_dir, "node_modules", "jest"))
-        has_mocha = os.path.exists(os.path.join(self.project_dir, "node_modules", "mocha"))
-        has_pytest = False
+        # Track test execution status
+        success = True
+        tests_run = False
         
-        try:
-            result = subprocess.run([sys.executable, "-m", "pytest", "--version"], 
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            has_pytest = result.returncode == 0
-        except:
-            pass
-        
-        # Run tests based on detected framework
-        if has_jest:
-            print("\nRunning Jest tests...")
+        # Try Python tests first
+        if self.available_test_frameworks['pytest']:
             try:
-                subprocess.run(["npx", "jest"], cwd=self.project_dir, check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error running Jest tests: {e}")
-        elif has_mocha:
-            print("\nRunning Mocha tests...")
+                import pytest
+                print("\nRunning pytest...")
+                pytest_args = ["-v", "--color=yes"]
+                pytest_result = pytest.main(pytest_args)
+                tests_run = True
+                if pytest_result != 0:
+                    success = False
+                    print("❌ Some pytest tests failed")
+                else:
+                    print("✅ All pytest tests passed")
+            except ImportError:
+                pass
+        
+        if not tests_run and self.available_test_frameworks['unittest']:
             try:
-                subprocess.run(["npx", "mocha"], cwd=self.project_dir, check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error running Mocha tests: {e}")
-        elif has_pytest:
-            print("\nRunning pytest tests...")
-            try:
-                subprocess.run([sys.executable, "-m", "pytest"], cwd=self.project_dir, check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error running pytest tests: {e}")
+                import unittest
+                print("\nRunning unittest...")
+                # Find and run all tests using unittest
+                suite = unittest.TestLoader().discover(self.project_dir, pattern="test_*.py")
+                result = unittest.TextTestRunner(verbosity=2).run(suite)
+                tests_run = True
+                if not result.wasSuccessful():
+                    success = False
+                    print("❌ Some unittest tests failed")
+                else:
+                    print("✅ All unittest tests passed")
+            except ImportError:
+                pass
+        
+        # Try JavaScript tests
+        if os.path.exists("package.json"):
+            if self.available_test_frameworks['jest']:
+                print("\nRunning Jest tests...")
+                try:
+                    result = subprocess.run(
+                        ["npx", "jest", "--color"],
+                        capture_output=True,
+                        text=True,
+                        cwd=self.project_dir
+                    )
+                    tests_run = True
+                    print(result.stdout)
+                    if result.returncode != 0:
+                        success = False
+                        print("❌ Jest tests failed")
+                    else:
+                        print("✅ Jest tests passed")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error running Jest: {e}")
+                    success = False
+                except FileNotFoundError:
+                    print("⚠️  npx not found. Please install Node.js and npm")
+            
+            elif self.available_test_frameworks['mocha']:
+                print("Running Mocha tests...")
+                try:
+                    result = subprocess.run(
+                        ["npx", "mocha", "--color"],
+                        capture_output=True,
+                        text=True,
+                        cwd=self.project_dir
+                    )
+                    tests_run = True
+                    print(result.stdout)
+                    if result.returncode != 0:
+                        success = False
+                        print("❌ Mocha tests failed")
+                    else:
+                        print("✅ Mocha tests passed")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error running Mocha: {e}")
+                    success = False
+                except FileNotFoundError:
+                    print("⚠️  npx not found. Please install Node.js and npm")
+        
+        if not tests_run:
+            print("\n⚠️  No testing frameworks detected. Please install one of the following:")
+            print("- pytest or unittest (for Python tests)")
+            print("- jest (for JavaScript tests)")
+            print("- mocha (for JavaScript tests)")
+            return False
+        
+        print("\nTest Summary:")
+        print("-------------")
+        if success:
+            print("✅ All tests completed successfully!")
         else:
-            print("\nNo test framework detected. Please run tests manually.")
-    
+            print("❌ Some tests failed. Please check the output above for details.")
+        
+        return success
+
     def create_new_feature(self):
         """Generate scaffolding for a new feature"""
         print("\nCreate New Feature")
