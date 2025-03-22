@@ -59,5 +59,88 @@ def init_app():
     
     return agents
 
+def analyze_directory(root_dir, should_ignore_func):
+    """Shared directory analysis function"""
+    results = {
+        "project_summary": {
+            "directory_count": 0,
+            "file_count": 0
+        }
+    }
+    
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        rel_dirpath = os.path.relpath(dirpath, root_dir)
+
+        if should_ignore_func(rel_dirpath):
+            dirnames[:] = []  # Don't go into ignored directories
+            continue
+
+        results["project_summary"]["directory_count"] += 1
+    
+    return results
+
+def generate_priority_section(priorities, report):
+    """Shared priority report generation"""
+    for priority in ["high", "medium", "low"]:
+        if priorities[priority]:
+            report.append(f"\n### {priority.capitalize()} Priority")
+            for rec in priorities[priority]:
+                report.append(f"- **{rec['description']}**")
+    return report
+
+def add_recent_activity(project_summary, report):
+    """Shared recent activity report generation"""
+    if project_summary.get("recently_modified_files"):
+        report.append("\n## Recent Activity")
+        report.append("Files modified recently:")
+        for file in project_summary.get("recently_modified_files", [])[:5]:
+            report.append(f"- {file['path']} ({file['last_modified']})")
+    return report
+
+def generate_component_template(component_name, is_typescript=False, is_react=False):
+    """Shared component template generation"""
+    if not is_react:
+        return ""
+        
+    if is_typescript:
+        return f'''import React, {{ useState, useEffect }} from 'react';
+interface {component_name}Props {{
+    title?: string;
+}}
+const {component_name}: React.FC<{component_name}Props> = ({{ title = "Default Title" }}) => {{
+    const [data, setData] = useState<any[]>([]);
+    useEffect(() => {{
+        console.log("Component mounted");
+        return () => console.log("Component will unmount");
+    }}, []);
+    return (
+        <div className="container">
+            <h1>{{title}}</h1>
+            <div className="content">
+                <p>This is the {component_name} component</p>
+            </div>
+        </div>
+    );
+}};
+export default {component_name};'''
+    else:
+        return f'''import React, {{ useState, useEffect }} from 'react';
+const {component_name} = ({{ title = "Default Title" }}) => {{
+    const [data, setData] = useState([]);
+    useEffect(() => {{
+        console.log("Component mounted");
+        return () => console.log("Component will unmount");
+    }}, []);
+    return (
+        <div className="container">
+            <h1>{{title}}</h1>
+            <div className="content">
+                <p>This is the {component_name} component</p>
+            </div>
+        </div>
+    );
+}};
+export default {component_name};'''
+    
 if __name__ == "__main__":
     init_app()
