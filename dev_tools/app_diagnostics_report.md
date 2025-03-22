@@ -1,6 +1,6 @@
 # Application Diagnostics Report
 
-Generated on: 2025-03-21 15:02:44
+Generated on: 2025-03-22 18:39:45
 
 ## Application Information
 
@@ -9,17 +9,27 @@ Generated on: 2025-03-21 15:02:44
 
 ## Issues Summary
 
-Found **59** issues
+Found **71** issues
 
-### Code Issues (57)
+### Code Issues (69)
 
 - **Found 6 TODO/FIXME comments**
   - File: `dev_workflow.py`
   - Severity: low
   - Fix: Complete the implementation of these features
 
+- **Found 4 TODO/FIXME comments**
+  - File: `app_diagnostics_report.md`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
 - **Found 3 TODO/FIXME comments**
   - File: `project_manager.py`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
+- **Found 20 TODO/FIXME comments**
+  - File: `app_diagnostics_report.json`
   - Severity: low
   - Fix: Complete the implementation of these features
 
@@ -30,6 +40,26 @@ Found **59** issues
 
 - **Found 6 TODO/FIXME comments**
   - File: `project_builder.py`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
+- **Found 1 TODO/FIXME comments**
+  - File: `src/features/avi/api/service.js`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
+- **Found 2 TODO/FIXME comments**
+  - File: `src/features/avi/components/Avi.jsx`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
+- **Found 4 TODO/FIXME comments**
+  - File: `project_analysis/project_analysis.json`
+  - Severity: low
+  - Fix: Complete the implementation of these features
+
+- **Found 22 TODO/FIXME comments**
+  - File: `reports/dashboard_data.json`
   - Severity: low
   - Fix: Complete the implementation of these features
 
@@ -163,7 +193,17 @@ Found **59** issues
   - Severity: medium
   - Fix: Break down large functions into smaller, more focused ones
 
-- **Large function 'run_tests' in project_manager.py (60 lines)**
+- **File project_manager.py has 6 lines longer than 100 characters**
+  - File: `project_manager.py`
+  - Severity: low
+  - Fix: Break long lines to improve readability
+
+- **Large function '__init__' in project_manager.py (52 lines)**
+  - File: `project_manager.py`
+  - Severity: medium
+  - Fix: Break down large functions into smaller, more focused ones
+
+- **Large function 'run_tests' in project_manager.py (137 lines)**
   - File: `project_manager.py`
   - Severity: medium
   - Fix: Break down large functions into smaller, more focused ones
@@ -177,6 +217,11 @@ Found **59** issues
   - File: `project_manager.py`
   - Severity: medium
   - Fix: Break down large functions into smaller, more focused ones
+
+- **File app_diagnostics_report.json has 8 lines longer than 100 characters**
+  - File: `app_diagnostics_report.json`
+  - Severity: low
+  - Fix: Break long lines to improve readability
 
 - **File app_diagnostics.py has 31 lines longer than 100 characters**
   - File: `app_diagnostics.py`
@@ -293,8 +338,23 @@ Found **59** issues
   - Severity: medium
   - Fix: Break down large functions into smaller, more focused ones
 
-- **File project_analysis/project_analysis.json has 13 lines longer than 100 characters**
+- **File project_analysis/project_analysis.json has 35 lines longer than 100 characters**
   - File: `project_analysis/project_analysis.json`
+  - Severity: low
+  - Fix: Break long lines to improve readability
+
+- **File reports/dashboard_data.json has 40 lines longer than 100 characters**
+  - File: `reports/dashboard_data.json`
+  - Severity: low
+  - Fix: Break long lines to improve readability
+
+- **File test-data/products.json has 13 lines longer than 100 characters**
+  - File: `test-data/products.json`
+  - Severity: low
+  - Fix: Break long lines to improve readability
+
+- **File test-data/posts.json has 10 lines longer than 100 characters**
+  - File: `test-data/posts.json`
   - Severity: low
   - Fix: Break long lines to improve readability
 
@@ -313,7 +373,7 @@ Found **59** issues
 
 ## File Connections
 
-Found connections between 8 files
+Found connections between 14 files
 
 ### Top Connected Files
 
@@ -327,16 +387,16 @@ Found connections between 8 files
   - Line 20: `import sys`
   - Line 21: `import json`
   - ... and 53 more
+- **project_manager.py** (31 connections)
+  - Line 14: `import os`
+  - Line 15: `import sys`
+  - Line 16: `import subprocess`
+  - ... and 28 more
 - **app_diagnostics.py** (31 connections)
   - Line 20: `import os`
   - Line 21: `import sys`
   - Line 22: `import json`
   - ... and 28 more
-- **project_manager.py** (27 connections)
-  - Line 14: `import os`
-  - Line 15: `import sys`
-  - Line 16: `import subprocess`
-  - ... and 24 more
 - **link_validator.py** (17 connections)
   - Line 14: `import os`
   - Line 15: `import sys`
@@ -357,6 +417,15 @@ Found connections between 8 files
   - Line 15: `import uuid`
   - Line 16: `import random`
   - ... and 6 more
+- **src/features/avi/tests/Avi.test.js** (7 connections)
+  - Line 1: `import React from 'react';`
+  - Line 2: `import { render, screen, waitFor } from '@testing-library/react';`
+  - Line 3: `import '@testing-library/jest-dom';`
+  - ... and 4 more
+- **src/features/avi/components/Avi.jsx** (3 connections)
+  - Line 1: `import React, { useState, useEffect } from 'react';`
+  - Line 2: `import './styles.css';`
+  - Line 1: `import React, { useState, useEffect } from 'react';`
 
 ## Conclusion and Next Steps
 

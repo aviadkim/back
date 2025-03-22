@@ -1,18 +1,18 @@
 # Project Analysis Report
-Generated on: 2025-03-21 04:48:01
+Generated on: 2025-03-21 12:50:28
 
 ## Project Overview
 - **Project Directory**: /workspaces/back
-- **Total Files**: 92870
-- **Total Directories**: 8245
+- **Total Files**: 92893
+- **Total Directories**: 8270
 
 ### File Distribution
-- **Backend**: 34 files
-- **Docs**: 2328 files
-- **Tests**: 248 files
-- **Other**: 6605 files
-- **Data**: 15421 files
-- **Frontend**: 68233 files
+- **Backend**: 46 files
+- **Docs**: 2331 files
+- **Tests**: 252 files
+- **Other**: 6606 files
+- **Data**: 15423 files
+- **Frontend**: 68234 files
 - **Config**: 1 files
 
 ## Technology Stack
@@ -64,25 +64,25 @@ Generated on: 2025-03-21 04:48:01
 
 ## Git Information
 - **Current Branch**: master
-- **Total Commits**: 8
+- **Total Commits**: 12
 
 ### Recent Commits
-- `acd8826` v1.3: הוספת בוט חכם וניתוח מסמכים משופר
-- `cf3ef0c` גרסה 1.2.0: הוספת סקריפט pdf_mupdf_reader.py ופיתוח ממשק משתמש מבוסס React
-- `a2e51d5` עדכון pdf_mupdf_reader.py לגרסה 1.2 - שיפורים בזיהוי מבנה טבלאות ותבניות נתונים
+- `a586931` v1.6: תיקון שגיאות תחביר בקוד של הניתוח הפיננסי והוספת איתור פורט פנוי
+- `3acf41e` v1.5: תיקון הסוכן הפיננסי ושיפור יכולת השוואת דוחות פיננסיים
+- `13bec5a` v1.4: הוספת מערכת מתקדמת לניתוח מסמכים פיננסיים עם סוכנים חכמים
 
 ## Dependencies
 
 ### Python Dependencies
-- **Total**: 20 packages
+- **Total**: 10 packages
 
 **Key packages:**
-- opencv-python>=4.5.0: unspecified
-- numpy>=1.20.0: unspecified
-- pdf2image>=1.16.0: unspecified
-- pytesseract>=0.3.0: unspecified
-- python-dateutil>=2.8.2: unspecified
-- ... and 15 more
+- PyPDF2: 3.0.1
+- pdf2image: 1.16.3
+- pytesseract: 0.3.10
+- fastapi: 0.104.1
+- uvicorn: 0.24.0
+- ... and 5 more
 
 ### Npm Dependencies
 - **Total**: 1 packages
@@ -93,7 +93,17 @@ Generated on: 2025-03-21 04:48:01
 ## Recommendations
 
 ### Medium Priority
+- **Consider refactoring dev_workflow.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
 - **Consider refactoring project_analyzer.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring project_builder.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring api/routes.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring project_analysis/project_report.md into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring agents/financial/financial_agent.py into smaller modules**
   - *Why*: File has high complexity which could lead to maintenance challenges
 - **Consider refactoring frontend/package-lock.json into smaller modules**
   - *Why*: File has high complexity which could lead to maintenance challenges
@@ -4597,6 +4607,8 @@ Generated on: 2025-03-21 04:48:01
   - *Why*: File has high complexity which could lead to maintenance challenges
 - **Consider refactoring scripts/benchmark.py into smaller modules**
   - *Why*: File has high complexity which could lead to maintenance challenges
+- **Consider refactoring pdf_processor/analysis/financial_analyzer.py into smaller modules**
+  - *Why*: File has high complexity which could lead to maintenance challenges
 - **Consider refactoring models/ocr_results_page_10.json into smaller modules**
   - *Why*: File has high complexity which could lead to maintenance challenges
 - **Consider refactoring models/ocr_results_page_9.json into smaller modules**
@@ -4612,8 +4624,8 @@ Generated on: 2025-03-21 04:48:01
 
 ## Recent Activity
 Files modified recently:
-- project_analyzer.py (2025-03-21 04:45:44)
-- run_agents.py (2025-03-20 20:31:11)
-- test_gemini.py (2025-03-20 20:02:15)
-- agent_scripts.py (2025-03-20 19:52:08)
-- accessibility_agent.py (2025-03-20 19:49:00)
+- project_analysis/test_report_20250321_124757.md (2025-03-21 12:47:57)
+- project_analysis/project_analysis_v1.0.json (2025-03-21 12:47:16)
+- project_analysis/ai_assistant_guide_v1.0.md (2025-03-21 12:47:16)
+- project_analysis/project_report_v1.0.md (2025-03-21 12:47:16)
+- dev_workflow.py (2025-03-21 12:46:54)
