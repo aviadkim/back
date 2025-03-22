@@ -440,6 +440,60 @@ function App() {
     );
   };
   
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      if (!file) return;
+      
+      setLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await api.analyzePdf(formData);
+        setAnalysisResults(response.data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [file]); // Only re-run when file changes
+
+  useEffect(() => {
+    if (!selectedFile || isAnalyzing) return;
+
+    const analyzeFile = async () => {
+      setIsAnalyzing(true);
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        
+        const response = await api.analyzePdf(selectedFile);
+        setAnalysisResults(response.data);
+        setSnackbar({
+          open: true,
+          message: 'המסמך נותח בהצלחה',
+          severity: 'success'
+        });
+      } catch (err) {
+        console.error('Error analyzing document:', err);
+        setSnackbar({
+          open: true,
+          message: `שגיאה בניתוח המסמך: ${err.response?.data?.detail || err.message}`,
+          severity: 'error'
+        });
+      } finally {
+        setIsAnalyzing(false);
+      }
+    };
+
+    analyzeFile();
+  }, [selectedFile, isAnalyzing]); // Proper dependencies
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -608,4 +662,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
