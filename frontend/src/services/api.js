@@ -70,6 +70,7 @@ const pdfAnalysisApi = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      timeout: 120000 // 2 minutes timeout for PDF analysis
     });
 
     // עיבוד נוסף של התוצאות - ארגון הנתונים בטבלה
@@ -362,4 +363,4 @@ export const analyzePage = async (documentId, pageNumber) => {
   } catch (error) {
     throw new Error(error.response?.data?.message || 'שגיאה בניתוח העמוד');
   }
-}; 
+};

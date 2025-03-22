@@ -465,6 +465,9 @@ function App() {
 
   useEffect(() => {
     if (!selectedFile || isAnalyzing) return;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 180000); // 3min timeout
 
     const analyzeFile = async () => {
       setIsAnalyzing(true);
@@ -486,12 +489,18 @@ function App() {
           message: `שגיאה בניתוח המסמך: ${err.response?.data?.detail || err.message}`,
           severity: 'error'
         });
+        setAnalysisResults(null);
       } finally {
         setIsAnalyzing(false);
       }
     };
 
     analyzeFile();
+    
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [selectedFile, isAnalyzing]); // Proper dependencies
   
   return (
