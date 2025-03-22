@@ -203,7 +203,7 @@ class NaturalLanguageQueryAgent:
                     'value': 'bond'
                 })
             
-              if 'stock' in query_text or 'מניות' in query_text or 'מניה' in query_text:
+            if 'stock' in query_text or 'מניות' in query_text or 'מניה' in query_text:
                 structured_query['filters'].append({
                     'field': 'security_type',
                     'operator': '=',
