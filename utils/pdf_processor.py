@@ -1,5 +1,5 @@
 import pytesseract
-from PyPDF2 import PdfReader
+from PyPDF2 import PdfReader, PdfWriter
 from PIL import Image
 import io
 import re
@@ -164,14 +164,81 @@ class PDFProcessor:
             str: הטקסט המחולץ
         """
         try:
-            # המרת עמוד ל-PIL Image
-            # זוהי פונקציה מורכבת שדורשת הפיכת PDF לתמונה
-            # עבור הדגמה זו, נחזיר טקסט ריק
-            return "טקסט OCR יופיע כאן"
-            
+            # המרת עמוד PDF לתמונה
+            temp_dir = tempfile.mkdtemp()
+            try:
+                # ניסיון להשתמש ב-convert_from_path
+                writer = PdfWriter()
+                writer.add_page(page)
+                
+                # שמירת עמוד בודד לקובץ זמני
+                temp_pdf_path = os.path.join(temp_dir, "temp_page.pdf")
+                with open(temp_pdf_path, "wb") as f:
+                    writer.write(f)
+                
+                try:
+                    # ניסיון להמיר באמצעות pdf2image
+                    from pdf2image import convert_from_path
+                    images = convert_from_path(temp_pdf_path)
+                except ImportError:
+                    logger.warning("pdf2image לא מותקן, מנסה שיטה חלופית")
+                    # שיטה חלופית אם pdf2image לא זמין
+                    images = self._fallback_pdf_to_image(temp_pdf_path)
+                
+                # שימוש ב-OCR על התמונה
+                text = ""
+                for img in images:
+                    text += pytesseract.image_to_string(img, lang=self.lang) + "\n"
+                
+                return text.strip()
+                
+            finally:
+                # ניקוי קבצים זמניים
+                import shutil
+                shutil.rmtree(temp_dir, ignore_errors=True)
+                
         except Exception as e:
             logger.error(f"שגיאה ב-OCR: {e}")
-            return ""
+            # במקרה של כישלון, החזר מחרוזת שמציינת את הבעיה
+            return f"[OCR נכשל: {str(e)}]"
+    
+    def _fallback_pdf_to_image(self, pdf_path):
+        """
+        שיטה חלופית להמרת PDF לתמונה אם pdf2image לא זמין
+        
+        Args:
+            pdf_path: נתיב לקובץ PDF
+            
+        Returns:
+            List[PIL.Image]: רשימת תמונות
+        """
+        try:
+            # ניסיון להשתמש ב-poppler אם זמין
+            import subprocess
+            from PIL import Image
+            
+            # המרה באמצעות pdftoppm (חלק מ-poppler)
+            output_prefix = pdf_path.replace(".pdf", "")
+            subprocess.call(["pdftoppm", "-png", pdf_path, output_prefix])
+            
+            # חיפוש קבצי תמונה שנוצרו
+            image_files = [os.path.join(os.path.dirname(pdf_path), f) 
+                          for f in os.listdir(os.path.dirname(pdf_path)) 
+                          if f.startswith(os.path.basename(output_prefix)) and f.endswith(".png")]
+            
+            # טעינת התמונות
+            images = [Image.open(img_path) for img_path in sorted(image_files)]
+            
+            # ניקוי קבצי תמונה
+            for img_path in image_files:
+                os.remove(img_path)
+                
+            return images
+            
+        except Exception:
+            logger.error("גם שיטת גיבוי להמרת PDF לתמונה נכשלה")
+            # החזרת רשימה ריקה במקרה של כישלון
+            return []
     
     def _identify_table_patterns(self, text: str) -> List[Dict[str, Any]]:
         """
