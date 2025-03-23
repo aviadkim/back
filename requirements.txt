@@ -3,6 +3,11 @@ PyPDF2==3.0.1
 pdf2image==1.16.3
 pytesseract==0.3.10
 PyMuPDF>=1.22.0  # Updated version
+unstructured>=0.10.0
+
+# LangChain & LLM Integrations
+langchain>=0.1.0
+langchain_mistralai>=0.0.2
 
 # API and web framework
 fastapi==0.104.1
