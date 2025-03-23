@@ -21,6 +21,9 @@ class Document(Base):
     mime_type = Column(String(128), nullable=False)
     upload_date = Column(DateTime, default=datetime.utcnow)
     last_accessed = Column(DateTime, default=datetime.utcnow)
+    analysis_data = Column(JSON)
+    user_id = Column(String(50))
+    document_type = Column(String(50))
     
     # מידע לאחר עיבוד
     page_count = Column(Integer, nullable=True)

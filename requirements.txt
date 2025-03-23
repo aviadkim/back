@@ -4,27 +4,31 @@ pdf2image==1.16.3
 pytesseract==0.3.10
 PyMuPDF>=1.22.0  # Updated version
 unstructured>=0.10.0
+pdfminer.six==20231228
 
 # LangChain & LLM Integrations
-langchain>=0.1.0
+langchain==0.1.9
 langchain_mistralai>=0.0.2
+mistralai==0.0.7
 
 # API and web framework
 fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
-Flask==2.0.1
-Flask-CORS==3.0.10
+Flask==3.1.0
+flask-cors==4.0.0
+flask-pymongo==3.0.1
 Werkzeug==2.0.1
 python-dotenv==0.19.0
 
 # Data processing
-pandas==2.1.1
-numpy==1.26.0
+pandas==2.2.1
+numpy==1.26.4
 python-dateutil==2.8.2
 
 # Database
-pymongo==4.6.1
+pymongo==4.11.3
+sqlalchemy==2.0.27
 
 # API models
 pydantic==2.4.2
