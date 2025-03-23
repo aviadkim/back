@@ -26,8 +26,8 @@ app = Flask(__name__,
             static_folder='frontend/build/static',
             template_folder='frontend/build')
 
-# הגדרת CORS כדי לאפשר גישה מהפרונטאנד
-CORS(app)
+# הגדרת CORS כדי לאפשר גישה מהפרונטאנד (כל מקור)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ייבוא נתיבים
 from routes.document_routes import document_routes
@@ -54,6 +54,20 @@ def serve(path):
 @app.route('/health')
 def health_check():
     return jsonify({"status": "ok", "message": "System is operational"})
+
+# נתיב להגשת קבצים סטטיים מתיקיית build
+@app.route('/static/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
+
+# נתיב למניפסט ופייקון
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_from_directory(app.template_folder, 'manifest.json')
+
+@app.route('/favicon.ico')
+def serve_favicon():
+    return send_from_directory(app.template_folder, 'favicon.ico')
 
 if __name__ == '__main__':
     # קביעת פורט לשרת
