@@ -37,9 +37,12 @@ def process_document():
         # ניקוי קובץ זמני
         os.remove(temp_file_path)
         
+        # הוצאת מזהה המסמך, או יצירת מזהה זמני אם לא קיים
+        document_id = results.get('document_id', 'doc_' + str(id(results)))
+        
         return jsonify({
             'status': 'success',
-            'document_id': 'doc_' + str(id(results)),  # במערכת אמיתית, השתמש במזהה מסמך מתאים
+            'document_id': document_id,
             'page_count': len(results.get('document_content', {})),
             'table_count': sum(len(tables) for tables in results.get('tables', {}).values()),
             'message': 'המסמך עובד בהצלחה'
@@ -113,6 +116,17 @@ def process_natural_language_query(document_id):
         # עיבוד השאילתה באמצעות מתאם הסוכנים
         result = agent_coordinator.process_natural_language_query(document_id, query_text)
         
+        # שמירת השאילתה במסד נתונים אם יש צורך
+        if 'error' not in result and hasattr(request, 'user_id'):
+            user_id = getattr(request, 'user_id', 'default_user')
+            agent_coordinator.remember_query(
+                user_id=user_id,
+                query_text=query_text,
+                structured_query=result.get('query', {}),
+                results=result,
+                document_ids=[document_id]
+            )
+        
         if 'error' in result:
             return jsonify(result), 400
             
@@ -160,3 +174,105 @@ def get_document(filename):
         return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
     except Exception as e:
         return jsonify({'error': str(e)}), 404
+
+# נתיבי API חדשים לתמיכה בסוכן הזיכרון וסוכן האנליטיקה
+
+@document_routes.route('/api/documents/search', methods=['POST'])
+def search_documents():
+    """חיפוש מסמכים לפי שאילתת טקסט."""
+    try:
+        data = request.json
+        if not data or 'query' not in data:
+            return jsonify({'error': 'לא סופקה שאילתת חיפוש'}), 400
+            
+        query_text = data['query']
+        user_id = getattr(request, 'user_id', None)  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
+        
+        # חיפוש מסמכים באמצעות מתאם הסוכנים
+        results = agent_coordinator.find_similar_documents(query_text, user_id)
+        
+        return jsonify(results), 200
+        
+    except Exception as e:
+        logger.error(f"שגיאה בחיפוש מסמכים: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/documents/<document_id>/insights', methods=['GET'])
+def get_document_insights(document_id):
+    """קבלת תובנות עבור מסמך ספציפי."""
+    try:
+        # הפקת תובנות באמצעות מתאם הסוכנים
+        insights = agent_coordinator.generate_document_insights(document_id)
+        
+        if 'error' in insights:
+            return jsonify(insights), 404 if insights['error'] == 'Document not found' else 400
+            
+        return jsonify(insights), 200
+        
+    except Exception as e:
+        logger.error(f"שגיאה בקבלת תובנות מסמך: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/portfolio/<user_id>/trends', methods=['GET'])
+def analyze_portfolio_trends(user_id):
+    """ניתוח מגמות בתיק השקעות לאורך זמן."""
+    try:
+        # קבלת פרמטרי בקשה
+        time_period = request.args.get('time_period', default=180, type=int)
+        
+        # ניתוח מגמות באמצעות מתאם הסוכנים
+        trends = agent_coordinator.analyze_portfolio_trends(user_id, time_period)
+        
+        if 'error' in trends:
+            return jsonify(trends), 400
+            
+        return jsonify(trends), 200
+        
+    except Exception as e:
+        logger.error(f"שגיאה בניתוח מגמות תיק השקעות: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/portfolio/<user_id>/outliers', methods=['GET'])
+def detect_portfolio_outliers(user_id):
+    """זיהוי חריגות בנתונים פיננסיים."""
+    try:
+        # קבלת פרמטרי בקשה
+        metric = request.args.get('metric', default='yield_percent')
+        
+        # זיהוי חריגות באמצעות מתאם הסוכנים
+        outliers = agent_coordinator.detect_outliers(user_id, metric)
+        
+        if 'error' in outliers:
+            return jsonify(outliers), 400
+            
+        return jsonify(outliers), 200
+        
+    except Exception as e:
+        logger.error(f"שגיאה בזיהוי חריגות בנתונים פיננסיים: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/documents/compare', methods=['POST'])
+def compare_documents():
+    """השוואה בין שני מסמכים."""
+    try:
+        data = request.json
+        if not data or 'doc_id_1' not in data or 'doc_id_2' not in data:
+            return jsonify({'error': 'לא סופקו מזהי מסמכים להשוואה'}), 400
+            
+        doc_id_1 = data['doc_id_1']
+        doc_id_2 = data['doc_id_2']
+        
+        # השוואת מסמכים באמצעות סוכן הזיכרון
+        if 'memory_agent' in agent_coordinator.agents:
+            comparison = agent_coordinator.agents['memory_agent'].compare_documents(doc_id_1, doc_id_2)
+            
+            if 'error' in comparison:
+                return jsonify(comparison), 404 if comparison['error'] == 'One or both documents not found' else 400
+                
+            return jsonify(comparison), 200
+        else:
+            return jsonify({'error': 'שירות השוואת מסמכים אינו זמין'}), 503
+            
+    except Exception as e:
+        logger.error(f"שגיאה בהשוואת מסמכים: {str(e)}")
+        return jsonify({'error': str(e)}), 500
