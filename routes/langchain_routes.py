@@ -246,11 +246,20 @@ def health_check():
     """
     language = request.args.get('language', 'he')  # ברירת מחדל היא עברית
     
-    status_message = "שירותי AI פעילים" if language == "he" else "AI services operational"
+    # Check if we're using the dummy coordinator
+    using_dummy = isinstance(coordinator, DummyCoordinator)
+    
+    if using_dummy:
+        status = "warning"
+        status_message = "שירותי AI מוגבלים - משתמש במודל דמה" if language == "he" else "AI services limited - using dummy model"
+    else:
+        status = "ok"
+        status_message = "שירותי AI פעילים" if language == "he" else "AI services operational"
+    
     status_language = "עברית" if language == "he" else "English"
     
     return jsonify({
-        "status": "ok",
+        "status": status,
         "message": status_message,
         "language": status_language
     })
