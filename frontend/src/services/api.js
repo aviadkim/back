@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // קביעת כתובת בסיסית לשרת ה-API
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 // יצירת מופע axios עם הגדרות ברירת מחדל
 const api = axios.create({
@@ -56,71 +56,26 @@ api.interceptors.response.use(
 
 // מודול עם כל הפונקציות לניתוח PDF
 const pdfAnalysisApi = {
-  // ניתוח PDF
-  analyzePdf: async (file, page) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('page_num', page.toString());
-    formData.append('extract_tables', 'true');
-    formData.append('extract_financial_data', 'true');
-    formData.append('parse_bonds', 'true');
-    formData.append('use_new_version', 'true');
-    
-    const response = await api.post('/pdf/analyze', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      timeout: 120000 // 2 minutes timeout for PDF analysis
-    });
-
-    // עיבוד נוסף של התוצאות - ארגון הנתונים בטבלה
-    const result = response.data;
-    if (result.pages && result.pages[page]) {
-      const pageData = result.pages[page];
+  // ניתוח PDF - גרסה מעודכנת לעבודה עם הממשק החדש שלנו
+  analyzePdf: async (file, page = 0) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('language', 'he');
       
-      // ארגון נתוני אגרות החוב בטבלה
-      if (pageData.text) {
-        const bonds = [];
-        const lines = pageData.text.split('\n');
-        
-        let currentBond = {};
-        for (const line of lines) {
-          // חיפוש מידע על אגרות חוב
-          if (line.includes('ISIN:')) {
-            if (Object.keys(currentBond).length > 0) {
-              bonds.push(currentBond);
-            }
-            currentBond = {
-              isin: line.match(/ISIN: ([\w\d]+)/)?.[1],
-              valorn: line.match(/Valorn\.: (\d+)/)?.[1]
-            };
-          }
-          
-          // חיפוש פרטים נוספים
-          if (currentBond.isin) {
-            if (line.includes('Maturity:')) {
-              currentBond.maturity = line.match(/Maturity: ([\d\.]+)/)?.[1];
-            }
-            if (line.includes('Coupon:')) {
-              currentBond.coupon = line.match(/Coupon: ([\d\.]+)/)?.[1];
-            }
-            if (line.includes('USD')) {
-              const amounts = line.match(/USD ([\d,\']+)/);
-              if (amounts) {
-                currentBond.amount = amounts[1];
-              }
-            }
-          }
-        }
-        
-        // הוספת הטבלה המאורגנת לתוצאות
-        if (bonds.length > 0) {
-          pageData.organized_bonds = bonds;
-        }
-      }
+      // הבקשה תואמת את נקודת הקצה בשרת הבקאנד
+      const response = await api.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 120000 // 2 minutes timeout for PDF analysis
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error analyzing PDF:', error);
+      throw error;
     }
-    
-    return result;
   },
   
   // חילוץ טקסט מ-PDF
@@ -178,17 +133,17 @@ const pdfAnalysisApi = {
 const documentsApi = {
   // קבלת רשימת כל המסמכים
   getAll: (page = 1, limit = 10) => {
-    return api.get('/documents', { params: { page, limit } });
+    return api.get('/api/documents', { params: { page, limit } });
   },
   
   // קבלת מסמך לפי מזהה
   getById: (id) => {
-    return api.get(`/documents/${id}`);
+    return api.get(`/api/documents/${id}`);
   },
   
   // קבלת מסמך לפי שם קובץ
   getByFilename: (filename) => {
-    return api.get('/documents/search', { params: { filename } });
+    return api.get('/api/documents/search', { params: { filename } });
   },
   
   // העלאת מסמך חדש
@@ -200,7 +155,7 @@ const documentsApi = {
       formData.append('metadata', JSON.stringify(metadata));
     }
     
-    const response = await api.post('/documents/upload', formData, {
+    const response = await api.post('/api/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -210,19 +165,19 @@ const documentsApi = {
   
   // הורדת קובץ PDF
   download: async (id) => {
-    return api.get(`/documents/${id}/download`, {
+    return api.get(`/api/documents/${id}/download`, {
       responseType: 'blob',
     });
   },
   
   // מחיקת מסמך
   delete: (id) => {
-    return api.delete(`/documents/${id}`);
+    return api.delete(`/api/documents/${id}`);
   },
   
   // עדכון מטא-דאטה של מסמך
   updateMetadata: (id, metadata) => {
-    return api.patch(`/documents/${id}/metadata`, { metadata });
+    return api.patch(`/api/documents/${id}/metadata`, { metadata });
   },
 };
 
@@ -284,7 +239,10 @@ export const chatApi = {
     const formData = new FormData();
     formData.append('message', message);
     formData.append('context', context);
-    const response = await api.post('/chat/message', formData);
+    const response = await api.post('/api/chat', { 
+      question: message,
+      conversation_id: context
+    });
     return response.data;
   },
 
@@ -343,7 +301,7 @@ export const uploadDocument = async (file) => {
   formData.append('file', file);
   
   try {
-    const response = await api.post('/documents/upload', formData, {
+    const response = await api.post('/api/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -356,7 +314,7 @@ export const uploadDocument = async (file) => {
 
 export const analyzePage = async (documentId, pageNumber) => {
   try {
-    const response = await api.post(`/documents/${documentId}/analyze`, {
+    const response = await api.post(`/api/documents/${documentId}/analyze`, {
       pageNumber
     });
     return response.data;
