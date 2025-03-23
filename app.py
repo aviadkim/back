@@ -1,53 +1,64 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, render_template, send_from_directory, jsonify
 from flask_cors import CORS
 import os
-from routes import document_routes, langchain_routes
-from models.document_models import init_db
-from utils.logger import setup_logger
+from dotenv import load_dotenv
+import logging
 
-# Create Flask app
-app = Flask(__name__, static_folder='frontend/build')
-# Enable CORS for all routes and origins
-CORS(app, resources={r"/*": {"origins": "*"}})
+# טעינת משתני סביבה מקובץ .env
+load_dotenv()
 
-# Setup logger
-logger = setup_logger()
+# הגדרת לוגר
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    filename='logs/app.log',
+    filemode='a'
+)
+logger = logging.getLogger(__name__)
 
-# Initialize database
-init_db()
+# יצירת תיקיות נדרשות אם אינן קיימות
+required_dirs = ['uploads', 'data', 'data/embeddings', 'logs']
+for directory in required_dirs:
+    os.makedirs(directory, exist_ok=True)
 
-# Create upload directory if it doesn't exist
-if not os.path.exists('uploads'):
-    os.makedirs('uploads')
+# יצירת אפליקציית Flask
+app = Flask(__name__, 
+            static_folder='frontend/build/static',
+            template_folder='frontend/build')
 
-# Register routes
-app.register_blueprint(document_routes.document_bp)
-app.register_blueprint(langchain_routes.langchain_bp)
+# הגדרת CORS כדי לאפשר גישה מהפרונטאנד
+CORS(app)
 
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint to verify server is running."""
-    return jsonify({"status": "ok"}), 200
+# ייבוא נתיבים
+from routes.document_routes import document_routes
+from routes.langchain_routes import langchain_routes
 
-# Serve React App
+# רישום נתיבים
+app.register_blueprint(document_routes)
+app.register_blueprint(langchain_routes)
+
+# נתיב ברירת מחדל להצגת הפרונטאנד
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+    try:
+        if path and os.path.exists(os.path.join(app.template_folder, path)):
+            return send_from_directory(app.template_folder, path)
+        else:
+            return render_template('index.html')
+    except Exception as e:
+        logger.error(f"Error serving path {path}: {e}")
+        return render_template('index.html')
 
-# Handle 404 errors
-@app.errorhandler(404)
-def not_found(e):
-    return jsonify({"error": "Not found"}), 404
-
-# Handle 500 errors
-@app.errorhandler(500)
-def server_error(e):
-    logger.error(f"Server error: {str(e)}")
-    return jsonify({"error": "Internal server error"}), 500
+# נתיב בדיקת תקינות
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "ok", "message": "System is operational"})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    # קביעת פורט לשרת
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV', 'development') == 'development'
+    
+    logger.info(f"Starting server on port {port}, debug mode: {debug}")
+    app.run(host='0.0.0.0', port=port, debug=debug)
