@@ -7,6 +7,9 @@ from pdf_processor.tables.table_extractor import TableExtractor
 from pdf_processor.analysis.financial_analyzer import FinancialAnalyzer
 from .table_generator import CustomTableGenerator
 from .nlp_agent import NaturalLanguageQueryAgent
+from .memory_agent import MemoryAgent
+from .analytics_agent import AnalyticsAgent
+from models.document_models import Document, Query
 from agents.base.base_agent import BaseAgent
 from agents.financial.financial_agent import FinancialAgent
 
@@ -31,6 +34,14 @@ class AgentCoordinator:
             financial_agent = FinancialAgent()
             table_generator = CustomTableGenerator(financial_analyzer)
             nlp_agent = NaturalLanguageQueryAgent()
+            
+            # אתחול סוכן הזיכרון
+            memory_agent = MemoryAgent()
+            self.register_agent('memory_agent', memory_agent)
+
+            # אתחול סוכן האנליטיקה
+            analytics_agent = AnalyticsAgent(memory_agent)
+            self.register_agent('analytics_agent', analytics_agent)
             
             # רישום הסוכנים
             self.register_agent('extractor', text_extractor)
@@ -97,6 +108,32 @@ class AgentCoordinator:
                     self.logger.info("מפעיל סוכן פיננסי לניתוח מתקדם")
                     advanced_analysis = self.agents['financial_agent'].analyze_financial_data(financial_data)
                     results['advanced_financial_analysis'] = advanced_analysis
+            
+            # שמירת המידע במסד הנתונים אם יש סוכן זיכרון
+            if 'memory_agent' in self.agents:
+                try:
+                    # יצירת מודל מסמך
+                    document = Document(
+                        user_id=getattr(request, 'user_id', 'default_user'),  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
+                        filename=os.path.basename(pdf_path),
+                        original_file_path=pdf_path,
+                        processing_status="completed"
+                    )
+                    
+                    # הוספת המידע המעובד
+                    document.extracted_text = results.get('document_content', {})
+                    document.tables = results.get('tables', {})
+                    document.financial_data = results.get('financial_data', {})
+                    
+                    # שמירת המסמך
+                    document_id = self.agents['memory_agent'].store_document(document)
+                    
+                    # עדכון המזהה בתוצאות
+                    results['document_id'] = document_id
+                    self.logger.info(f"Document stored in database with ID: {document_id}")
+                except Exception as e:
+                    self.logger.error(f"Error storing document in database: {str(e)}")
+                    # ממשיכים גם אם יש שגיאה בשמירה
                 
             self.logger.info("עיבוד המסמך הושלם בהצלחה")
             return results
@@ -161,3 +198,90 @@ class AgentCoordinator:
         except Exception as e:
             self.logger.error(f"שגיאה בעיבוד שאילתה בשפה טבעית: {str(e)}")
             return {"error": str(e)}
+            
+    def analyze_portfolio_trends(self, user_id: str, time_period: int = 180) -> Dict[str, Any]:
+        """ניתוח מגמות בתיק השקעות לאורך זמן."""
+        try:
+            if 'analytics_agent' not in self.agents:
+                self.logger.error("Analytics agent not available")
+                return {"error": "Analytics not available"}
+            
+            return self.agents['analytics_agent'].analyze_portfolio_trends(user_id, time_period)
+        except Exception as e:
+            self.logger.error(f"Error analyzing portfolio trends: {str(e)}")
+            return {"error": str(e)}
+    
+    def generate_document_insights(self, document_id: str) -> Dict[str, Any]:
+        """הפקת תובנות ממסמך פיננסי."""
+        try:
+            if 'analytics_agent' not in self.agents:
+                self.logger.error("Analytics agent not available")
+                return {"error": "Analytics not available"}
+            
+            return self.agents['analytics_agent'].generate_insights(document_id)
+        except Exception as e:
+            self.logger.error(f"Error generating document insights: {str(e)}")
+            return {"error": str(e)}
+    
+    def find_similar_documents(self, text_query: str, user_id: Optional[str] = None) -> Dict[str, Any]:
+        """חיפוש מסמכים דומים לפי שאילתת טקסט."""
+        try:
+            if 'memory_agent' not in self.agents:
+                self.logger.error("Memory agent not available")
+                return {"error": "Document search not available"}
+            
+            documents = self.agents['memory_agent'].find_similar_documents(text_query, user_id)
+            
+            return {
+                "query": text_query,
+                "results_count": len(documents),
+                "documents": [
+                    {
+                        "id": doc.id,
+                        "filename": doc.filename,
+                        "upload_date": doc.upload_date,
+                        "document_type": doc.document_type
+                    } for doc in documents
+                ]
+            }
+        except Exception as e:
+            self.logger.error(f"Error finding similar documents: {str(e)}")
+            return {"error": str(e)}
+    
+    def detect_outliers(self, user_id: str, metric: str = 'yield_percent') -> Dict[str, Any]:
+        """זיהוי חריגות בנתונים פיננסיים."""
+        try:
+            if 'analytics_agent' not in self.agents:
+                self.logger.error("Analytics agent not available")
+                return {"error": "Analytics not available"}
+            
+            return self.agents['analytics_agent'].detect_outliers(user_id, metric)
+        except Exception as e:
+            self.logger.error(f"Error detecting outliers: {str(e)}")
+            return {"error": str(e)}
+    
+    def remember_query(self, user_id: str, query_text: str, 
+                        structured_query: Dict[str, Any], 
+                        results: Dict[str, Any],
+                        document_ids: List[str] = None) -> str:
+        """שמירת שאילתה בשפה טבעית והתוצאות שלה לצורך למידה."""
+        try:
+            if 'memory_agent' not in self.agents:
+                self.logger.error("Memory agent not available")
+                return None
+            
+            query = Query(
+                user_id=user_id,
+                query_text=query_text,
+                structured_query=structured_query,
+                results=results,
+                document_ids=document_ids or []
+            )
+            
+            query_id = self.agents['memory_agent'].store_query(query)
+            self.logger.info(f"Query stored in database with ID: {query_id}")
+            
+            return query_id
+        except Exception as e:
+            self.logger.error(f"Error storing query: {str(e)}")
+            return None
