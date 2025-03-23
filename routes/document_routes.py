@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 # יצירת מתאם סוכנים
 agent_coordinator = AgentCoordinator()
 
+def allowed_file(filename):
+    """Check if file type is allowed."""
+    ALLOWED_EXTENSIONS = {'pdf'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @document_routes.route('/api/documents/process', methods=['POST'])
 def process_document():
     """עיבוד מסמך באמצעות מסגרת הסוכנים."""
@@ -240,3 +245,24 @@ def detect_outliers(user_id):
     except Exception as e:
         logger.error(f"Error detecting outliers: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/documents/upload', methods=['POST'])
+def upload_document():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+        
+    if file and allowed_file(file.filename):
+        try:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+            return jsonify({'document_id': str(filename)}), 201
+        except Exception as e:
+            return jsonify({'error': f'Error saving file: {str(e)}'}), 500
+    
+    return jsonify({'error': 'Invalid file type'}), 400
