@@ -61,7 +61,7 @@ class AgentCoordinator:
         self.agents[agent_name] = agent_instance
         self.logger.info(f"נרשם סוכן: {agent_name}")
         
-    def process_document(self, pdf_path: str) -> Dict[str, Any]:
+    def process_document(self, pdf_path: str, user_id: str = "default_user") -> Dict[str, Any]:
         """עיבוד מסמך דרך צינור הסוכנים המלא."""
         results = {}
         
@@ -121,7 +121,7 @@ class AgentCoordinator:
                 try:
                     # יצירת מודל מסמך
                     document = Document(
-                        user_id="default_user",  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
+                        user_id=user_id,  # משתמש המזהה שסופק
                         filename=os.path.basename(pdf_path),
                         original_file_path=pdf_path,
                         processing_status="completed"
