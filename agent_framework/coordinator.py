@@ -176,7 +176,7 @@ class AgentCoordinator:
             self.logger.error(f"שגיאה ביצירת טבלה מותאמת אישית: {str(e)}")
             return {"error": str(e)}
     
-    def process_natural_language_query(self, document_id: str, query_text: str) -> Dict[str, Any]:
+    def process_natural_language_query(self, document_id: str, query_text: str, user_id: str = 'default_user') -> Dict[str, Any]:
         """עיבוד שאילתה בשפה טבעית ליצירת טבלה מותאמת אישית."""
         try:
             if 'nlp_agent' not in self.agents:
@@ -192,6 +192,20 @@ class AgentCoordinator:
             # הוספת השאילתה המפורשת לתשובה
             if 'error' not in table_result:
                 table_result['query'] = structured_query
+                
+                # שמירת השאילתה במסד הנתונים אם יש סוכן זיכרון
+                if 'memory_agent' in self.agents:
+                    try:
+                        self.remember_query(
+                            user_id=user_id,
+                            query_text=query_text,
+                            structured_query=structured_query,
+                            results=table_result,
+                            document_ids=[document_id]
+                        )
+                    except Exception as e:
+                        self.logger.error(f"Error storing query: {str(e)}")
+                        # ממשיכים גם אם יש שגיאה בשמירה
                 
             return table_result
             
