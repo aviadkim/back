@@ -8,7 +8,9 @@ import logging
 from datetime import datetime
 import io
 
+# שינינו את הייבוא כך שיתמוך גם ב-PDFProcessor וגם ב-extract_text_from_pdf
 from utils.pdf_processor import PDFProcessor
+from utils import extract_text_from_pdf
 
 # הגדרת לוגר
 logger = logging.getLogger(__name__)
