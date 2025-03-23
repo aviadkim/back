@@ -104,17 +104,24 @@ class AgentCoordinator:
                 results['financial_data'] = financial_data
                 
                 # עיבוד נוסף עם סוכן פיננסי ספציפי
+                # בדיקה אם הסוכן תומך בשיטה הנדרשת
                 if 'financial_agent' in self.agents:
-                    self.logger.info("מפעיל סוכן פיננסי לניתוח מתקדם")
-                    advanced_analysis = self.agents['financial_agent'].analyze_financial_data(financial_data)
-                    results['advanced_financial_analysis'] = advanced_analysis
+                    try:
+                        self.logger.info("מפעיל סוכן פיננסי לניתוח מתקדם")
+                        if hasattr(self.agents['financial_agent'], 'analyze_financial_data'):
+                            advanced_analysis = self.agents['financial_agent'].analyze_financial_data(financial_data)
+                            results['advanced_financial_analysis'] = advanced_analysis
+                        else:
+                            self.logger.warning("סוכן פיננסי חסר מתודת analyze_financial_data")
+                    except Exception as e:
+                        self.logger.error(f"שגיאה בהפעלת ניתוח פיננסי מתקדם: {str(e)}")
             
             # שמירת המידע במסד הנתונים אם יש סוכן זיכרון
             if 'memory_agent' in self.agents:
                 try:
                     # יצירת מודל מסמך
                     document = Document(
-                        user_id=getattr(request, 'user_id', 'default_user'),  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
+                        user_id="default_user",  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
                         filename=os.path.basename(pdf_path),
                         original_file_path=pdf_path,
                         processing_status="completed"
