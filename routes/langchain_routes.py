@@ -1,9 +1,45 @@
 from flask import Blueprint, request, jsonify
-from ..agent_framework.coordinator import AgentCoordinator
 import os
+import json
+import logging
+from agent_framework.coordinator import AgentCoordinator
 
+# הגדרת לוגר
+logger = logging.getLogger(__name__)
+
+# יצירת Blueprint
 langchain_routes = Blueprint('langchain_routes', __name__)
-coordinator = AgentCoordinator(api_key=os.getenv('HUGGINGFACE_API_KEY', None))
+
+# יצירת מתאם הסוכנים עם מפתח API
+try:
+    coordinator = AgentCoordinator(api_key=os.getenv('HUGGINGFACE_API_KEY', None))
+    logger.info("AgentCoordinator initialized successfully")
+except Exception as e:
+    logger.error(f"Error initializing AgentCoordinator: {str(e)}")
+    # יצירת מתאם דמה שמחזיר תשובות סטטיות
+    class DummyCoordinator:
+        def answer_question(self, **kwargs):
+            return {
+                "answer": "זוהי תשובת דמה. המערכת אינה מחוברת למודל AI בזמן זה.",
+                "sources": [],
+                "conversation_id": kwargs.get("conversation_id", "dummy_conversation"),
+                "language": kwargs.get("language", "he")
+            }
+        
+        def process_document(self, **kwargs):
+            return True
+        
+        def get_document_summary(self, document_id, **kwargs):
+            return {"summary": "סיכום דמה", "document_id": document_id}
+        
+        def clear_conversation(self, conversation_id):
+            return True
+        
+        def set_language(self, language):
+            return True
+    
+    coordinator = DummyCoordinator()
+    logger.warning("Using DummyCoordinator due to initialization error")
 
 @langchain_routes.route('/api/chat', methods=['POST'])
 def chat():
@@ -19,27 +55,34 @@ def chat():
     Returns:
     - תשובה מבוססת מסמכים
     """
-    data = request.json
-    question = data.get('question')
-    document_ids = data.get('document_ids', [])
-    conversation_id = data.get('conversation_id')
-    language = data.get('language', 'he')  # ברירת מחדל היא עברית
-    
-    if not question:
-        error_message = "חסרה שאלה" if language == "he" else "Missing question"
-        return jsonify({"error": error_message}), 400
-    
     try:
-        response = coordinator.answer_question(
-            question=question, 
-            document_ids=document_ids, 
-            conversation_id=conversation_id,
-            language=language
-        )
-        return jsonify(response)
+        data = request.json
+        logger.info(f"Received chat request: {data}")
+        
+        question = data.get('question')
+        document_ids = data.get('document_ids', [])
+        conversation_id = data.get('conversation_id')
+        language = data.get('language', 'he')  # ברירת מחדל היא עברית
+        
+        if not question:
+            error_message = "חסרה שאלה" if language == "he" else "Missing question"
+            return jsonify({"error": error_message}), 400
+        
+        try:
+            response = coordinator.answer_question(
+                question=question, 
+                document_ids=document_ids, 
+                conversation_id=conversation_id,
+                language=language
+            )
+            return jsonify(response)
+        except Exception as e:
+            logger.error(f"Error in answer_question: {str(e)}")
+            error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
+            return jsonify({"error": error_message}), 500
     except Exception as e:
-        error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
-        return jsonify({"error": error_message}), 500
+        logger.error(f"General error in chat endpoint: {str(e)}")
+        return jsonify({"error": f"General error: {str(e)}"}), 500
 
 @langchain_routes.route('/api/upload', methods=['POST'])
 def upload_document():
@@ -211,5 +254,3 @@ def health_check():
         "message": status_message,
         "language": status_language
     })
-
-import json
