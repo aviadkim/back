@@ -1,278 +1,426 @@
-from flask import Blueprint, request, jsonify
-from flask import current_app, send_from_directory  # Separated imports
+from flask import Blueprint, request, jsonify, send_file
 import os
-import logging
-from agent_framework import AgentCoordinator
+import json
+import uuid
+import pandas as pd
 from werkzeug.utils import secure_filename
-from services.document_analyzer import analyze_pdf
+import logging
+from datetime import datetime
+import io
 
-document_routes = Blueprint('document_routes', __name__)
+from utils.pdf_processor import PDFProcessor
+
+# הגדרת לוגר
 logger = logging.getLogger(__name__)
 
-# יצירת מתאם סוכנים
-agent_coordinator = AgentCoordinator()
+# יצירת Blueprint
+document_routes = Blueprint('document_routes', __name__)
 
+# הגדרת תיקיית העלאות
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'pdf', 'xlsx', 'xls', 'csv', 'docx', 'doc', 'txt'}
+
+# בדיקה אם סיומת הקובץ מותרת
 def allowed_file(filename):
-    """Check if file type is allowed."""
-    ALLOWED_EXTENSIONS = {'pdf'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@document_routes.route('/api/documents/process', methods=['POST'])
-def process_document():
-    """עיבוד מסמך באמצעות מסגרת הסוכנים."""
-    if 'file' not in request.files:
-        return jsonify({'error': 'לא סופק קובץ'}), 400
-        
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'לא נבחר קובץ'}), 400
-        
-    if not file.filename.lower().endswith('.pdf'):
-        return jsonify({'error': 'רק קבצי PDF נתמכים'}), 400
-    
+# נתיב להעלאת קובץ
+@document_routes.route('/api/upload', methods=['POST'])
+def upload_file():
+    """
+    העלאת קובץ ועיבודו
+    """
     try:
-        # שמירת הקובץ שהועלה באופן זמני
-        temp_file_path = os.path.join('temp', file.filename)
-        os.makedirs('temp', exist_ok=True)
-        file.save(temp_file_path)
+        # בדיקה אם קיים קובץ בבקשה
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
         
-        # עיבוד המסמך עם מתאם הסוכנים
-        results = agent_coordinator.process_document(temp_file_path)
+        file = request.files['file']
         
-        # ניקוי קובץ זמני
-        os.remove(temp_file_path)
+        # בדיקה אם נבחר קובץ
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
         
-        # הוצאת מזהה המסמך, או יצירת מזהה זמני אם לא קיים
-        document_id = results.get('document_id', 'doc_' + str(id(results)))
+        # קבלת שפה מבוקשת (ברירת מחדל: עברית)
+        language = request.form.get('language', 'he')
         
-        return jsonify({
-            'status': 'success',
-            'document_id': document_id,
-            'page_count': len(results.get('document_content', {})),
-            'table_count': sum(len(tables) for tables in results.get('tables', {}).values()),
-            'message': 'המסמך עובד בהצלחה'
-        }), 200
-        
-    except Exception as e:
-        logger.error(f"שגיאה בעיבוד המסמך: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/<document_id>/available-fields', methods=['GET'])
-def get_available_fields(document_id):
-    """קבלת שדות זמינים להתאמת טבלה."""
-    try:
-        # במערכת אמיתית, קבל שדות ספציפיים למסמך
-        # בינתיים, החזר סט סטנדרטי של שדות
-        fields = [
-            'security_type',
-            'isin_number',
-            'security_name',
-            'current_price',
-            'total_value',
-            'portfolio_weight',
-            'yield_percent',
-            'maturity_date',
-            'total_return',
-            'performance',
-            'currency',
-            'credit_rating',
-            'sector'
-        ]
-        
-        return jsonify({
-            'document_id': document_id,
-            'fields': fields
-        }), 200
-        
-    except Exception as e:
-        logger.error(f"שגיאה בקבלת שדות זמינים: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/<document_id>/generate-table', methods=['POST'])
-def generate_custom_table(document_id):
-    """יצירת טבלה מותאמת אישית על סמך מפרט המשתמש."""
-    try:
-        query_spec = request.json
-        if not query_spec:
-            return jsonify({'error': 'לא סופק מפרט שאילתה'}), 400
-            
-        # יצירת הטבלה באמצעות מתאם הסוכנים
-        result = agent_coordinator.generate_custom_table(document_id, query_spec)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"שגיאה ביצירת טבלה מותאמת אישית: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/<document_id>/natural-language-query', methods=['POST'])
-def process_natural_language_query(document_id):
-    """עיבוד שאילתה בשפה טבעית ליצירת טבלה מותאמת אישית."""
-    try:
-        data = request.json
-        if not data or 'query' not in data:
-            return jsonify({'error': 'לא סופקה שאילתה'}), 400
-            
-        query_text = data['query']
-        user_id = getattr(request, 'user_id', 'default_user')  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
-        
-        # עיבוד השאילתה באמצעות מתאם הסוכנים
-        result = agent_coordinator.process_natural_language_query(document_id, query_text, user_id)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"שגיאה בעיבוד שאילתה בשפה טבעית: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/pdf/analyze', methods=['POST'])
-def analyze_document():
-    # Check if file was uploaded
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-    
-    file = request.files['file']
-    
-    # Check if file is empty
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-    
-    # Check if file type is allowed
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'File type not allowed. Please upload a PDF file'}), 400
-    
-    try:
-        # Make sure uploads folder exists
-        uploads_folder = os.path.join(os.getcwd(), 'uploads')
-        if not os.path.exists(uploads_folder):
-            os.makedirs(uploads_folder)
-            
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(uploads_folder, filename)
-        file.save(filepath)
-        
-        # Analyze the PDF
-        analysis_result = analyze_pdf(filepath)
-        
-        return jsonify({
-            'message': 'File analyzed successfully',
-            'filename': filename,
-            'analysis': analysis_result
-        })
-    except Exception as e:
-        logger.error(f"Error analyzing document: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/<filename>')
-def get_document(filename):
-    try:
-        uploads_folder = os.path.join(os.getcwd(), 'uploads')
-        return send_from_directory(uploads_folder, filename)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 404
-
-# נתיבי API חדשים לתמיכה בסוכן הזיכרון וסוכן האנליטיקה
-
-@document_routes.route('/api/analytics/portfolio/<user_id>', methods=['GET'])
-def analyze_portfolio(user_id):
-    """ניתוח מגמות בתיק השקעות."""
-    try:
-        time_period = request.args.get('time_period', 180, type=int)
-        
-        # קריאה לסוכן אנליטיקה
-        result = agent_coordinator.analyze_portfolio_trends(user_id, time_period)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"Error analyzing portfolio: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/analytics/insights/<document_id>', methods=['GET'])
-def get_document_insights(document_id):
-    """קבלת תובנות ממסמך פיננסי."""
-    try:
-        # קריאה לסוכן אנליטיקה
-        result = agent_coordinator.generate_document_insights(document_id)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"Error getting document insights: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/search', methods=['GET'])
-def search_documents():
-    """חיפוש מסמכים דומים."""
-    try:
-        query = request.args.get('q', '')
-        user_id = request.args.get('user_id', None)
-        
-        if not query:
-            return jsonify({'error': 'No query provided'}), 400
-            
-        # קריאה לסוכן זיכרון
-        result = agent_coordinator.find_similar_documents(query, user_id)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"Error searching documents: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/analytics/outliers/<user_id>', methods=['GET'])
-def detect_outliers(user_id):
-    """זיהוי חריגות בנתונים פיננסיים."""
-    try:
-        metric = request.args.get('metric', 'yield_percent')
-        
-        # קריאה לסוכן אנליטיקה
-        result = agent_coordinator.detect_outliers(user_id, metric)
-        
-        if 'error' in result:
-            return jsonify(result), 400
-            
-        return jsonify(result), 200
-        
-    except Exception as e:
-        logger.error(f"Error detecting outliers: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@document_routes.route('/api/documents/upload', methods=['POST'])
-def upload_document():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-        
-    if file and allowed_file(file.filename):
-        try:
-            uploads_folder = os.path.join(os.getcwd(), 'uploads')
-            if not os.path.exists(uploads_folder):
-                os.makedirs(uploads_folder)
-                
+        # בדיקה אם סוג הקובץ מותר
+        if file and allowed_file(file.filename):
+            # יצירת שם קובץ בטוח
             filename = secure_filename(file.filename)
-            file_path = os.path.join(uploads_folder, filename)
+            
+            # הוספת חותמת זמן וזיהוי ייחודי לשם הקובץ כדי למנוע התנגשויות
+            unique_id = str(uuid.uuid4())[:8]
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # יצירת שם קובץ חדש עם חותמת זמן ו-UUID
+            basename, extension = os.path.splitext(filename)
+            new_filename = f"{basename}_{timestamp}_{unique_id}{extension}"
+            
+            # נתיב מלא לשמירת הקובץ
+            file_path = os.path.join(UPLOAD_FOLDER, new_filename)
+            
+            # שמירת הקובץ
             file.save(file_path)
-            return jsonify({'document_id': str(filename)}), 201
-        except Exception as e:
-            return jsonify({'error': f'Error saving file: {str(e)}'}), 500
-    
-    return jsonify({'error': 'Invalid file type'}), 400
+            logger.info(f"File saved: {file_path}")
+            
+            # עיבוד הקובץ בהתאם לסוג
+            if extension.lower() == '.pdf':
+                # עיבוד PDF
+                return process_pdf(file_path, language)
+            elif extension.lower() in ['.xlsx', '.xls']:
+                # עיבוד קובץ אקסל
+                return process_excel(file_path, language)
+            elif extension.lower() == '.csv':
+                # עיבוד קובץ CSV
+                return process_csv(file_path, language)
+            else:
+                # סוגי קבצים אחרים
+                return jsonify({
+                    "message": "File uploaded successfully, but processing not implemented for this file type",
+                    "document_id": os.path.basename(file_path),
+                    "language": language
+                })
+                
+        else:
+            return jsonify({"error": f"File type not allowed. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}"}), 400
+            
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error uploading file: {str(e)}"}), 500
+
+def process_pdf(file_path, language):
+    """
+    עיבוד קובץ PDF
+    """
+    try:
+        # יצירת מעבד PDF
+        pdf_processor = PDFProcessor(ocr_enabled=True, lang="heb+eng" if language == "he" else "eng")
+        
+        # חילוץ טקסט
+        text = pdf_processor.extract_text(file_path)
+        
+        # חילוץ טבלאות
+        tables = pdf_processor.extract_tables(file_path)
+        
+        # חילוץ מידע פיננסי
+        financial_data = pdf_processor.extract_financial_data(file_path)
+        
+        # יצירת מזהה מסמך
+        document_id = os.path.basename(file_path)
+        
+        # שמירת הנתונים המעובדים
+        processed_data = {
+            "document_id": document_id,
+            "text": text,
+            "tables": tables,
+            "financial_data": financial_data,
+            "file_path": file_path,
+            "language": language,
+            "processing_date": datetime.now().isoformat()
+        }
+        
+        # שמירת הנתונים המעובדים לקובץ JSON
+        json_path = os.path.join('data', f"{document_id}.json")
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(processed_data, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"PDF processed successfully: {document_id}")
+        
+        return jsonify({
+            "message": "PDF processed successfully",
+            "document_id": document_id,
+            "table_count": len(tables),
+            "text_length": len(text),
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing PDF: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error processing PDF: {str(e)}"}), 500
+
+def process_excel(file_path, language):
+    """
+    עיבוד קובץ אקסל
+    """
+    try:
+        # קריאת קובץ אקסל
+        xls = pd.ExcelFile(file_path)
+        
+        # קריאת כל הגיליונות
+        sheets = {}
+        for sheet_name in xls.sheet_names:
+            df = pd.read_excel(file_path, sheet_name=sheet_name)
+            sheets[sheet_name] = df.to_dict(orient='records')
+        
+        # יצירת מזהה מסמך
+        document_id = os.path.basename(file_path)
+        
+        # שמירת הנתונים המעובדים
+        processed_data = {
+            "document_id": document_id,
+            "sheets": sheets,
+            "file_path": file_path,
+            "language": language,
+            "processing_date": datetime.now().isoformat()
+        }
+        
+        # שמירת הנתונים המעובדים לקובץ JSON
+        json_path = os.path.join('data', f"{document_id}.json")
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(processed_data, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"Excel processed successfully: {document_id}")
+        
+        return jsonify({
+            "message": "Excel processed successfully",
+            "document_id": document_id,
+            "sheet_count": len(sheets),
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing Excel: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error processing Excel: {str(e)}"}), 500
+
+def process_csv(file_path, language):
+    """
+    עיבוד קובץ CSV
+    """
+    try:
+        # ניסיון לקרוא עם קידוד UTF-8
+        try:
+            df = pd.read_csv(file_path, encoding='utf-8')
+        except UnicodeDecodeError:
+            # אם זה נכשל, ננסה עם קידוד ISO-8859-8 (עברית)
+            df = pd.read_csv(file_path, encoding='ISO-8859-8')
+        
+        # יצירת מזהה מסמך
+        document_id = os.path.basename(file_path)
+        
+        # המרת DataFrame למילון
+        data = df.to_dict(orient='records')
+        
+        # שמירת הנתונים המעובדים
+        processed_data = {
+            "document_id": document_id,
+            "data": data,
+            "file_path": file_path,
+            "language": language,
+            "processing_date": datetime.now().isoformat()
+        }
+        
+        # שמירת הנתונים המעובדים לקובץ JSON
+        json_path = os.path.join('data', f"{document_id}.json")
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(processed_data, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"CSV processed successfully: {document_id}")
+        
+        return jsonify({
+            "message": "CSV processed successfully",
+            "document_id": document_id,
+            "row_count": len(data),
+            "column_count": len(df.columns),
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing CSV: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error processing CSV: {str(e)}"}), 500
+
+# נתיב לקבלת רשימת מסמכים
+@document_routes.route('/api/documents', methods=['GET'])
+def get_documents():
+    """
+    קבלת רשימת המסמכים המעובדים
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # קריאת קבצי JSON מתיקיית data
+        documents = []
+        data_dir = 'data'
+        
+        if os.path.exists(data_dir):
+            for filename in os.listdir(data_dir):
+                if filename.endswith('.json'):
+                    try:
+                        with open(os.path.join(data_dir, filename), 'r', encoding='utf-8') as f:
+                            doc_data = json.load(f)
+                            
+                            # יצירת תקציר מסמך
+                            doc_summary = {
+                                "document_id": doc_data.get("document_id", filename),
+                                "processing_date": doc_data.get("processing_date", ""),
+                                "language": doc_data.get("language", "unknown"),
+                                "file_path": doc_data.get("file_path", "")
+                            }
+                            
+                            # הוספת מידע נוסף בהתאם לסוג הקובץ
+                            if "tables" in doc_data:
+                                doc_summary["type"] = "PDF"
+                                doc_summary["table_count"] = len(doc_data.get("tables", []))
+                                doc_summary["text_length"] = len(doc_data.get("text", ""))
+                            elif "sheets" in doc_data:
+                                doc_summary["type"] = "Excel"
+                                doc_summary["sheet_count"] = len(doc_data.get("sheets", {}))
+                            elif "data" in doc_data:
+                                doc_summary["type"] = "CSV"
+                                doc_summary["row_count"] = len(doc_data.get("data", []))
+                            
+                            documents.append(doc_summary)
+                    except Exception as e:
+                        logger.error(f"Error reading document JSON {filename}: {str(e)}")
+        
+        # מיון לפי תאריך עיבוד (החדש ביותר קודם)
+        documents.sort(key=lambda x: x.get("processing_date", ""), reverse=True)
+        
+        message = "מסמכים נטענו בהצלחה" if language == "he" else "Documents loaded successfully"
+        
+        return jsonify({
+            "message": message,
+            "documents": documents,
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting documents: {str(e)}", exc_info=True)
+        error_message = f"שגיאה בטעינת מסמכים: {str(e)}" if language == "he" else f"Error loading documents: {str(e)}"
+        return jsonify({"error": error_message}), 500
+
+# נתיב לקבלת פרטי מסמך
+@document_routes.route('/api/documents/<document_id>', methods=['GET'])
+def get_document(document_id):
+    """
+    קבלת פרטי מסמך ספציפי
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # בדיקה אם קובץ JSON קיים
+        json_path = os.path.join('data', f"{document_id}.json")
+        
+        if not os.path.exists(json_path):
+            error_message = "מסמך לא נמצא" if language == "he" else "Document not found"
+            return jsonify({"error": error_message}), 404
+        
+        # קריאת קובץ JSON
+        with open(json_path, 'r', encoding='utf-8') as f:
+            document_data = json.load(f)
+        
+        message = "מסמך נטען בהצלחה" if language == "he" else "Document loaded successfully"
+        
+        return jsonify({
+            "message": message,
+            "document": document_data,
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting document {document_id}: {str(e)}", exc_info=True)
+        error_message = f"שגיאה בטעינת מסמך: {str(e)}" if language == "he" else f"Error loading document: {str(e)}"
+        return jsonify({"error": error_message}), 500
+
+# נתיב לייצוא טבלה לאקסל
+@document_routes.route('/api/export/<document_id>/table/<int:table_index>', methods=['GET'])
+def export_table(document_id, table_index):
+    """
+    ייצוא טבלה ספציפית לקובץ אקסל
+    """
+    try:
+        # בדיקה אם קובץ JSON קיים
+        json_path = os.path.join('data', f"{document_id}.json")
+        
+        if not os.path.exists(json_path):
+            return jsonify({"error": "Document not found"}), 404
+        
+        # קריאת קובץ JSON
+        with open(json_path, 'r', encoding='utf-8') as f:
+            document_data = json.load(f)
+        
+        # בדיקה אם יש טבלאות במסמך
+        if "tables" not in document_data or table_index >= len(document_data["tables"]):
+            return jsonify({"error": "Table not found"}), 404
+        
+        # קבלת נתוני הטבלה
+        table_data = document_data["tables"][table_index]
+        
+        # יצירת DataFrame מנתוני הטבלה
+        if "rows" in table_data:
+            # אם יש שורות מוגדרות, השתמש בהן
+            df = pd.DataFrame([row.split() for row in table_data["rows"]])
+            # הגדרת השורה הראשונה כשמות עמודות אם יש יותר משורה אחת
+            if len(df) > 1:
+                df.columns = df.iloc[0]
+                df = df[1:]
+        else:
+            # אם אין מבנה שורות מוגדר, השתמש בתוכן הגולמי
+            content_lines = table_data.get("content", "").split('\n')
+            df = pd.DataFrame([line.split() for line in content_lines if line.strip()])
+            # הגדרת השורה הראשונה כשמות עמודות אם יש יותר משורה אחת
+            if len(df) > 1:
+                df.columns = df.iloc[0]
+                df = df[1:]
+        
+        # יצירת קובץ אקסל בזיכרון
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, sheet_name='Table', index=False)
+        
+        output.seek(0)
+        
+        # שליחת הקובץ למשתמש
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f"{document_id}_table_{table_index}.xlsx"
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting table {table_index} from document {document_id}: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error exporting table: {str(e)}"}), 500
+
+# נתיב למחיקת מסמך
+@document_routes.route('/api/documents/<document_id>', methods=['DELETE'])
+def delete_document(document_id):
+    """
+    מחיקת מסמך ספציפי
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # בדיקה אם קובץ JSON קיים
+        json_path = os.path.join('data', f"{document_id}.json")
+        
+        if not os.path.exists(json_path):
+            error_message = "מסמך לא נמצא" if language == "he" else "Document not found"
+            return jsonify({"error": error_message}), 404
+        
+        # קריאת קובץ JSON לקבלת נתיב הקובץ המקורי
+        with open(json_path, 'r', encoding='utf-8') as f:
+            document_data = json.load(f)
+        
+        # נתיב הקובץ המקורי
+        original_file_path = document_data.get("file_path", "")
+        
+        # מחיקת קובץ JSON
+        os.remove(json_path)
+        
+        # מחיקת הקובץ המקורי אם הוא קיים
+        if original_file_path and os.path.exists(original_file_path):
+            os.remove(original_file_path)
+        
+        message = "מסמך נמחק בהצלחה" if language == "he" else "Document deleted successfully"
+        
+        return jsonify({
+            "message": message,
+            "document_id": document_id,
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error deleting document {document_id}: {str(e)}", exc_info=True)
+        error_message = f"שגיאה במחיקת מסמך: {str(e)}" if language == "he" else f"Error deleting document: {str(e)}"
+        return jsonify({"error": error_message}), 500
