@@ -37,9 +37,12 @@ def process_document():
         # ניקוי קובץ זמני
         os.remove(temp_file_path)
         
+        # הוצאת מזהה המסמך, או יצירת מזהה זמני אם לא קיים
+        document_id = results.get('document_id', 'doc_' + str(id(results)))
+        
         return jsonify({
             'status': 'success',
-            'document_id': 'doc_' + str(id(results)),  # במערכת אמיתית, השתמש במזהה מסמך מתאים
+            'document_id': document_id,
             'page_count': len(results.get('document_content', {})),
             'table_count': sum(len(tables) for tables in results.get('tables', {}).values()),
             'message': 'המסמך עובד בהצלחה'
@@ -109,9 +112,10 @@ def process_natural_language_query(document_id):
             return jsonify({'error': 'לא סופקה שאילתה'}), 400
             
         query_text = data['query']
+        user_id = getattr(request, 'user_id', 'default_user')  # בממשק אמיתי, יש להשתמש במזהה המשתמש האמיתי
         
         # עיבוד השאילתה באמצעות מתאם הסוכנים
-        result = agent_coordinator.process_natural_language_query(document_id, query_text)
+        result = agent_coordinator.process_natural_language_query(document_id, query_text, user_id)
         
         if 'error' in result:
             return jsonify(result), 400
@@ -160,3 +164,79 @@ def get_document(filename):
         return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
     except Exception as e:
         return jsonify({'error': str(e)}), 404
+
+# נתיבי API חדשים לתמיכה בסוכן הזיכרון וסוכן האנליטיקה
+
+@document_routes.route('/api/analytics/portfolio/<user_id>', methods=['GET'])
+def analyze_portfolio(user_id):
+    """ניתוח מגמות בתיק השקעות."""
+    try:
+        time_period = request.args.get('time_period', 180, type=int)
+        
+        # קריאה לסוכן אנליטיקה
+        result = agent_coordinator.analyze_portfolio_trends(user_id, time_period)
+        
+        if 'error' in result:
+            return jsonify(result), 400
+            
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error analyzing portfolio: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/analytics/insights/<document_id>', methods=['GET'])
+def get_document_insights(document_id):
+    """קבלת תובנות ממסמך פיננסי."""
+    try:
+        # קריאה לסוכן אנליטיקה
+        result = agent_coordinator.generate_document_insights(document_id)
+        
+        if 'error' in result:
+            return jsonify(result), 400
+            
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting document insights: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/documents/search', methods=['GET'])
+def search_documents():
+    """חיפוש מסמכים דומים."""
+    try:
+        query = request.args.get('q', '')
+        user_id = request.args.get('user_id', None)
+        
+        if not query:
+            return jsonify({'error': 'No query provided'}), 400
+            
+        # קריאה לסוכן זיכרון
+        result = agent_coordinator.find_similar_documents(query, user_id)
+        
+        if 'error' in result:
+            return jsonify(result), 400
+            
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error searching documents: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@document_routes.route('/api/analytics/outliers/<user_id>', methods=['GET'])
+def detect_outliers(user_id):
+    """זיהוי חריגות בנתונים פיננסיים."""
+    try:
+        metric = request.args.get('metric', 'yield_percent')
+        
+        # קריאה לסוכן אנליטיקה
+        result = agent_coordinator.detect_outliers(user_id, metric)
+        
+        if 'error' in result:
+            return jsonify(result), 400
+            
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error detecting outliers: {str(e)}")
+        return jsonify({'error': str(e)}), 500

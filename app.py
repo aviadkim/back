@@ -2,6 +2,10 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -21,6 +25,15 @@ app.static_url_path = '/static'
 from routes.document_routes import document_routes
 app.register_blueprint(document_routes)
 
+# Import LangChain routes (if available)
+try:
+    from routes.langchain_routes import langchain_routes
+    app.register_blueprint(langchain_routes)
+    print("LangChain routes registered successfully")
+except ImportError as e:
+    print(f"Warning: Could not import LangChain routes: {e}")
+    print("LangChain functionality will not be available")
+
 # Basic error handlers
 @app.errorhandler(404)
 def not_found(error):
@@ -33,9 +46,13 @@ def server_error(error):
 # Health check endpoint
 @app.route('/health')
 def health_check():
+    # Check if Mistral API key is set
+    mistral_available = bool(os.environ.get('MISTRAL_API_KEY'))
+    
     return jsonify({
         'status': 'healthy',
-        'timestamp': datetime.now().isoformat()
+        'timestamp': datetime.now().isoformat(),
+        'langchain_ready': mistral_available
     })
 
 @app.route('/', defaults={'path': ''})
@@ -50,7 +67,7 @@ def serve(path):
     return send_from_directory(build_path, 'index.html')
 
 # Port configuration for Codespaces compatibility
-port = int(os.environ.get('PORT', 8080))
+port = int(os.environ.get('PORT', 8080))  # Keep 8080 as default for Codespaces
 
 def allowed_file(filename):
     """Check if file type is allowed."""

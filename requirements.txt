@@ -3,6 +3,11 @@ PyPDF2==3.0.1
 pdf2image==1.16.3
 pytesseract==0.3.10
 PyMuPDF>=1.22.0  # Updated version
+unstructured>=0.10.0
+
+# LangChain & LLM Integrations
+langchain>=0.1.0
+langchain_mistralai>=0.0.2
 
 # API and web framework
 fastapi==0.104.1
@@ -17,6 +22,9 @@ python-dotenv==0.19.0
 pandas==2.1.1
 numpy==1.26.0
 python-dateutil==2.8.2
+
+# Database
+pymongo==4.6.1
 
 # API models
 pydantic==2.4.2
