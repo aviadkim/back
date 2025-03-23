@@ -1,4 +1,6 @@
-"""Utility functions package."""
-from .pdf_processor import extract_text_from_pdf
+# utils/__init__.py
+# ייבוא פונקציות שימושיות
 
-__all__ = ['extract_text_from_pdf']
+# הערה: נשנה את הייבוא כדי שיתאים למבנה הקובץ הנוכחי
+# במקום ייבוא פונקציה ספציפית, נייבא את המחלקה PDFProcessor
+from .pdf_processor import PDFProcessor
