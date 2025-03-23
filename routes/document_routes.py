@@ -131,7 +131,7 @@ def process_natural_language_query(document_id):
         logger.error(f"שגיאה בעיבוד שאילתה בשפה טבעית: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@document_routes.route('/api/documents/analyze', methods=['POST'])
+@document_routes.route('/pdf/analyze', methods=['POST'])
 def analyze_document():
     # Check if file was uploaded
     if 'file' not in request.files:
@@ -148,8 +148,13 @@ def analyze_document():
         return jsonify({'error': 'File type not allowed. Please upload a PDF file'}), 400
     
     try:
+        # Make sure uploads folder exists
+        uploads_folder = os.path.join(os.getcwd(), 'uploads')
+        if not os.path.exists(uploads_folder):
+            os.makedirs(uploads_folder)
+            
         filename = secure_filename(file.filename)
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        filepath = os.path.join(uploads_folder, filename)
         file.save(filepath)
         
         # Analyze the PDF
@@ -161,12 +166,14 @@ def analyze_document():
             'analysis': analysis_result
         })
     except Exception as e:
+        logger.error(f"Error analyzing document: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @document_routes.route('/api/documents/<filename>')
 def get_document(filename):
     try:
-        return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+        uploads_folder = os.path.join(os.getcwd(), 'uploads')
+        return send_from_directory(uploads_folder, filename)
     except Exception as e:
         return jsonify({'error': str(e)}), 404
 
@@ -257,9 +264,12 @@ def upload_document():
         
     if file and allowed_file(file.filename):
         try:
+            uploads_folder = os.path.join(os.getcwd(), 'uploads')
+            if not os.path.exists(uploads_folder):
+                os.makedirs(uploads_folder)
+                
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file_path = os.path.join(uploads_folder, filename)
             file.save(file_path)
             return jsonify({'document_id': str(filename)}), 201
         except Exception as e:
