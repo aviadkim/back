@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניתוח מסמכים פיננסיים</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/chatbot-fix.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-blue-800">מערכת ניתוח מסמכים פיננסיים</h1>
+        </header>
+        
+        <main>
+            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">העלאת מסמך</h2>
+                <form id="upload-form" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">בחר קובץ להעלאה:</label>
+                        <input type="file" id="file-input" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">שפה:</label>
+                        <select id="language-select" class="w-full p-2 border rounded">
+                            <option value="he" selected>עברית</option>
+                            <option value="en">אנגלית</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">העלאה</button>
+                </form>
+                <div id="upload-status" class="mt-4 hidden"></div>
+            </div>
+            
+            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">מסמכים</h2>
+                <div id="documents-list" class="space-y-2">
+                    <p>טוען מסמכים...</p>
+                </div>
+            </div>
+            
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">צ'אט חכם</h2>
+                <p class="mb-4">שאל שאלות לגבי המסמכים שהעלית:</p>
+                <div id="chatbot-container" class="block">
+                    <!-- הצ'טבוט יוטען כאן -->
+                </div>
+            </div>
+        </main>
+        
+        <footer class="mt-8 text-center text-gray-600">
+            <p>© 2025 מערכת ניתוח מסמכים פיננסיים</p>
+        </footer>
+    </div>
+    
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>
