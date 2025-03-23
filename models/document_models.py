@@ -99,7 +99,7 @@ class MemoryEntry(Base):
     document_id = Column(Integer, ForeignKey('documents.id'), nullable=False)
     entry_type = Column(String(50), nullable=False)  # סוג הזיכרון ("query", "insight", "alert")
     content = Column(Text, nullable=False)  # תוכן הזיכרון
-    metadata = Column(JSON, nullable=True)  # מטא-דאטה נוסף
+    meta_data = Column(JSON, nullable=True)  # מטא-דאטה נוסף (שינינו metadata ל-meta_data)
     creation_date = Column(DateTime, default=datetime.utcnow)
     last_accessed = Column(DateTime, default=datetime.utcnow)
     access_count = Column(Integer, default=0)  # כמה פעמים פריט זה נצפה
@@ -110,3 +110,22 @@ class MemoryEntry(Base):
     
     def __repr__(self):
         return f"<MemoryEntry(id={self.id}, document_id={self.document_id}, entry_type='{self.entry_type}')>"
+
+
+class Query(Base):
+    """מודל לשמירת שאילתות בשפה טבעית והתוצאות שלהן."""
+    __tablename__ = 'queries'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String(100), nullable=False)
+    query_text = Column(Text, nullable=False)
+    structured_query = Column(JSON, nullable=False)
+    results = Column(JSON, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<Query(id={self.id}, user_id='{self.user_id}', query_text='{self.query_text[:20]}...')>"
+
+    @property
+    def document_ids(self):
+        return []  # ברירת מחדל, אם צריך אפשר להרחיב
