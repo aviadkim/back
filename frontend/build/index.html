@@ -4,58 +4,547 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מערכת ניתוח מסמכים פיננסיים</title>
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/css/chatbot-fix.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .button-primary {
+            background-color: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .button-primary:hover {
+            background-color: rgba(96, 165, 250, 1);
+        }
+        
+        .button-secondary {
+            background-color: rgba(107, 114, 128, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .button-secondary:hover {
+            background-color: rgba(107, 114, 128, 0.3);
+        }
+        
+        .button-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: rgb(252, 165, 165);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .button-danger:hover {
+            background-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .input-field {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: white;
+            width: 100%;
+        }
+        
+        .document-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .document-card:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .message-user {
+            background-color: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem 0.75rem 0 0.75rem;
+            max-width: 80%;
+            margin-left: auto;
+            margin-bottom: 0.75rem;
+        }
+        
+        .message-bot {
+            background-color: rgba(75, 85, 99, 0.7);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem 0.75rem 0.75rem 0;
+            max-width: 80%;
+            margin-right: auto;
+            margin-bottom: 0.75rem;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .status-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-uploaded {
+            color: #d1d5db;
+        }
+        
+        .status-processing {
+            color: #60a5fa;
+        }
+        
+        .status-ready {
+            color: #34d399;
+        }
+        
+        .status-error {
+            color: #f87171;
+        }
+        
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Diagnostic button styles */
+        .diagnostic-button {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.75rem 1.5rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .diagnostic-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Alert styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-info {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: rgb(191, 219, 254);
+        }
+        
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: rgb(167, 243, 208);
+        }
+        
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: rgb(253, 230, 138);
+        }
+        
+        .alert-error {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: rgb(252, 165, 165);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto px-4 py-8">
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-blue-800">מערכת ניתוח מסמכים פיננסיים</h1>
-        </header>
-        
-        <main>
-            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">העלאת מסמך</h2>
-                <form id="upload-form" class="space-y-4">
-                    <div>
-                        <label class="block text-gray-700 mb-2">בחר קובץ להעלאה:</label>
-                        <input type="file" id="file-input" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">שפה:</label>
-                        <select id="language-select" class="w-full p-2 border rounded">
-                            <option value="he" selected>עברית</option>
-                            <option value="en">אנגלית</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">העלאה</button>
-                </form>
-                <div id="upload-status" class="mt-4 hidden"></div>
-            </div>
+<body>
+    <div class="container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">מערכת ניתוח מסמכים פיננסיים</h1>
+            <p class="text-gray-300 text-lg">העלה מסמכים פיננסיים וקבל תובנות באמצעות צ'אט מבוסס AI.</p>
             
-            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">מסמכים</h2>
-                <div id="documents-list" class="space-y-2">
-                    <p>טוען מסמכים...</p>
+            <!-- Diagnostic button -->
+            <a href="/system-diagnostic" class="diagnostic-button mt-4">
+                אבחון מערכת PDF
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Document Management Section -->
+            <div class="space-y-6">
+                <!-- Upload Card -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4">העלאת מסמך</h2>
+                    <div class="mb-4">
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <input type="file" id="file-input" name="file" class="input-field mb-2" accept=".pdf,.xlsx,.csv,.docx">
+                            <label for="file-input" class="text-sm text-gray-400 block mb-4">גרור ושחרר קבצים, או לחץ לבחירה (PDF, Excel, CSV)</label>
+                            
+                            <div class="mb-4">
+                                <label for="language-select" class="text-sm text-gray-400 block mb-2">שפת המסמך</label>
+                                <select id="language-select" name="language" class="input-field">
+                                    <option value="he" selected>עברית</option>
+                                    <option value="en">English</option>
+                                    <option value="es">Español</option>
+                                    <option value="fr">Français</option>
+                                    <option value="de">Deutsch</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="button-primary">העלאה</button>
+                        </form>
+                    </div>
+                    <div id="upload-status" class="hidden alert alert-info">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span>מעלה את הקובץ...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documents List Card -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4">מסמכים</h2>
+                    <div id="documents-list" class="space-y-3">
+                        <!-- Documents will be added here dynamically -->
+                        <div class="text-gray-400 text-center">אין מסמכים להצגה</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Chat Section -->
+            <div class="card">
                 <h2 class="text-xl font-semibold mb-4">צ'אט חכם</h2>
-                <p class="mb-4">שאל שאלות לגבי המסמכים שהעלית:</p>
-                <div id="chatbot-container" class="block">
-                    <!-- הצ'טבוט יוטען כאן -->
+                <div id="chat-messages" class="chat-container mb-4">
+                    <!-- Sample message -->
+                    <div class="message-bot fade-in">
+                        ברוכים הבאים! איך אוכל לעזור לך עם המסמכים שלך?
+                    </div>
+                </div>
+                <div class="flex">
+                    <textarea id="message-input" class="input-field ml-2" placeholder="הקלד את שאלתך..."></textarea>
+                    <button id="send-message" class="button-primary">שלח</button>
                 </div>
             </div>
-        </main>
-        
-        <footer class="mt-8 text-center text-gray-600">
-            <p>© 2025 מערכת ניתוח מסמכים פיננסיים</p>
-        </footer>
+        </div>
     </div>
-    
-    <script src="/static/js/main.js"></script>
-    <script src="/static/js/chatbot.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadForm = document.getElementById('upload-form');
+            const fileInput = document.getElementById('file-input');
+            const languageSelect = document.getElementById('language-select');
+            const uploadStatus = document.getElementById('upload-status');
+            const documentsList = document.getElementById('documents-list');
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendMessageBtn = document.getElementById('send-message');
+            
+            // Sample documents data
+            let documents = [];
+            
+            // Helper to create status icon
+            function getStatusIcon(status) {
+                switch(status) {
+                    case 'uploaded':
+                        return '<svg class="status-icon status-uploaded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>';
+                    case 'processing':
+                        return '<svg class="status-icon status-processing spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
+                    case 'ready':
+                        return '<svg class="status-icon status-ready" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                    case 'error':
+                        return '<svg class="status-icon status-error" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                    default:
+                        return '';
+                }
+            }
+            
+            // Get status text in the correct language
+            function getStatusText(status, language) {
+                const translations = {
+                    'en': {
+                        'uploaded': 'Uploaded',
+                        'processing': 'Processing',
+                        'ready': 'Ready',
+                        'error': 'Error'
+                    },
+                    'he': {
+                        'uploaded': 'הועלה',
+                        'processing': 'בטיפול',
+                        'ready': 'מוכן',
+                        'error': 'שגיאה'
+                    }
+                };
+                
+                return translations[language] ? translations[language][status] : translations['he'][status];
+            }
+            
+            // Render documents list
+            function renderDocuments() {
+                if (documents.length === 0) {
+                    documentsList.innerHTML = '<div class="text-gray-400 text-center">אין מסמכים להצגה</div>';
+                    return;
+                }
+                
+                documentsList.innerHTML = '';
+                documents.forEach(doc => {
+                    const docElement = document.createElement('div');
+                    docElement.className = 'document-card fade-in';
+                    docElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="mr-3">
+                                ${getStatusIcon(doc.status)}
+                            </div>
+                            <div>
+                                <div class="font-medium">${doc.name}</div>
+                                <div class="text-sm text-gray-400">${getStatusText(doc.status, doc.language)}</div>
+                            </div>
+                        </div>
+                        <button class="button-danger delete-document" data-id="${doc.id}">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    `;
+                    documentsList.appendChild(docElement);
+                });
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-document').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        documents = documents.filter(doc => doc.id !== id);
+                        renderDocuments();
+                    });
+                });
+            }
+            
+            // Add a new message to the chat
+            function addChatMessage(text, sender, language) {
+                const messageElement = document.createElement('div');
+                messageElement.className = sender === 'user' ? 'message-user fade-in' : 'message-bot fade-in';
+                messageElement.textContent = text;
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Handle file upload
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!fileInput.files.length) {
+                    alert('נא לבחור קובץ להעלאה');
+                    return;
+                }
+                
+                // Show upload status
+                uploadStatus.classList.remove('hidden');
+                
+                // Create FormData
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('language', languageSelect.value);
+                
+                // Add to documents with 'uploaded' status
+                const newDoc = {
+                    id: Date.now().toString(),
+                    name: fileInput.files[0].name,
+                    status: 'uploaded',
+                    language: languageSelect.value
+                };
+                
+                documents.push(newDoc);
+                renderDocuments();
+                
+                // Send to server (simulated with setTimeout for demo)
+                setTimeout(() => {
+                    // Update status to 'processing'
+                    documents = documents.map(doc => 
+                        doc.id === newDoc.id ? { ...doc, status: 'processing' } : doc
+                    );
+                    renderDocuments();
+                    
+                    // Simulate processing time
+                    setTimeout(() => {
+                        // Update to 'ready'
+                        documents = documents.map(doc => 
+                            doc.id === newDoc.id ? { ...doc, status: 'ready' } : doc
+                        );
+                        renderDocuments();
+                        uploadStatus.classList.add('hidden');
+                        
+                        // Clear file input
+                        fileInput.value = '';
+                        
+                        // Send to actual server (replace with real API call)
+                        fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Upload response:', data);
+                            
+                            // Add welcome message from bot about the uploaded document
+                            const language = languageSelect.value;
+                            const welcomeMessage = language === 'he' 
+                                ? `המסמך "${newDoc.name}" הועלה בהצלחה! אני יכול לענות על שאלות לגביו.`
+                                : `The document "${newDoc.name}" was uploaded successfully! I can answer questions about it.`;
+                                
+                            addChatMessage(welcomeMessage, 'bot', language);
+                        })
+                        .catch(error => {
+                            console.error('Upload error:', error);
+                            // Update to 'error' if the server request failed
+                            documents = documents.map(doc => 
+                                doc.id === newDoc.id ? { ...doc, status: 'error' } : doc
+                            );
+                            renderDocuments();
+                        });
+                    }, 2000);
+                }, 1000);
+            });
+            
+            // Handle send message
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                const language = languageSelect.value;
+                
+                // Add user message to chat
+                addChatMessage(message, 'user', language);
+                
+                // Clear input
+                messageInput.value = '';
+                
+                // Simulate bot response (replace with real API call)
+                setTimeout(() => {
+                    // Get bot response
+                    fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            question: message,
+                            language: language
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Add bot response
+                        const botResponse = data.answer || (language === 'he'
+                            ? 'אני עדיין לומד לנתח מסמכים. האם תוכל להיות יותר ספציפי?'
+                            : 'I am still learning to analyze documents. Could you be more specific?');
+                            
+                        addChatMessage(botResponse, 'bot', language);
+                    })
+                    .catch(error => {
+                        console.error('Chat error:', error);
+                        const errorMessage = language === 'he'
+                            ? 'אירעה שגיאה בעיבוד הבקשה. נסה שוב מאוחר יותר.'
+                            : 'An error occurred processing your request. Please try again later.';
+                            
+                        addChatMessage(errorMessage, 'bot', language);
+                    });
+                }, 1000);
+            }
+            
+            // Send message button
+            sendMessageBtn.addEventListener('click', sendMessage);
+            
+            // Send message on Enter key
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Initial render
+            renderDocuments();
+            
+            // Fetch existing documents
+            fetch('/api/documents')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length) {
+                        documents = data;
+                        renderDocuments();
+                    }
+                })
+                .catch(error => console.error('Error fetching documents:', error));
+        });
+    </script>
 </body>
 </html>
