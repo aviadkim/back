@@ -2,10 +2,10 @@ services:
   # A Python web service
   - type: web
     name: financial-doc-analyzer
-    env: python
+    runtime: docker
     region: eu-west-1  # Choose an appropriate region
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    rootDir: .
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: FLASK_ENV
         value: production
@@ -17,7 +17,9 @@ services:
         generateValue: true
       - key: DEFAULT_LANGUAGE
         value: he
-
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+        
 databases:
   - name: financial-doc-mongodb
     plan: free
