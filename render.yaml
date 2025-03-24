@@ -1,27 +1,27 @@
 services:
-  # A Python web service
   - type: web
     name: financial-doc-analyzer
-    runtime: docker
-    region: frankfurt  # Changed to supported Render region
-    rootDir: .
-    dockerfilePath: ./Dockerfile
+    env: docker
+    repo: https://github.com/aviadkim/back.git
+    branch: master
+    buildCommand: docker build -t financial-doc-analyzer .
+    startCommand: docker run -p $PORT:10000 financial-doc-analyzer
+    healthCheckPath: /health
     envVars:
       - key: FLASK_ENV
         value: production
       - key: PORT
         value: 10000
+      - key: DEFAULT_LANGUAGE
+        value: he
       - key: SECRET_KEY
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      - key: DEFAULT_LANGUAGE
-        value: he
-      - key: HUGGINGFACE_API_KEY
-        sync: false
-        
-databases:
-  - name: financial-doc-mongodb
-    plan: free
-    region: frankfurt  # Changed to supported Render region
-    ipAllowList: [] # only allow internal connections
+      - key: MONGO_URI
+        value: mongodb://localhost:27017/financial_documents
+        # Replace with your actual MongoDB URI when deploying
+    disk:
+      name: data-disk
+      mountPath: /app/data
+      sizeGB: 1
