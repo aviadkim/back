@@ -16,30 +16,7 @@ try:
     logger.info("AgentCoordinator initialized successfully")
 except Exception as e:
     logger.error(f"Error initializing AgentCoordinator: {str(e)}")
-    # יצירת מתאם דמה שמחזיר תשובות סטטיות
-    class DummyCoordinator:
-        def answer_question(self, **kwargs):
-            return {
-                "answer": "זוהי תשובת דמה. המערכת אינה מחוברת למודל AI בזמן זה.",
-                "sources": [],
-                "conversation_id": kwargs.get("conversation_id", "dummy_conversation"),
-                "language": kwargs.get("language", "he")
-            }
-        
-        def process_document(self, **kwargs):
-            return True
-        
-        def get_document_summary(self, document_id, **kwargs):
-            return {"summary": "סיכום דמה", "document_id": document_id}
-        
-        def clear_conversation(self, conversation_id):
-            return True
-        
-        def set_language(self, language):
-            return True
-    
-    coordinator = DummyCoordinator()
-    logger.warning("Using DummyCoordinator due to initialization error")
+    coordinator = None
 
 @langchain_routes.route('/api/chat', methods=['POST'])
 def chat():
@@ -246,15 +223,8 @@ def health_check():
     """
     language = request.args.get('language', 'he')  # ברירת מחדל היא עברית
     
-    # Check if we're using the dummy coordinator
-    using_dummy = isinstance(coordinator, DummyCoordinator)
-    
-    if using_dummy:
-        status = "warning"
-        status_message = "שירותי AI מוגבלים - משתמש במודל דמה" if language == "he" else "AI services limited - using dummy model"
-    else:
-        status = "ok"
-        status_message = "שירותי AI פעילים" if language == "he" else "AI services operational"
+    status = "warning"
+    status_message = "שירותי AI מוגבלים - משתמש במודל דמה" if language == "he" else "AI services limited - using dummy model"
     
     status_language = "עברית" if language == "he" else "English"
     
