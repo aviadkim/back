@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דיאגנוסטיקה למערכת ניתוח מסמכים</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .diagnostic-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .diagnostic-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .results-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .check-item {
+            margin-bottom: 15px;
+            border-right: 4px solid #ccc;
+            padding-right: 15px;
+        }
+        
+        .check-item.success {
+            border-right-color: #4CAF50;
+        }
+        
+        .check-item.failure {
+            border-right-color: #f44336;
+        }
+        
+        .check-title {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .check-status {
+            margin-left: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .check-status.success {
+            background-color: #4CAF50;
+        }
+        
+        .check-status.failure {
+            background-color: #f44336;
+        }
+        
+        .check-details {
+            margin-top: 5px;
+            margin-right: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .recommendations {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 5px;
+        }
+        
+        .recommendations h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        
+        .recommendations ul {
+            margin-bottom: 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>דיאגנוסטיקה למערכת ניתוח מסמכים</h1>
+        <p style="text-align: center;">לחץ על הכפתור למטה כדי לבדוק את תקינות המערכת ולאתר בעיות בעיבוד קבצי PDF</p>
+        
+        <button id="run-diagnostics" class="diagnostic-btn">הפעל בדיקה</button>
+        
+        <div id="spinner" class="spinner"></div>
+        
+        <div id="results" class="results-container">
+            <h2>תוצאות הבדיקה</h2>
+            <div id="results-summary"></div>
+            <div id="checks-container"></div>
+            
+            <div id="recommendations" class="recommendations" style="display: none;">
+                <h3>המלצות לתיקון</h3>
+                <ul id="recommendations-list"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('run-diagnostics').addEventListener('click', runDiagnostics);
+        
+        function runDiagnostics() {
+            // Show spinner
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('run-diagnostics').disabled = true;
+            
+            // Call the diagnostic API
+            fetch('/diagnostic/check')
+                .then(response => response.json())
+                .then(data => {
+                    displayResults(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('results-summary').innerHTML = 
+                        '<div class="check-item failure"><div class="check-title">' +
+                        '<span class="check-status failure"></span>שגיאה בביצוע הבדיקה</div>' +
+                        '<div class="check-details">אירעה שגיאה בעת ניסיון לבצע את הבדיקה. ייתכן שהשרת אינו פעיל.</div></div>';
+                    document.getElementById('results').style.display = 'block';
+                })
+                .finally(() => {
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('run-diagnostics').disabled = false;
+                });
+        }
+        
+        function displayResults(data) {
+            // Display summary
+            const summaryEl = document.getElementById('results-summary');
+            if (data.status === 'ok') {
+                summaryEl.innerHTML = '<div class="check-item success"><div class="check-title">' +
+                    '<span class="check-status success"></span>כל המערכות תקינות</div>' +
+                    '<div class="check-details">לא נמצאו בעיות במערכת עיבוד קבצי PDF.</div></div>';
+            } else {
+                summaryEl.innerHTML = '<div class="check-item failure"><div class="check-title">' +
+                    '<span class="check-status failure"></span>נמצאו בעיות במערכת</div>' +
+                    '<div class="check-details">נמצאו מספר בעיות שעלולות להשפיע על עיבוד קבצי PDF.</div></div>';
+            }
+            
+            // Display individual checks
+            const checksEl = document.getElementById('checks-container');
+            checksEl.innerHTML = '';
+            
+            for (const [checkName, checkResult] of Object.entries(data.checks)) {
+                const checkItem = document.createElement('div');
+                checkItem.className = `check-item ${checkResult.passed ? 'success' : 'failure'}`;
+                
+                // Format the check name for display
+                const formattedName = checkName.replace(/_/g, ' ')
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                
+                checkItem.innerHTML = `
+                    <div class="check-title">
+                        <span class="check-status ${checkResult.passed ? 'success' : 'failure'}"></span>
+                        ${formattedName}
+                    </div>
+                    <div class="check-details">${checkResult.message}</div>
+                `;
+                
+                checksEl.appendChild(checkItem);
+            }
+            
+            // Display recommendations if any
+            const recommendationsEl = document.getElementById('recommendations');
+            const recommendationsListEl = document.getElementById('recommendations-list');
+            
+            if (data.recommendations && data.recommendations.length > 0) {
+                recommendationsListEl.innerHTML = '';
+                data.recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    recommendationsListEl.appendChild(li);
+                });
+                recommendationsEl.style.display = 'block';
+            } else {
+                recommendationsEl.style.display = 'none';
+            }
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
