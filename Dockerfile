@@ -1,8 +1,8 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# התקנת תלויות OS
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-heb \
@@ -10,18 +10,24 @@ RUN apt-get update && apt-get install -y \
     poppler-utils \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# העתקת קבצי הפרויקט
+# Copy requirements file
 COPY requirements.txt .
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code
 COPY . .
 
-# יצירת תיקיות נדרשות
-RUN mkdir -p uploads data data/embeddings data/templates logs
+# Create necessary directories
+RUN mkdir -p uploads data/embeddings data/templates logs
 
-# הגדרת משתני סביבה
+# Set environment variables
 ENV FLASK_ENV=production
-ENV PORT=5000
+ENV PORT=10000
 
-# הגדרת פקודת הרצה
+# Expose port
+EXPOSE 10000
+
+# Run the application with gunicorn
 CMD gunicorn --bind 0.0.0.0:$PORT app:app
