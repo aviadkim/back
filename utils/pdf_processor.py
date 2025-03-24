@@ -7,10 +7,16 @@ import os
 import tempfile
 import logging
 from typing import Dict, List, Tuple, Optional, Any
+import pdf2image
 
 # הגדרת לוגר
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Configure Tesseract path from environment or default
+TESSERACT_PATH = os.environ.get('TESSERACT_PATH', '/usr/bin/tesseract')
+if TESSERACT_PATH:
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 # Simple function to extract text from PDF - used by tests
 def extract_text_from_pdf(file_path: str) -> str:
@@ -57,6 +63,14 @@ class PDFProcessor:
         if self.ocr_enabled:
             try:
                 pytesseract.get_tesseract_version()
+                logger.info(f"Tesseract version: {pytesseract.get_tesseract_version()}")
+                
+                # Check if Hebrew language is available
+                langs = pytesseract.get_languages()
+                logger.info(f"Available languages: {langs}")
+                
+                if 'heb' not in langs and self.lang.startswith('heb'):
+                    logger.warning("Hebrew language data not found for Tesseract OCR")
             except Exception as e:
                 logger.warning(f"OCR לא זמין: {e}. מבטל OCR.")
                 self.ocr_enabled = False
@@ -89,7 +103,7 @@ class PDFProcessor:
                     # אם הטקסט חסר או OCR מופעל, מנסה OCR
                     if self.ocr_enabled and (not page_text or len(page_text) < 100):
                         logger.info(f"משתמש ב-OCR עבור עמוד {page_num + 1}")
-                        page_text = self._extract_text_with_ocr(page)
+                        page_text = self._extract_text_with_ocr(pdf_path, page_num)
                     
                     text += page_text + "\n\n"
                 
@@ -178,19 +192,38 @@ class PDFProcessor:
             logger.error(f"שגיאה בחילוץ מידע פיננסי מ-PDF: {e}")
             return financial_data
     
-    def _extract_text_with_ocr(self, page) -> str:
+    def _extract_text_with_ocr(self, pdf_path: str, page_num: int) -> str:
         """
         חילוץ טקסט מעמוד PDF באמצעות OCR
         
         Args:
-            page: עמוד PDF
+            pdf_path: נתיב לקובץ PDF
+            page_num: מספר העמוד לחילוץ
             
         Returns:
             str: הטקסט המחולץ
         """
         try:
-            # השיטה פשוטה יותר לסביבת ענן
-            return "OCR content would appear here"
+            logger.info(f"Starting OCR for page {page_num+1} of {pdf_path}")
+            
+            # Convert PDF page to image
+            images = pdf2image.convert_from_path(
+                pdf_path,
+                first_page=page_num+1,
+                last_page=page_num+1
+            )
+            
+            if not images:
+                logger.warning(f"No images generated from page {page_num+1}")
+                return ""
+            
+            # Get the first (and only) image
+            image = images[0]
+            
+            # Extract text with pytesseract
+            extracted_text = pytesseract.image_to_string(image, lang=self.lang)
+            
+            return extracted_text
             
         except Exception as e:
             logger.error(f"שגיאה ב-OCR: {e}")
