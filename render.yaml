@@ -3,7 +3,7 @@ services:
   - type: web
     name: financial-doc-analyzer
     runtime: docker
-    region: eu-west-1  # Choose an appropriate region
+    region: frankfurt  # Changed to supported Render region
     rootDir: .
     dockerfilePath: ./Dockerfile
     envVars:
@@ -23,5 +23,5 @@ services:
 databases:
   - name: financial-doc-mongodb
     plan: free
-    region: eu-west-1
+    region: frankfurt  # Changed to supported Render region
     ipAllowList: [] # only allow internal connections
