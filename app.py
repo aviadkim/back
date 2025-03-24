@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_from_directory, jsonify
 from flask_cors import CORS
 import os
+import jinja2
 from dotenv import load_dotenv
 import logging
 
