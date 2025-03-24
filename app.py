@@ -118,7 +118,16 @@ def serve_favicon():
 # Simple test page for debugging
 @app.route('/test')
 def test_page():
-    html = """
+    diagnostic_link = ""
+    if has_diagnostic:
+        diagnostic_link = """
+        <div style="margin: 20px 0;">
+            <a href="/system-diagnostic" style="display: inline-block; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">אבחון מערכת PDF</a>
+            <p>לחץ על הכפתור לביצוע אבחון של בעיות בעיבוד קבצי PDF</p>
+        </div>
+        """
+    
+    html = f"""
     <!DOCTYPE html>
     <html lang="he" dir="rtl">
     <head>
@@ -126,14 +135,18 @@ def test_page():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Test Page</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .container { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
-            .chatbox { height: 300px; border: 2px solid blue; padding: 10px; overflow-y: auto; }
-            .controls { margin-top: 10px; }
+            body {{ font-family: Arial, sans-serif; margin: 20px; }}
+            .container {{ border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }}
+            .chatbox {{ height: 300px; border: 2px solid blue; padding: 10px; overflow-y: auto; }}
+            .controls {{ margin-top: 10px; }}
+            .diagnostic-btn {{ display: inline-block; margin: 20px 0; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; }}
+            .diagnostic-btn:hover {{ background-color: #45a049; }}
         </style>
     </head>
     <body>
         <h1>דף בדיקה פשוט</h1>
+        
+        {diagnostic_link}
         
         <div class="container">
             <h2>העלאת קובץ</h2>
@@ -158,7 +171,7 @@ def test_page():
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {{
                 console.log('Test page loaded');
                 
                 // Upload form
@@ -167,12 +180,12 @@ def test_page():
                 const languageSelect = document.getElementById('language-select');
                 const uploadStatus = document.getElementById('upload-status');
                 
-                uploadForm.addEventListener('submit', function(e) {
+                uploadForm.addEventListener('submit', function(e) {{
                     e.preventDefault();
-                    if (!fileInput.files.length) {
+                    if (!fileInput.files.length) {{
                         uploadStatus.textContent = 'נא לבחור קובץ';
                         return;
-                    }
+                    }}
                     
                     const formData = new FormData();
                     formData.append('file', fileInput.files[0]);
@@ -180,27 +193,27 @@ def test_page():
                     
                     uploadStatus.textContent = 'שולח קובץ...';
                     
-                    fetch('/api/upload', {
+                    fetch('/api/upload', {{
                         method: 'POST',
                         body: formData
-                    })
+                    }})
                     .then(response => response.json())
-                    .then(data => {
+                    .then(data => {{
                         uploadStatus.textContent = 'הקובץ הועלה בהצלחה!';
                         console.log('Upload response:', data);
-                    })
-                    .catch(error => {
+                    }})
+                    .catch(error => {{
                         uploadStatus.textContent = 'שגיאה בהעלאה: ' + error.message;
                         console.error('Upload error:', error);
-                    });
-                });
+                    }});
+                }});
                 
                 // Chat
                 const chatMessages = document.getElementById('chat-messages');
                 const messageInput = document.getElementById('message-input');
                 const sendButton = document.getElementById('send-button');
                 
-                sendButton.addEventListener('click', function() {
+                sendButton.addEventListener('click', function() {{
                     const message = messageInput.value.trim();
                     if (!message) return;
                     
@@ -217,18 +230,18 @@ def test_page():
                     messageInput.value = '';
                     
                     // Send to API
-                    fetch('/api/chat', {
+                    fetch('/api/chat', {{
                         method: 'POST',
-                        headers: {
+                        headers: {{
                             'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
+                        }},
+                        body: JSON.stringify({{
                             question: message,
                             language: languageSelect.value
-                        })
-                    })
+                        }})
+                    }})
                     .then(response => response.json())
-                    .then(data => {
+                    .then(data => {{
                         console.log('Chat response:', data);
                         
                         const botMsg = document.createElement('div');
@@ -239,8 +252,8 @@ def test_page():
                         botMsg.style.padding = '5px';
                         botMsg.style.borderRadius = '5px';
                         chatMessages.appendChild(botMsg);
-                    })
-                    .catch(error => {
+                    }})
+                    .catch(error => {{
                         console.error('Chat error:', error);
                         
                         const errorMsg = document.createElement('div');
@@ -248,19 +261,19 @@ def test_page():
                         errorMsg.style.color = 'red';
                         errorMsg.style.margin = '5px';
                         chatMessages.appendChild(errorMsg);
-                    });
-                });
+                    }});
+                }});
                 
                 // Test initial API health
                 fetch('/api/health')
                     .then(response => response.json())
-                    .then(data => {
+                    .then(data => {{
                         console.log('API health:', data);
-                    })
-                    .catch(error => {
+                    }})
+                    .catch(error => {{
                         console.error('API health check error:', error);
-                    });
-            });
+                    }});
+            }});
         </script>
     </body>
     </html>
