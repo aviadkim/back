@@ -1,145 +1,85 @@
-# מערכת ניתוח מסמכים פיננסיים - גרסה 2.1
+# מערכת ניתוח מסמכים פיננסיים
 
-מערכת AI מתקדמת לניתוח מסמכים פיננסיים, המאפשרת העלאת מסמכים וצ'אט אינטראקטיבי איתם.
+מערכת לניתוח מסמכים פיננסיים בעברית ושפות אחרות באמצעות בינה מלאכותית. המערכת מאפשרת העלאת קבצי PDF, Excel וקבצי CSV, ומספקת ממשק צ'אט חכם לשאילת שאלות אודות המסמכים.
 
 ## תכונות עיקריות
 
-- 📄 עיבוד מסמכי PDF, Excel ו-CSV עם תמיכה משופרת
-- 🔍 חילוץ טקסט מ-PDF באמצעות OCR מתקדם רב-שפתי
-- 💬 צ'אטבוט AI משופר לשאלות ותשובות על המסמכים
-- 📊 זיהוי וחילוץ מדויק יותר של טבלאות ממסמכים
-- 📱 ממשק משתמש רספונסיבי בעברית עם תצוגה משופרת
+- **ניתוח מסמכים**: תמיכה בקבצי PDF, Excel ו-CSV
+- **תמיכה רב-לשונית**: עברית, אנגלית ושפות נוספות
+- **OCR מובנה**: עם תמיכה בשפה העברית
+- **צ'אט מבוסס AI**: אינטראקציה טבעית עם המסמכים
+- **ממשק משתמש חדשני**: עיצוב אינטואיטיבי ומגיב
+- **כלי אבחון**: לזיהוי וטיפול בתקלות במערכת
 
-## התקנה מהירה
+## התקנה מקומית
 
-### דרישות מקדימות
+### דרישות מערכת
 
-- Python 3.8 או גרסה חדשה יותר
-- Docker (למסד נתונים MongoDB)
-- Tesseract OCR (לשיפור חילוץ טקסט)
+- Python 3.9 או גרסה חדשה יותר
+- MongoDB
+- Tesseract OCR עם תמיכה בעברית
+- poppler-utils (לעיבוד קבצי PDF)
 
-### שלבים להתקנה
+### הוראות התקנה
 
-1. שכפול המאגר והתקנת סביבה וירטואלית:
+1. שיבוט המאגר:
+   ```bash
+   git clone https://github.com/aviadkim/back.git
+   cd back
+   ```
 
-```bash
-git clone https://github.com/aviadkim/back.git
-cd back
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# או
-venv\Scripts\activate     # Windows
-```
+2. יצירת סביבה וירטואלית:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # לינוקס/מק
+   # או
+   venv\Scripts\activate     # חלונות
+   ```
 
-2. התקנת תלויות:
+3. התקנת תלויות:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+4. התקנת Tesseract OCR:
+   - **לינוקס**: `sudo apt-get install tesseract-ocr tesseract-ocr-heb poppler-utils`
+   - **מק**: `brew install tesseract tesseract-lang poppler`
+   - **חלונות**: הורד והתקן מ-[UB-Mannheim Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
 
-3. עריכת קובץ `.env` עם הגדרות מתאימות:
+5. הגדרת משתני סביבה:
+   - העתק את הקובץ `.env.sample` לקובץ `.env` ומלא את הערכים הנדרשים.
 
-```
-# הגדרות API חיצוניים
-HUGGINGFACE_API_KEY=your_key_here  # החלף במפתח שלך להשתמש ב-AI אמיתי
-```
+6. הפעלת השרת:
+   ```bash
+   python app.py
+   ```
 
-4. הרצת סקריפט האתחול:
+7. גישה לאפליקציה:
+   - פתח דפדפן בכתובת: `http://localhost:5000`
 
-```bash
-python start.py
-```
+## הפעלה בענן (Render)
 
-הסקריפט ידאג:
-- ליצירת כל התיקיות הנדרשות
-- לאימות הגדרות הסביבה
-- להפעלת MongoDB
-- להרצת בדיקות
-- להפעלת השרת
+1. הירשם ל-[Render](https://render.com/) וחבר את חשבון ה-GitHub שלך
+2. צור שירות חדש וקשר אותו למאגר `aviadkim/back`
+3. הגדר את השירות:
+   - **סוג**: Web Service
+   - **תבנית ייצור**: Docker
+   - **ענף**: master
+   - **משתני סביבה**: הגדר את המשתנים מקובץ `.env.sample`
+   - **תכנית אחסון**: הוסף נפח אחסון למסמכים
 
-## שימוש במערכת
+4. לחץ "Deploy" והמתן לסיום התהליך
+5. גש לכתובת ה-URL שתוצג לאחר ההפעלה
 
-לאחר הפעלת השרת, גש לכתובת: http://localhost:5000
+## אבחון בעיות
 
-המערכת כוללת שלושה חלקים עיקריים:
-1. **אזור העלאת מסמכים** - להעלאת קבצי PDF, Excel או CSV חדשים
-2. **רשימת מסמכים** - הצגת המסמכים שהועלו ואפשרויות לצפייה ומחיקה
-3. **צ'אטבוט משופר** - לשאילת שאלות על המסמכים שהועלו
+המערכת כוללת כלי אבחון מובנה לזיהוי בעיות בעיבוד קבצי PDF:
 
-## תמיכה ב-OCR משופר
+1. גש לכתובת `/test` במערכת שלך (לדוגמה, `http://localhost:5000/test` או `https://your-app.onrender.com/test`)
+2. לחץ על כפתור "אבחון מערכת PDF"
+3. הפעל את הבדיקה באמצעות לחיצה על כפתור "הפעל בדיקה"
+4. בדוק את הבעיות המוצגות ופתור אותן לפי ההמלצות
 
-המערכת כוללת תמיכה משופרת בחילוץ טקסט אוטומטי (OCR) ממסמכי PDF סרוקים, כולל:
-- זיהוי טקסט משופר בעברית
-- תמיכה ברב-שפתיות
-- ביצועים משופרים
+## רישיון
 
-### התקנת Tesseract OCR
-
-**Windows:**
-1. הורד והתקן מ: https://github.com/UB-Mannheim/tesseract/wiki
-2. הוסף לנתיב המערכת (PATH)
-3. וודא שהתקנת את חבילות השפה העברית והאנגלית
-
-**Linux:**
-```bash
-sudo apt-get update
-sudo apt-get install -y tesseract-ocr tesseract-ocr-heb tesseract-ocr-eng
-```
-
-**Mac:**
-```bash
-brew install tesseract
-brew install tesseract-lang
-```
-
-## חידושים בגרסה 2.1
-
-גרסה 2.1 מביאה מספר שיפורים משמעותיים:
-
-1. **ממשק צ'אטבוט משופר**
-   - נראות משופרת בכל הרזולוציות
-   - טיפול טוב יותר בהיסטוריית שיחה
-   - תצוגה משופרת של תשובות ומקורות
-
-2. **OCR מתקדם יותר**
-   - תמיכה טובה יותר בעברית
-   - שיפור יכולת זיהוי טבלאות
-   - מהירות עיבוד משופרת
-
-3. **ניהול מפתחות API משופר**
-   - אבטחה טובה יותר של מפתחות
-   - טיפול חכם יותר בשגיאות תקשורת
-   - תמיכה במספר ספקי AI
-
-4. **ביצועים משופרים**
-   - טעינה מהירה יותר של מסמכים
-   - חיפוש מהיר יותר במסמכים
-   - צריכת משאבים נמוכה יותר
-
-למידע מפורט על השינויים בגרסה 2.1, ראה את [תיעוד הגרסה](VERSION.md).
-
-## פיתוח נוסף
-
-כדי להוסיף תכונות או לתרום למערכת:
-
-1. צור ענף (branch) חדש עבור התכונה שלך
-2. פתח בקשת משיכה (pull request) עם הסברים על השינויים שביצעת
-3. וודא שכל הבדיקות עוברות
-
-## פתרון בעיות נפוצות
-
-### הצ'אטבוט לא מופיע
-- וודא שנקודת הקצה `/api/health` מחזירה תשובה תקינה
-- בדוק את קונסולת הדפדפן לשגיאות JavaScript
-
-### מודל ה-AI מחזיר רק "תשובות דמה"
-- וודא שיש לך מפתח Hugging Face API תקף בקובץ `.env`
-- בדוק את הלוגים ב-`logs/app.log` לשגיאות אתחול מודל
-
-### שגיאת OCR
-- וודא שהתקנת Tesseract OCR כראוי
-- בדוק שהנתיב ל-Tesseract נכון והוא זמין בסביבת המערכת
-
-## יצירת קשר ותמיכה
-
-לשאלות, תמיכה או דיווח על באגים, אנא צור [issue חדש](https://github.com/aviadkim/back/issues) או פנה ישירות למפתחים.
+זכויות יוצרים © 2025
