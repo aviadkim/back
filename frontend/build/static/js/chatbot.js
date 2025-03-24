@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`${apiBaseUrl}/api/documents?language=he`)
                 .then(response => response.json())
                 .then(data => {
-                    if (response.ok && data.documents) {
+                    if (data.documents) {
                         // Clear existing options except "All Documents"
                         while (documentSelector.options.length > 1) {
                             documentSelector.remove(1);
