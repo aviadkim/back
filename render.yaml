@@ -1,0 +1,25 @@
+services:
+  # A Python web service
+  - type: web
+    name: financial-doc-analyzer
+    env: python
+    region: eu-west-1  # Choose an appropriate region
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEFAULT_LANGUAGE
+        value: he
+
+databases:
+  - name: financial-doc-mongodb
+    plan: free
+    region: eu-west-1
+    ipAllowList: [] # only allow internal connections
