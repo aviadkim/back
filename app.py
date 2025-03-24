@@ -17,14 +17,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # יצירת תיקיות נדרשות אם אינן קיימות
-required_dirs = ['uploads', 'data', 'data/embeddings', 'logs']
+required_dirs = ['uploads', 'data', 'data/embeddings', 'logs', 'templates']
 for directory in required_dirs:
     os.makedirs(directory, exist_ok=True)
 
 # יצירת אפליקציית Flask
 app = Flask(__name__, 
-            static_folder='frontend/build/static',
-            template_folder='frontend/build')
+            static_folder='frontend/build/static')
+
+# Set custom template folders with fallback
+app.jinja_loader = jinja2.ChoiceLoader([
+    jinja2.FileSystemLoader('templates'),
+    jinja2.FileSystemLoader('frontend/build')
+])
 
 # הגדרת CORS כדי לאפשר גישה מהפרונטאנד (כל מקור)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -40,17 +45,33 @@ def after_request(response):
 from routes.document_routes import document_routes
 from routes.langchain_routes import langchain_routes
 
+# Import the diagnostic routes
+try:
+    from diagnostic import register_diagnostic_routes
+    has_diagnostic = True
+except ImportError:
+    has_diagnostic = False
+    logger.warning("Diagnostic module not found. Diagnostic routes will not be available.")
+
 # רישום נתיבים
 app.register_blueprint(document_routes)
 app.register_blueprint(langchain_routes)
+
+# Register diagnostic routes if available
+if has_diagnostic:
+    register_diagnostic_routes(app)
+    
+    @app.route('/system-diagnostic', methods=['GET'])
+    def diagnostic_page():
+        return render_template('diagnostic.html')
 
 # נתיב ברירת מחדל להצגת הפרונטאנד
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     try:
-        if path and os.path.exists(os.path.join(app.template_folder, path)):
-            return send_from_directory(app.template_folder, path)
+        if path and os.path.exists(os.path.join('frontend/build', path)):
+            return send_from_directory('frontend/build', path)
         else:
             return render_template('index.html')
     except Exception as e:
@@ -71,7 +92,7 @@ def serve_static(path):
 @app.route('/manifest.json')
 def serve_manifest():
     try:
-        return send_from_directory(app.template_folder, 'manifest.json')
+        return send_from_directory('frontend/build', 'manifest.json')
     except:
         # If manifest.json doesn't exist, create a basic one
         manifest = {
@@ -88,7 +109,7 @@ def serve_manifest():
 @app.route('/favicon.ico')
 def serve_favicon():
     try:
-        return send_from_directory(app.template_folder, 'favicon.ico')
+        return send_from_directory('frontend/build', 'favicon.ico')
     except:
         # Return a 204 No Content if favicon is missing
         return '', 204
