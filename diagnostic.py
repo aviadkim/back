@@ -882,3 +882,5 @@ def repair_tesseract_language():
         results['message'] = f'Failed to install language pack: {str(e)}'
     
     return results
+
+# שים לב: אין כאן פונקציית register_diagnostic_routes - הסרנו אותה
