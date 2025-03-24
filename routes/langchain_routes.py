@@ -84,7 +84,7 @@ def chat():
         logger.error(f"General error in chat endpoint: {str(e)}")
         return jsonify({"error": f"General error: {str(e)}"}), 500
 
-@langchain_routes.route('/api/upload', methods=['POST'])
+@langchain_routes.route('/api/process_document', methods=['POST'])
 def upload_document():
     """
     נקודת קצה להעלאת מסמך לעיבוד
