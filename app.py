@@ -46,9 +46,10 @@ def after_request(response):
 from routes.document_routes import document_routes
 from routes.langchain_routes import langchain_routes
 
+# הקטע החדש (להחליף):
 # Import the diagnostic routes
 try:
-    from diagnostic import register_diagnostic_routes
+    from diagnostic import diagnostic_bp
     has_diagnostic = True
 except ImportError:
     has_diagnostic = False
@@ -60,7 +61,7 @@ app.register_blueprint(langchain_routes)
 
 # Register diagnostic routes if available
 if has_diagnostic:
-    register_diagnostic_routes(app)
+    app.register_blueprint(diagnostic_bp, url_prefix='/diagnostic')
     
     @app.route('/system-diagnostic', methods=['GET'])
     def diagnostic_page():
