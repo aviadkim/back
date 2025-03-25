@@ -1,304 +1,344 @@
 import React from 'react';
 import {
   Box,
-  Typography,
   Card,
   CardContent,
   Divider,
-  Chip,
+  Typography,
   Grid,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Alert,
-  List,
-  ListItem,
-  ListItemText
+  Chip,
+  useTheme,
 } from '@mui/material';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+
+// Translations for the component
+const translations = {
+  en: {
+    extractedData: 'Extracted Data',
+    financialSummary: 'Financial Summary',
+    entities: 'Extracted Entities',
+    tables: 'Extracted Tables',
+    noData: 'No data has been extracted from this document.',
+    noEntities: 'No entities were found in this document.',
+    noTables: 'No tables were found in this document.',
+    date: 'Date',
+    institution: 'Institution',
+    accountNumber: 'Account Number',
+    accountHolder: 'Account Holder',
+    totalIncome: 'Total Income',
+    totalExpenses: 'Total Expenses',
+    balance: 'Balance',
+    currency: 'Currency',
+    table: 'Table',
+    entityType: 'Type',
+    entityValue: 'Value',
+    entityConfidence: 'Confidence',
+  },
+  he: {
+    extractedData: 'נתונים שחולצו',
+    financialSummary: 'סיכום פיננסי',
+    entities: 'ישויות שחולצו',
+    tables: 'טבלאות שחולצו',
+    noData: 'לא חולצו נתונים ממסמך זה.',
+    noEntities: 'לא נמצאו ישויות במסמך זה.',
+    noTables: 'לא נמצאו טבלאות במסמך זה.',
+    date: 'תאריך',
+    institution: 'מוסד',
+    accountNumber: 'מספר חשבון',
+    accountHolder: 'בעל החשבון',
+    totalIncome: 'סך הכנסות',
+    totalExpenses: 'סך הוצאות',
+    balance: 'יתרה',
+    currency: 'מטבע',
+    table: 'טבלה',
+    entityType: 'סוג',
+    entityValue: 'ערך',
+    entityConfidence: 'ביטחון',
+  },
+};
 
 /**
- * ExtractedDataView component displays financial data extracted from documents
+ * Format a numeric value as currency
  * 
- * The component organizes and formats different types of financial data:
- * - Financial metrics (e.g., totals, averages, ratios)
- * - Account information
- * - Transaction details
- * - Investment holdings
- * - Performance metrics
+ * @param {number} value - The numeric value
+ * @param {string} currency - The currency code
+ * @returns {string} The formatted currency value
  */
-function ExtractedDataView({ document, language = 'he' }) {
-  if (!document || !document.extracted_data) {
+const formatCurrency = (value, currency = 'ILS') => {
+  if (value === null || value === undefined) return '-';
+  
+  return new Intl.NumberFormat('he-IL', {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
+/**
+ * Format a date value
+ * 
+ * @param {string} dateStr - The date string
+ * @returns {string} The formatted date
+ */
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('he-IL');
+  } catch (err) {
+    return dateStr;
+  }
+};
+
+/**
+ * ExtractedDataView component displays data extracted from a document
+ * 
+ * @param {Object} props - Component properties
+ * @param {Object} props.document - The document object
+ * @param {string} props.language - Current language (en/he)
+ * @returns {JSX.Element} The rendered component
+ */
+const ExtractedDataView = ({ document, language = 'en' }) => {
+  const theme = useTheme();
+  const t = translations[language];
+  
+  // Check if the document has any extracted data
+  const hasAnalysis = document?.analysis || document?.extracted_data;
+  const extractedData = document?.analysis || document?.extracted_data || {};
+  
+  // Extract financial data
+  const financialData = extractedData.financial_data || {};
+  
+  // Extract entities
+  const entities = extractedData.entities || [];
+  
+  // Extract tables
+  const tables = extractedData.tables || [];
+  
+  // If no data is available
+  if (!hasAnalysis) {
     return (
       <Alert severity="info">
-        {language === 'he' 
-          ? 'אין נתונים פיננסיים מחולצים למסמך זה' 
-          : 'No extracted financial data available for this document'}
+        {t.noData}
       </Alert>
     );
   }
   
-  const { extracted_data } = document;
-  
-  // Helper function to format currency values
-  const formatCurrency = (value, currencyCode = 'ILS') => {
-    if (value === undefined || value === null) return '-';
-    
-    return new Intl.NumberFormat(language === 'he' ? 'he-IL' : 'en-US', {
-      style: 'currency',
-      currency: currencyCode
-    }).format(value);
-  };
-  
-  // Helper function to format percentage values
-  const formatPercentage = (value) => {
-    if (value === undefined || value === null) return '-';
-    
-    return `${value.toFixed(2)}%`;
-  };
-  
-  // Helper function to format dates
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    
-    try {
-      return new Date(dateString).toLocaleDateString();
-    } catch (e) {
-      return dateString;
-    }
-  };
-  
   return (
     <Box>
-      {/* Financial Metrics Section */}
-      {extracted_data.financial_metrics && (
-        <Card variant="outlined" sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              {language === 'he' ? 'מדדים פיננסיים' : 'Financial Metrics'}
-            </Typography>
-            
-            <Grid container spacing={2}>
-              {Object.entries(extracted_data.financial_metrics).map(([key, value]) => (
-                <Grid item xs={12} sm={6} md={4} key={key}>
-                  <Box sx={{ p: 2, borderRadius: 1, bgcolor: 'background.paper' }}>
-                    <Typography variant="caption" color="text.secondary">
-                      {key.replace(/_/g, ' ')}
-                    </Typography>
-                    <Typography variant="h6">
-                      {typeof value === 'number' && key.includes('percent') 
-                        ? formatPercentage(value)
-                        : typeof value === 'number' && (key.includes('amount') || key.includes('value') || key.includes('balance'))
-                          ? formatCurrency(value, document.metadata?.currency)
-                          : typeof value === 'string' && key.includes('date')
-                            ? formatDate(value)
-                            : value}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
+      {/* Financial Summary */}
+      <Typography variant="h6" gutterBottom>
+        {t.financialSummary}
+      </Typography>
+      
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Grid container spacing={3}>
+            {/* Date and institution */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.date}
+              </Typography>
+              <Typography variant="body1">
+                {formatDate(financialData.date)}
+              </Typography>
             </Grid>
-          </CardContent>
-        </Card>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.institution}
+              </Typography>
+              <Typography variant="body1">
+                {financialData.institution || '-'}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.accountNumber}
+              </Typography>
+              <Typography variant="body1">
+                {financialData.account_number || '-'}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.accountHolder}
+              </Typography>
+              <Typography variant="body1">
+                {financialData.account_holder || '-'}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12}>
+              <Divider sx={{ my: 1 }} />
+            </Grid>
+            
+            {/* Financial figures */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.totalIncome}
+              </Typography>
+              <Typography 
+                variant="body1" 
+                color={financialData.total_income > 0 ? 'success.main' : 'text.primary'}
+                fontWeight="medium"
+              >
+                {formatCurrency(financialData.total_income, financialData.currency)}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.totalExpenses}
+              </Typography>
+              <Typography 
+                variant="body1" 
+                color={financialData.total_expenses > 0 ? 'error.main' : 'text.primary'}
+                fontWeight="medium"
+              >
+                {formatCurrency(financialData.total_expenses, financialData.currency)}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.balance}
+              </Typography>
+              <Typography 
+                variant="body1" 
+                color={
+                  financialData.balance > 0 
+                    ? 'success.main' 
+                    : financialData.balance < 0 
+                      ? 'error.main' 
+                      : 'text.primary'
+                }
+                fontWeight="medium"
+              >
+                {formatCurrency(financialData.balance, financialData.currency)}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t.currency}
+              </Typography>
+              <Typography variant="body1">
+                {financialData.currency || 'ILS'}
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+      
+      {/* Extracted Entities */}
+      <Typography variant="h6" gutterBottom>
+        {t.entities}
+      </Typography>
+      
+      {entities.length > 0 ? (
+        <TableContainer component={Paper} sx={{ mb: 4 }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>{t.entityType}</TableCell>
+                <TableCell>{t.entityValue}</TableCell>
+                <TableCell align="right">{t.entityConfidence}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {entities.map((entity, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Chip 
+                      label={entity.type} 
+                      size="small"
+                      color={
+                        entity.type.includes('MONEY') || entity.type.includes('CURRENCY')
+                          ? 'success'
+                          : entity.type.includes('DATE')
+                            ? 'primary'
+                            : entity.type.includes('PERSON')
+                              ? 'secondary'
+                              : 'default'
+                      }
+                      variant="outlined"
+                    />
+                  </TableCell>
+                  <TableCell>{entity.text}</TableCell>
+                  <TableCell align="right">
+                    {entity.confidence
+                      ? `${(entity.confidence * 100).toFixed(0)}%`
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Alert severity="info" sx={{ mb: 4 }}>
+          {t.noEntities}
+        </Alert>
       )}
       
-      {/* Account Information Section */}
-      {extracted_data.accounts && extracted_data.accounts.length > 0 && (
-        <Card variant="outlined" sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              {language === 'he' ? 'פרטי חשבונות' : 'Account Information'}
+      {/* Extracted Tables */}
+      <Typography variant="h6" gutterBottom>
+        {t.tables}
+      </Typography>
+      
+      {tables.length > 0 ? (
+        tables.map((table, tableIndex) => (
+          <Box key={tableIndex} sx={{ mb: 4 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              {`${t.table} ${tableIndex + 1}`}
             </Typography>
             
-            {extracted_data.accounts.map((account, index) => (
-              <Paper variant="outlined" sx={{ p: 2, mb: 2 }} key={index}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                  <Typography variant="subtitle1">
-                    {account.account_name || (language === 'he' ? 'חשבון' : 'Account')} {account.account_number ? `#${account.account_number}` : ''}
-                  </Typography>
-                  
-                  <Chip 
-                    icon={<AccountBalanceIcon />} 
-                    label={account.account_type || (language === 'he' ? 'חשבון' : 'Account')} 
-                    size="small"
-                  />
-                </Box>
-                
-                <Grid container spacing={2}>
-                  {account.balance && (
-                    <Grid item xs={12} sm={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {language === 'he' ? 'יתרה:' : 'Balance:'}
-                        </Typography>
-                        <Typography variant="body1" fontWeight="medium">
-                          {formatCurrency(account.balance, account.currency || document.metadata?.currency)}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  )}
-                  
-                  {account.available_balance && (
-                    <Grid item xs={12} sm={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {language === 'he' ? 'יתרה זמינה:' : 'Available Balance:'}
-                        </Typography>
-                        <Typography variant="body1">
-                          {formatCurrency(account.available_balance, account.currency || document.metadata?.currency)}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  )}
-                  
-                  {account.last_updated && (
-                    <Grid item xs={12} sm={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {language === 'he' ? 'עדכון אחרון:' : 'Last Updated:'}
-                        </Typography>
-                        <Typography variant="body1">
-                          {formatDate(account.last_updated)}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  )}
-                </Grid>
-                
-                {account.additional_details && Object.keys(account.additional_details).length > 0 && (
-                  <>
-                    <Divider sx={{ my: 1 }} />
-                    <Typography variant="subtitle2" gutterBottom>
-                      {language === 'he' ? 'פרטים נוספים' : 'Additional Details'}
-                    </Typography>
-                    
-                    <Grid container spacing={1}>
-                      {Object.entries(account.additional_details).map(([key, value]) => (
-                        <Grid item xs={12} sm={6} key={key}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">
-                              {key.replace(/_/g, ' ')}:
-                            </Typography>
-                            <Typography variant="body2">
-                              {value}
-                            </Typography>
-                          </Box>
-                        </Grid>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                {table.headers && (
+                  <TableHead>
+                    <TableRow>
+                      {table.headers.map((header, idx) => (
+                        <TableCell key={idx}>
+                          {header}
+                        </TableCell>
                       ))}
-                    </Grid>
-                  </>
+                    </TableRow>
+                  </TableHead>
                 )}
-              </Paper>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Investment Holdings Section */}
-      {extracted_data.investments && extracted_data.investments.length > 0 && (
-        <Card variant="outlined" sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              {language === 'he' ? 'נכסי השקעה' : 'Investment Holdings'}
-            </Typography>
-            
-            <Paper variant="outlined">
-              <Box sx={{ overflowX: 'auto' }}>
-                <Box
-                  component="table"
-                  sx={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    '& th, & td': {
-                      px: 2,
-                      py: 1.5,
-                      borderBottom: '1px solid',
-                      borderColor: 'divider',
-                    },
-                  }}
-                >
-                  <Box component="thead" sx={{ backgroundColor: 'background.default' }}>
-                    <Box component="tr">
-                      <Box component="th" sx={{ textAlign: 'left' }}>
-                        {language === 'he' ? 'שם נכס' : 'Security Name'}
-                      </Box>
-                      <Box component="th" sx={{ textAlign: 'right' }}>
-                        {language === 'he' ? 'כמות' : 'Quantity'}
-                      </Box>
-                      <Box component="th" sx={{ textAlign: 'right' }}>
-                        {language === 'he' ? 'מחיר יחידה' : 'Unit Price'}
-                      </Box>
-                      <Box component="th" sx={{ textAlign: 'right' }}>
-                        {language === 'he' ? 'שווי שוק' : 'Market Value'}
-                      </Box>
-                      <Box component="th" sx={{ textAlign: 'right' }}>
-                        {language === 'he' ? 'משקל בתיק' : 'Weight'}
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box component="tbody">
-                    {extracted_data.investments.map((investment, index) => (
-                      <Box component="tr" key={index}>
-                        <Box component="td">
-                          <Typography variant="body2">
-                            {investment.security_name || '-'}
-                          </Typography>
-                          {investment.symbol && (
-                            <Typography variant="caption" color="text.secondary">
-                              {investment.symbol}
-                            </Typography>
-                          )}
-                        </Box>
-                        <Box component="td" sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2">
-                            {investment.quantity !== undefined ? investment.quantity.toLocaleString() : '-'}
-                          </Typography>
-                        </Box>
-                        <Box component="td" sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2">
-                            {investment.unit_price !== undefined
-                              ? formatCurrency(investment.unit_price, investment.currency || document.metadata?.currency)
-                              : '-'}
-                          </Typography>
-                        </Box>
-                        <Box component="td" sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2" fontWeight="medium">
-                            {investment.market_value !== undefined
-                              ? formatCurrency(investment.market_value, investment.currency || document.metadata?.currency)
-                              : '-'}
-                          </Typography>
-                        </Box>
-                        <Box component="td" sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2">
-                            {investment.weight !== undefined
-                              ? formatPercentage(investment.weight)
-                              : '-'}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              </Box>
-            </Paper>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* No Data Case */}
-      {!extracted_data.financial_metrics && 
-       (!extracted_data.accounts || extracted_data.accounts.length === 0) &&
-       (!extracted_data.investments || extracted_data.investments.length === 0) && (
+                
+                <TableBody>
+                  {table.rows && table.rows.map((row, rowIdx) => (
+                    <TableRow key={rowIdx}>
+                      {row.map((cell, cellIdx) => (
+                        <TableCell key={cellIdx}>
+                          {cell}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        ))
+      ) : (
         <Alert severity="info">
-          {language === 'he'
-            ? 'לא נמצאו נתונים פיננסיים מובנים במסמך זה'
-            : 'No structured financial data found in this document'}
+          {t.noTables}
         </Alert>
       )}
     </Box>
   );
-}
+};
 
 export default ExtractedDataView;
