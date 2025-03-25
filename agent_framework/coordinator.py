@@ -1,199 +1,202 @@
-from typing import List, Dict, Optional, Any, Union
-import os
-import json
 import logging
+import uuid
+import os
+from typing import Dict, List, Any, Optional, Tuple
 from .memory_agent import MemoryAgent
-import re
+import json
 
 # הגדרת לוגר
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-class DummyCoordinator:
-    """
-    מתאם דמה - גרסה קלה יותר למשאבים
-    """
-    def __init__(self):
-        self.conversation_history = {}
-        self.default_language = "he"
-    
-    def answer_question(self, **kwargs):
-        """
-        תשובה פשוטה לצורך בדיקה
-        """
-        question = kwargs.get("question", "")
-        language = kwargs.get("language", "he")
-        conversation_id = kwargs.get("conversation_id", "dummy_conversation")
-        
-        if not conversation_id in self.conversation_history:
-            self.conversation_history[conversation_id] = []
-        
-        # שמירת השאלה בהיסטוריה
-        self.conversation_history[conversation_id].append({
-            "role": "user", 
-            "content": question
-        })
-        
-        # תשובה פשוטה
-        if language == "he":
-            answer = f"קיבלתי את השאלה: '{question}'. זו גרסת דמו של המערכת עם יכולות מוגבלות."
-        else:
-            answer = f"I received your question: '{question}'. This is a demo version of the system with limited capabilities."
-        
-        # שמירת התשובה בהיסטוריה
-        self.conversation_history[conversation_id].append({
-            "role": "assistant", 
-            "content": answer
-        })
-        
-        return {
-            "answer": answer,
-            "confidence": 0.7,
-            "sources": [],
-            "conversation_id": conversation_id,
-            "language": language
-        }
-    
-    def process_document(self, **kwargs):
-        """
-        עיבוד מסמך - גרסת דמו
-        """
-        document_id = kwargs.get("document_id", "")
-        language = kwargs.get("language", "he")
-        
-        return True
-    
-    def get_document_summary(self, document_id, **kwargs):
-        """
-        סיכום מסמך - גרסת דמו
-        """
-        language = kwargs.get("language", "he")
-        
-        if language == "he":
-            summary = "זהו סיכום דמו של המסמך. בגרסה המלאה, יוצג כאן סיכום מבוסס AI של התוכן."
-        else:
-            summary = "This is a demo summary of the document. In the full version, an AI-based summary of the content would be displayed here."
-        
-        return {
-            "summary": summary,
-            "document_id": document_id,
-            "document_type": "demo",
-            "key_points": ["נקודה 1", "נקודה 2", "נקודה 3"] if language == "he" else ["Point 1", "Point 2", "Point 3"],
-            "response_language": language
-        }
-    
-    def clear_conversation(self, conversation_id):
-        """
-        מחיקת היסטוריית שיחה
-        """
-        if conversation_id in self.conversation_history:
-            del self.conversation_history[conversation_id]
-            return True
-        return False
-    
-    def set_language(self, language):
-        """
-        הגדרת שפה
-        """
-        if language in ["he", "en"]:
-            self.default_language = language
-            return True
-        return False
 
 class AgentCoordinator:
     """
-    מתאם בין הסוכנים השונים במערכת.
-    מנהל זרימת עבודה והאינטראקציה בין הרכיבים השונים.
+    מתאם הסוכנים - אחראי על ניהול והפעלה של הסוכנים השונים במערכת.
+    מאפשר תיאום בין הסוכנים, ניתוב פעולות, וניהול זרימת העבודה.
     """
     
-    def __init__(self, api_key: Optional[str] = None, default_language: str = "he"):
+    def __init__(self):
+        """אתחול מתאם הסוכנים"""
+        # מילון של סוכני זיכרון פעילים לפי מזהה שיחה
+        self.active_memory_agents: Dict[str, MemoryAgent] = {}
+        
+        # נתיב לתיקיית הנתונים
+        self.data_dir = 'data'
+        
+        # וודא שהתיקיות הנדרשות קיימות
+        os.makedirs(os.path.join(self.data_dir, 'memory'), exist_ok=True)
+        os.makedirs(os.path.join(self.data_dir, 'embeddings'), exist_ok=True)
+        os.makedirs(os.path.join(self.data_dir, 'templates'), exist_ok=True)
+    
+    def get_memory_agent(self, session_id: Optional[str] = None) -> MemoryAgent:
         """
-        אתחול המתאם
+        קבלת סוכן זיכרון עבור שיחה ספציפית
         
         Args:
-            api_key: מפתח API ל-HuggingFace או שירות LLM אחר
-            default_language: שפת ברירת מחדל (he לעברית, en לאנגלית)
-        """
-        # For Render, we're using a lightweight version
-        # The full version with models would be too resource-intensive
-        self._dummy = DummyCoordinator()
-        
-        logger.info("Using lightweight coordinator for Render deployment")
-    
-    def answer_question(self, **kwargs):
-        """Delegate to dummy implementation"""
-        return self._dummy.answer_question(**kwargs)
-    
-    def process_document(self, **kwargs):
-        """Delegate to dummy implementation"""
-        return self._dummy.process_document(**kwargs)
-    
-    def get_document_summary(self, document_id, **kwargs):
-        """Delegate to dummy implementation"""
-        return self._dummy.get_document_summary(document_id, **kwargs)
-    
-    def clear_conversation(self, conversation_id):
-        """Delegate to dummy implementation"""
-        return self._dummy.clear_conversation(conversation_id)
-    
-    def set_language(self, language):
-        """Delegate to dummy implementation"""
-        return self._dummy.set_language(language)
-    
-    def _extract_section(self, text, section_name, section_title):
-        """
-        חילוץ סעיף מתוך תשובה
-        
-        Args:
-            text: הטקסט המלא
-            section_name: שם הסעיף באנגלית לחיפוש
-            section_title: כותרת הסעיף לחיפוש
+            session_id: מזהה השיחה (אם לא ניתן, נוצר חדש)
             
         Returns:
-            str: תוכן הסעיף
+            סוכן זיכרון לשיחה
         """
-        # חיפוש בפורמט סטנדרטי - fixed escape sequence
-        pattern = f'"{section_name}"\\s*:\\s*"([^"]*)"'
-        match = re.search(pattern, text)
-        if match:
-            return match.group(1)
+        # אם לא ניתן מזהה שיחה, צור חדש
+        if not session_id:
+            session_id = str(uuid.uuid4())
         
-        # חיפוש לפי כותרת - fixed escape sequence
-        pattern = f'{section_title}:\\s*(.*?)(?:\\n\\n|\\n[A-Za-zא-ת])'
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            return match.group(1).strip()
+        # אם הסוכן כבר קיים, החזר אותו
+        if session_id in self.active_memory_agents:
+            return self.active_memory_agents[session_id]
         
-        return ""
+        # אחרת, צור סוכן חדש
+        memory_agent = MemoryAgent(session_id)
+        self.active_memory_agents[session_id] = memory_agent
+        
+        return memory_agent
     
-    def _extract_list(self, text, section_name, section_title):
+    def process_document(self, file_path: str, language: str = 'he') -> Dict[str, Any]:
         """
-        חילוץ רשימה מתוך תשובה
+        עיבוד מסמך
         
         Args:
-            text: הטקסט המלא
-            section_name: שם הסעיף באנגלית לחיפוש
-            section_title: כותרת הסעיף לחיפוש
+            file_path: נתיב לקובץ
+            language: שפת המסמך
             
         Returns:
-            List[str]: רשימת פריטים
+            תוצאות העיבוד
         """
-        # חיפוש בפורמט סטנדרטי - fixed escape sequence
-        pattern = f'"{section_name}"\\s*:\\s*\\[(.*?)\\]'
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            items_str = match.group(1)
-            items = re.findall(r'"([^"]*)"', items_str)
-            return items
+        # כאן יתבצע תיאום בין הסוכנים השונים לעיבוד המסמך
+        # כרגע זוהי פונקציה מלאכותית, בהמשך תממש תיאום אמיתי
         
-        # חיפוש לפי כותרת ורשימה ממוספרת או עם נקודות - fixed escape sequence
-        pattern = f'{section_title}:\\s*(.*?)(?:\\n\\n|\\Z)'
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            items_text = match.group(1).strip()
-            items = re.findall(r'\d+\.\s*(.*?)(?:\n|$)', items_text)
-            if not items:
-                items = re.findall(r'[-•]\s*(.*?)(?:\n|$)', items_text)
-            return items
+        logger.info(f"Processing document: {file_path}, language: {language}")
         
-        return []
+        result = {
+            "document_id": os.path.basename(file_path),
+            "language": language,
+            "status": "processed"
+        }
+        
+        return result
+    
+    def process_query(self, session_id: str, query: str, 
+                      document_ids: Optional[List[str]] = None,
+                      language: str = 'he') -> Dict[str, Any]:
+        """
+        עיבוד שאילתה למערכת
+        
+        Args:
+            session_id: מזהה השיחה
+            query: השאילתה עצמה
+            document_ids: רשימת מזהי מסמכים רלוונטיים (אופציונלי)
+            language: שפת השאילתה
+            
+        Returns:
+            תשובה לשאילתה
+        """
+        logger.info(f"Processing query for session {session_id}: {query}")
+        
+        # קבלת סוכן הזיכרון לשיחה
+        memory_agent = self.get_memory_agent(session_id)
+        
+        # שמירת השאילתה בהיסטוריה
+        memory_agent.add_message(role="user", content=query)
+        
+        # אם יש מסמכים ספציפיים שצוינו, הוסף אותם להקשר
+        if document_ids:
+            for doc_id in document_ids:
+                memory_agent.add_document_reference(doc_id)
+        
+        # ניתן להוסיף כאן קריאה לסוכנים נוספים:
+        # 1. חיפוש מסמכים רלוונטיים
+        # 2. חילוץ מידע ייעודי
+        # 3. ניתוח הוראות במשפט
+        # 4. חיפוש מידע בבסיס הנתונים
+        
+        # כרגע זוהי תשובה מלאכותית
+        answer = f"תשובה לשאלה: {query}"
+        
+        # שמירת התשובה בהיסטוריה
+        memory_agent.add_message(role="assistant", content=answer)
+        
+        result = {
+            "session_id": session_id,
+            "query": query,
+            "answer": answer,
+            "language": language,
+            "document_references": memory_agent.get_document_references()
+        }
+        
+        return result
+    
+    def get_active_sessions(self) -> List[Dict[str, Any]]:
+        """
+        קבלת רשימת שיחות פעילות
+        
+        Returns:
+            רשימת שיחות פעילות עם נתוני סיכום
+        """
+        active_sessions = []
+        
+        # איסוף מידע על שיחות פעילות בזיכרון
+        for session_id, memory_agent in self.active_memory_agents.items():
+            summary = memory_agent.get_memory_summary()
+            active_sessions.append(summary)
+        
+        # בדיקה גם לקבצי זיכרון שנשמרו בדיסק ולא טעונים כרגע
+        memory_dir = os.path.join(self.data_dir, 'memory')
+        if os.path.exists(memory_dir):
+            for filename in os.listdir(memory_dir):
+                if filename.endswith('.json'):
+                    session_id = os.path.splitext(filename)[0]
+                    
+                    # אם השיחה כבר נמצאת ברשימה, דלג
+                    if session_id in [s["session_id"] for s in active_sessions]:
+                        continue
+                    
+                    # קרא מידע בסיסי מהקובץ
+                    try:
+                        with open(os.path.join(memory_dir, filename), 'r', encoding='utf-8') as f:
+                            memory_data = json.load(f)
+                            summary = {
+                                "session_id": session_id,
+                                "created_at": memory_data.get("created_at", ""),
+                                "updated_at": memory_data.get("updated_at", ""),
+                                "message_count": len(memory_data.get("message_history", [])),
+                                "document_count": len(memory_data.get("document_references", [])),
+                                "from_disk": True
+                            }
+                            active_sessions.append(summary)
+                    except Exception as e:
+                        logger.error(f"Error reading memory file {filename}: {e}")
+        
+        # מיון לפי תאריך עדכון אחרון
+        active_sessions.sort(
+            key=lambda x: x.get("updated_at", ""),
+            reverse=True
+        )
+        
+        return active_sessions
+    
+    def clear_session(self, session_id: str) -> bool:
+        """
+        ניקוי נתוני שיחה
+        
+        Args:
+            session_id: מזהה השיחה
+            
+        Returns:
+            האם הפעולה הצליחה
+        """
+        try:
+            # אם השיחה פעילה, נקה את הזיכרון
+            if session_id in self.active_memory_agents:
+                self.active_memory_agents[session_id].clear_all()
+                del self.active_memory_agents[session_id]
+            
+            # מחק את קובץ הזיכרון מהדיסק
+            memory_file = os.path.join(self.data_dir, 'memory', f'{session_id}.json')
+            if os.path.exists(memory_file):
+                os.remove(memory_file)
+            
+            logger.info(f"Cleared session {session_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Error clearing session {session_id}: {e}")
+            return False
