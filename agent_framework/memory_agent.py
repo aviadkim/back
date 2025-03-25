@@ -1,232 +1,313 @@
-import logging
-import json
 import os
+import json
+import logging
 from typing import Dict, List, Any, Optional
-from datetime import datetime
 
-# הגדרת לוגר
+# Set up logging
 logger = logging.getLogger(__name__)
 
 class MemoryAgent:
     """
-    סוכן לניהול זיכרון ושמירת מידע בהקשר השיחה.
-    מאפשר שמירה ושליפה של מידע לאורך שיחה, כולל היסטוריית שאלות ותשובות,
-    מסמכים רלוונטיים, והקשרים נוספים.
+    Agent responsible for managing document memory
+    
+    This agent maintains a memory of documents for quick access and retrieval
+    during chat and analysis.
     """
     
-    def __init__(self, session_id: str, max_history: int = 10):
+    def __init__(self):
+        """Initialize the memory agent"""
+        # Document memory
+        self.documents = {}
+        
+    def add_document(self, document_id: str, analysis_path: str) -> bool:
         """
-        אתחול סוכן הזיכרון
+        Add a document to memory
         
         Args:
-            session_id: מזהה ייחודי של השיחה
-            max_history: מספר מקסימלי של הודעות לשמירה בהיסטוריה
+            document_id (str): Document ID
+            analysis_path (str): Path to document analysis JSON
+            
+        Returns:
+            bool: Success status
         """
-        self.session_id = session_id
-        self.max_history = max_history
-        self.memory_file = os.path.join('data', 'memory', f'{session_id}.json')
-        
-        # יוצר את התיקייה אם היא לא קיימת
-        os.makedirs(os.path.dirname(self.memory_file), exist_ok=True)
-        
-        # מאתחל זיכרון בסיסי
-        self.memory = {
-            "session_id": session_id,
-            "created_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            "message_history": [],
-            "document_references": [],
-            "extracted_data": {},
-            "context": {}
-        }
-        
-        # טוען זיכרון קיים אם יש
-        self._load_memory()
-    
-    def _load_memory(self):
-        """טעינת זיכרון מקובץ אם קיים"""
         try:
-            if os.path.exists(self.memory_file):
-                with open(self.memory_file, 'r', encoding='utf-8') as f:
-                    self.memory = json.load(f)
-                logger.info(f"Loaded memory for session {self.session_id}")
+            # Check if file exists
+            if not os.path.exists(analysis_path):
+                logger.error(f"Analysis file not found: {analysis_path}")
+                return False
+                
+            # Load analysis data
+            with open(analysis_path, 'r', encoding='utf-8') as f:
+                analysis_data = json.load(f)
+                
+            # Extract key document info
+            document_info = {
+                'id': document_id,
+                'title': analysis_data.get('file_name', 'Unknown Document'),
+                'language': analysis_data.get('language', 'he'),
+                'content': analysis_data.get('text_content', ''),
+                'metadata': analysis_data.get('metadata', {}),
+                'tables': analysis_data.get('tables', []),
+                'entities': analysis_data.get('entities', []),
+                'financial_data': analysis_data.get('financial_data', {}),
+                'chunks': self._create_chunks(analysis_data.get('text_content', ''), 1000, 200),
+                'analysis_path': analysis_path
+            }
+            
+            # Add to memory
+            self.documents[document_id] = document_info
+            logger.info(f"Document {document_id} added to memory")
+            return True
+            
         except Exception as e:
-            logger.error(f"Error loading memory: {e}")
-    
-    def _save_memory(self):
-        """שמירת הזיכרון לקובץ"""
+            logger.exception(f"Error adding document {document_id} to memory: {str(e)}")
+            return False
+            
+    def forget_document(self, document_id: str) -> bool:
+        """
+        Remove a document from memory
+        
+        Args:
+            document_id (str): Document ID
+            
+        Returns:
+            bool: Success status
+        """
         try:
-            self.memory["updated_at"] = datetime.now().isoformat()
-            with open(self.memory_file, 'w', encoding='utf-8') as f:
-                json.dump(self.memory, f, ensure_ascii=False, indent=2)
+            if document_id in self.documents:
+                del self.documents[document_id]
+                logger.info(f"Document {document_id} removed from memory")
+                return True
+            else:
+                logger.warning(f"Document {document_id} not found in memory")
+                return False
+                
         except Exception as e:
-            logger.error(f"Error saving memory: {e}")
-    
-    def add_message(self, role: str, content: str):
+            logger.exception(f"Error removing document {document_id} from memory: {str(e)}")
+            return False
+            
+    def get_document_context(self, document_id: str, query: str) -> Optional[Dict[str, Any]]:
         """
-        הוספת הודעה להיסטוריית השיחה
+        Get relevant context from document based on query
         
         Args:
-            role: תפקיד השולח (user/system/assistant)
-            content: תוכן ההודעה
-        """
-        message = {
-            "role": role,
-            "content": content,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-        # מוסיף את ההודעה לתחילת הרשימה (הודעות חדשות בהתחלה)
-        self.memory["message_history"].insert(0, message)
-        
-        # מגביל את גודל ההיסטוריה
-        if len(self.memory["message_history"]) > self.max_history:
-            self.memory["message_history"] = self.memory["message_history"][:self.max_history]
-        
-        self._save_memory()
-        logger.debug(f"Added message from {role} to session {self.session_id}")
-    
-    def get_message_history(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
-        """
-        קבלת היסטוריית השיחה
-        
-        Args:
-            limit: מספר מקסימלי של הודעות להחזרה (ברירת מחדל: הכל)
+            document_id (str): Document ID
+            query (str): User query
             
         Returns:
-            רשימת הודעות מההיסטוריה
+            Optional[Dict]: Document context
         """
-        if limit is None or limit > len(self.memory["message_history"]):
-            limit = len(self.memory["message_history"])
-        
-        # מחזיר את ההודעות מהחדשה לישנה
-        return self.memory["message_history"][:limit]
-    
-    def add_document_reference(self, document_id: str, relevance_score: float = 1.0):
+        try:
+            if document_id not in self.documents:
+                logger.warning(f"Document {document_id} not found in memory")
+                return None
+                
+            document = self.documents[document_id]
+            
+            # Find relevant chunks based on simple keyword matching
+            # In a production system, this would use vector similarity
+            relevant_chunks = self._find_relevant_chunks(document['chunks'], query)
+            
+            # Create context
+            context = {
+                'id': document_id,
+                'title': document.get('title', 'Unknown Document'),
+                'content': '\n\n'.join(relevant_chunks),
+                'metadata': document.get('metadata', {}),
+                'language': document.get('language', 'he')
+            }
+            
+            # If no relevant chunks found, use beginning of document
+            if not relevant_chunks and document.get('content'):
+                context['content'] = document['content'][:5000]  # Use first 5000 chars
+                
+            return context
+            
+        except Exception as e:
+            logger.exception(f"Error getting context for document {document_id}: {str(e)}")
+            return None
+            
+    def get_document_full_content(self, document_id: str) -> Optional[str]:
         """
-        הוספת הפניה למסמך רלוונטי לשיחה
-        
-        Args:
-            document_id: מזהה המסמך
-            relevance_score: ציון הרלוונטיות (0-1)
-        """
-        reference = {
-            "document_id": document_id,
-            "relevance_score": relevance_score,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-        # בודק אם המסמך כבר קיים ומעדכן אותו
-        for i, doc in enumerate(self.memory["document_references"]):
-            if doc["document_id"] == document_id:
-                self.memory["document_references"][i] = reference
-                self._save_memory()
-                return
-        
-        # אם המסמך לא קיים, מוסיף אותו
-        self.memory["document_references"].append(reference)
-        self._save_memory()
-        logger.debug(f"Added document reference {document_id} to session {self.session_id}")
-    
-    def get_document_references(self) -> List[Dict[str, Any]]:
-        """
-        קבלת רשימת המסמכים הרלוונטיים לשיחה
-        
-        Returns:
-            רשימת הפניות למסמכים
-        """
-        # מיון לפי ציון רלוונטיות (מהגבוה לנמוך)
-        sorted_docs = sorted(
-            self.memory["document_references"],
-            key=lambda x: x["relevance_score"],
-            reverse=True
-        )
-        return sorted_docs
-    
-    def store_context(self, key: str, value: Any):
-        """
-        שמירת מידע הקשרי נוסף
+        Get full document content
         
         Args:
-            key: מפתח לאחסון
-            value: ערך לאחסון
-        """
-        self.memory["context"][key] = value
-        self._save_memory()
-        logger.debug(f"Stored context {key} to session {self.session_id}")
-    
-    def get_context(self, key: str, default: Any = None) -> Any:
-        """
-        קבלת מידע הקשרי שנשמר
-        
-        Args:
-            key: מפתח לשליפה
-            default: ערך ברירת מחדל אם המפתח לא קיים
+            document_id (str): Document ID
             
         Returns:
-            הערך המאוחסן או ברירת המחדל
+            Optional[str]: Document content
         """
-        return self.memory["context"].get(key, default)
-    
-    def store_extracted_data(self, category: str, data: Any):
+        try:
+            if document_id not in self.documents:
+                logger.warning(f"Document {document_id} not found in memory")
+                return None
+                
+            document = self.documents[document_id]
+            return document.get('content', '')
+            
+        except Exception as e:
+            logger.exception(f"Error getting content for document {document_id}: {str(e)}")
+            return None
+            
+    def get_document_financial_data(self, document_id: str) -> Optional[Dict[str, Any]]:
         """
-        שמירת מידע שחולץ מהשיחה או ממסמכים
+        Get financial data from document
         
         Args:
-            category: קטגוריית המידע
-            data: המידע שחולץ
-        """
-        self.memory["extracted_data"][category] = data
-        self._save_memory()
-        logger.debug(f"Stored extracted data for category {category}")
-    
-    def get_extracted_data(self, category: str = None) -> Dict[str, Any]:
-        """
-        קבלת מידע שחולץ
-        
-        Args:
-            category: קטגוריה ספציפית (אופציונלי)
+            document_id (str): Document ID
             
         Returns:
-            כל המידע שחולץ או רק הקטגוריה המבוקשת
+            Optional[Dict]: Financial data
         """
-        if category:
-            return self.memory["extracted_data"].get(category, {})
-        return self.memory["extracted_data"]
-    
-    def clear_history(self):
-        """מחיקת היסטוריית ההודעות"""
-        self.memory["message_history"] = []
-        self._save_memory()
-        logger.info(f"Cleared message history for session {self.session_id}")
-    
-    def clear_all(self):
-        """מחיקת כל המידע בזיכרון"""
-        self.memory = {
-            "session_id": self.session_id,
-            "created_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            "message_history": [],
-            "document_references": [],
-            "extracted_data": {},
-            "context": {}
-        }
-        self._save_memory()
-        logger.info(f"Cleared all memory for session {self.session_id}")
-    
-    def get_memory_summary(self) -> Dict[str, Any]:
+        try:
+            if document_id not in self.documents:
+                logger.warning(f"Document {document_id} not found in memory")
+                return None
+                
+            document = self.documents[document_id]
+            return document.get('financial_data', {})
+            
+        except Exception as e:
+            logger.exception(f"Error getting financial data for document {document_id}: {str(e)}")
+            return None
+            
+    def get_document_tables(self, document_id: str) -> Optional[List[Dict[str, Any]]]:
         """
-        קבלת סיכום של הזיכרון
+        Get tables from document
         
+        Args:
+            document_id (str): Document ID
+            
         Returns:
-            מילון עם נתוני סיכום על הזיכרון
+            Optional[List[Dict]]: Document tables
         """
-        return {
-            "session_id": self.session_id,
-            "created_at": self.memory["created_at"],
-            "updated_at": self.memory["updated_at"],
-            "message_count": len(self.memory["message_history"]),
-            "document_count": len(self.memory["document_references"]),
-            "context_keys": list(self.memory["context"].keys()),
-            "extracted_data_categories": list(self.memory["extracted_data"].keys())
-        }
+        try:
+            if document_id not in self.documents:
+                logger.warning(f"Document {document_id} not found in memory")
+                return None
+                
+            document = self.documents[document_id]
+            return document.get('tables', [])
+            
+        except Exception as e:
+            logger.exception(f"Error getting tables for document {document_id}: {str(e)}")
+            return None
+            
+    def update_document(self, document_id: str, analysis_path: str) -> bool:
+        """
+        Update document in memory
+        
+        Args:
+            document_id (str): Document ID
+            analysis_path (str): Path to document analysis JSON
+            
+        Returns:
+            bool: Success status
+        """
+        # Just re-add the document with the updated analysis
+        return self.add_document(document_id, analysis_path)
+        
+    def _create_chunks(self, text: str, chunk_size: int, overlap: int) -> List[str]:
+        """
+        Create overlapping chunks from text
+        
+        Args:
+            text (str): Text to chunk
+            chunk_size (int): Size of each chunk
+            overlap (int): Overlap between chunks
+            
+        Returns:
+            List[str]: List of text chunks
+        """
+        if not text:
+            return []
+            
+        chunks = []
+        start = 0
+        
+        while start < len(text):
+            end = start + chunk_size
+            chunk = text[start:end]
+            
+            # Adjust chunk to end at sentence boundary if possible
+            if end < len(text):
+                sentence_end = self._find_sentence_end(chunk)
+                if sentence_end > 0:
+                    chunk = chunk[:sentence_end]
+                    end = start + sentence_end
+            
+            chunks.append(chunk)
+            
+            # Move start position for next chunk
+            start = end - overlap
+            
+        return chunks
+        
+    def _find_sentence_end(self, text: str) -> int:
+        """
+        Find the end of the last complete sentence in text
+        
+        Args:
+            text (str): Text to search
+            
+        Returns:
+            int: Position of sentence end
+        """
+        # Look for the last sentence-ending punctuation
+        for i in range(len(text) - 1, 0, -1):
+            if text[i] in ['.', '!', '?', ':', ';', '\n'] and i < len(text) - 1:
+                return i + 1
+                
+        # If no sentence boundary found, look for the last word boundary
+        for i in range(len(text) - 1, 0, -1):
+            if text[i].isspace() and i < len(text) - 1:
+                return i + 1
+                
+        # If no boundaries found, return the entire chunk
+        return -1
+        
+    def _find_relevant_chunks(self, chunks: List[str], query: str) -> List[str]:
+        """
+        Find chunks relevant to the query
+        
+        Args:
+            chunks (List[str]): Text chunks
+            query (str): Query string
+            
+        Returns:
+            List[str]: Relevant chunks
+        """
+        if not chunks or not query:
+            return []
+            
+        # Simple keyword matching
+        # In a production system, this would use vector similarity
+        
+        # Get keywords from query
+        keywords = [
+            word.lower() for word in query.split() 
+            if len(word) > 3 and word.lower() not in ['what', 'where', 'when', 'which', 'who', 'how', 'the', 'and', 'that', 'this', 'for', 'from', 'with']
+        ]
+        
+        # Score each chunk
+        chunk_scores = []
+        for i, chunk in enumerate(chunks):
+            chunk_lower = chunk.lower()
+            score = 0
+            
+            for keyword in keywords:
+                if keyword in chunk_lower:
+                    score += chunk_lower.count(keyword)
+                    
+            chunk_scores.append((i, score))
+            
+        # Sort chunks by score
+        chunk_scores.sort(key=lambda x: x[1], reverse=True)
+        
+        # Get top chunks (up to 5)
+        relevant_chunks = []
+        for i, score in chunk_scores:
+            if score > 0 and len(relevant_chunks) < 5:
+                relevant_chunks.append(chunks[i])
+                
+        return relevant_chunks
