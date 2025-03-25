@@ -21,15 +21,19 @@ import {
 // Layout components
 import AppNavigation from './shared/components/AppNavigation';
 import Breadcrumbs from './shared/components/Breadcrumbs';
+import ErrorBoundary from './shared/components/ErrorBoundary';
 
 // Feature components
 import DocumentUploader from './features/pdf_scanning/components/DocumentUploader';
 import DocumentList from './features/pdf_scanning/components/DocumentList';
+import DocumentDetailPage from './features/pdf_scanning/pages/DocumentDetailPage';
 import ChatInterface from './features/chatbot/components/ChatInterface';
 import TableGenerator from './features/tables/components/TableGenerator';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
+import UserSettingsPage from './features/user/pages/UserSettingsPage';
 
 // Context providers
+import { UserContextProvider } from './features/user/context/UserContext';
 import DocumentContextProvider from './shared/contexts/DocumentContext';
 
 /**
@@ -40,6 +44,7 @@ import DocumentContextProvider from './shared/contexts/DocumentContext';
  * - Theming
  * - Context providers
  * - Language detection and handling
+ * - Error boundaries for fault tolerance
  */
 function App() {
   // Theme preference detection
@@ -103,75 +108,108 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <DocumentContextProvider>
-        <Router>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '100vh',
-            }}
-          >
-            {/* App Navigation */}
-            <AppNavigation 
-              language={language} 
-              themeMode={themeMode}
-              onToggleTheme={toggleTheme}
-              onToggleLanguage={toggleLanguage}
-            />
-            
-            {/* Main Content */}
-            <Box
-              component="main"
-              sx={{
-                flexGrow: 1,
-                py: 3,
-                px: { xs: 2, md: 3 },
-              }}
-            >
-              {/* Breadcrumbs */}
-              <Breadcrumbs language={language} />
-              
-              <Container maxWidth="xl" sx={{ mt: 2 }}>
-                <Routes>
-                  {/* Dashboard */}
-                  <Route 
-                    path="/" 
-                    element={<DashboardPage language={language} />} 
-                  />
+      <ErrorBoundary language={language}>
+        <UserContextProvider>
+          <DocumentContextProvider>
+            <Router>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: '100vh',
+                }}
+              >
+                {/* App Navigation */}
+                <AppNavigation 
+                  language={language} 
+                  themeMode={themeMode}
+                  onToggleTheme={toggleTheme}
+                  onToggleLanguage={toggleLanguage}
+                />
+                
+                {/* Main Content */}
+                <Box
+                  component="main"
+                  sx={{
+                    flexGrow: 1,
+                    py: 3,
+                    px: { xs: 2, md: 3 },
+                  }}
+                >
+                  {/* Breadcrumbs */}
+                  <Breadcrumbs language={language} />
                   
-                  {/* Documents */}
-                  <Route 
-                    path="/documents" 
-                    element={<DocumentList language={language} />} 
-                  />
-                  <Route 
-                    path="/documents/upload" 
-                    element={<DocumentUploader language={language} />} 
-                  />
-                  
-                  {/* Chat */}
-                  <Route 
-                    path="/chat" 
-                    element={<ChatInterface language={language} />} 
-                  />
-                  
-                  {/* Tables */}
-                  <Route 
-                    path="/tables/new" 
-                    element={<TableGenerator language={language} />} 
-                  />
-                  
-                  {/* Redirect unknown routes to dashboard */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </Container>
-            </Box>
-            
-            {/* Footer (could be added later) */}
-          </Box>
-        </Router>
-      </DocumentContextProvider>
+                  <Container maxWidth="xl" sx={{ mt: 2 }}>
+                    <Routes>
+                      {/* Dashboard */}
+                      <Route 
+                        path="/" 
+                        element={<DashboardPage language={language} />} 
+                      />
+                      
+                      {/* Documents */}
+                      <Route 
+                        path="/documents" 
+                        element={<DocumentList language={language} />} 
+                      />
+                      <Route 
+                        path="/documents/upload" 
+                        element={<DocumentUploader language={language} />} 
+                      />
+                      <Route 
+                        path="/documents/:documentId" 
+                        element={<DocumentDetailPage language={language} />} 
+                      />
+                      
+                      {/* Chat */}
+                      <Route 
+                        path="/chat" 
+                        element={<ChatInterface language={language} />} 
+                      />
+                      
+                      {/* Tables */}
+                      <Route 
+                        path="/tables/new" 
+                        element={<TableGenerator language={language} />} 
+                      />
+                      
+                      {/* User Settings */}
+                      <Route 
+                        path="/settings" 
+                        element={<UserSettingsPage language={language} />} 
+                      />
+                      
+                      {/* Redirect unknown routes to dashboard */}
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                  </Container>
+                </Box>
+                
+                {/* Footer (could be added later) */}
+                <Box
+                  component="footer"
+                  sx={{
+                    py: 3,
+                    px: 2,
+                    mt: 'auto',
+                    backgroundColor: theme.palette.mode === 'light'
+                      ? theme.palette.grey[200]
+                      : theme.palette.grey[800],
+                  }}
+                >
+                  <Container maxWidth="xl">
+                    <Typography variant="body2" color="text.secondary" align="center">
+                      {language === 'he' 
+                        ? '© 2025 מנתח מסמכים פיננסיים. כל הזכויות שמורות.' 
+                        : '© 2025 Financial Document Analyzer. All rights reserved.'}
+                    </Typography>
+                  </Container>
+                </Box>
+              </Box>
+            </Router>
+          </DocumentContextProvider>
+        </UserContextProvider>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }
