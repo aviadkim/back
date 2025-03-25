@@ -1,260 +1,204 @@
-// This is a placeholder file for UserContext.jsx
-// Please paste the complete code from below in this file
+import React, { createContext, useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
 
-/*
-UserContext Component Guide:
-
-This context provides user authentication and profile data to the entire application.
-It handles:
-
-1. User authentication state (logged in/out)
-2. User profile information
-3. Authentication operations (login, logout, register)
-4. Loading user data from local storage or token
-5. Managing user preferences
-
-The context uses React's Context API to make user data and authentication
-functions available throughout the application without prop drilling.
-
-How to use:
-- Wrap your application with the UserContextProvider
-- Access user data and functions using the useUser hook
-- Check authentication status with isAuthenticated
-- Access current user data with userData
-*/
-import React, { createContext, useState, useContext, useEffect } from 'react';
-
-// Create the context
-export const UserContext = createContext(null);
+// Create the user context
+export const UserContext = createContext();
 
 /**
- * UserContextProvider component provides user authentication and profile data
- * to the entire application
+ * User Context Provider component
+ * Manages user authentication and settings following Vertical Slice Architecture
  * 
- * Features:
- * - User authentication state (logged in/out)
- * - User profile information
- * - Authentication operations (login, logout, register)
- * - Loading user data from local storage or token
+ * Responsibilities:
+ * - User authentication (login/logout)
+ * - Loading user profile
+ * - Updating user settings
  * - Managing user preferences
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} The provider component
  */
-export function UserContextProvider({ children }) {
-  // State for user data and authentication
+export const UserContextProvider = ({ children }) => {
+  // User state
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [userSettings, setUserSettings] = useState({
+    defaultLanguage: 'he',
+    theme: 'light',
+    notifications: true,
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  // Load user from local storage or token on component mount
+
+  /**
+   * Load user profile on mount
+   */
   useEffect(() => {
-    const loadUser = async () => {
-      setIsLoading(true);
+    const token = localStorage.getItem('authToken');
+    
+    if (token) {
+      loadUserProfile();
+    }
+  }, []);
+
+  /**
+   * Set auth token in axios headers
+   * 
+   * @param {string} token - Authentication token
+   */
+  const setAuthToken = useCallback((token) => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      localStorage.setItem('authToken', token);
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
+      localStorage.removeItem('authToken');
+    }
+  }, []);
+
+  /**
+   * Load user profile from the API
+   */
+  const loadUserProfile = useCallback(async () => {
+    try {
+      setLoading(true);
       setError(null);
       
-      try {
-        // Check if there's a token in localStorage
-        const token = localStorage.getItem('authToken');
-        
-        if (!token) {
-          setIsAuthenticated(false);
-          setUser(null);
-          return;
-        }
-        
-        // Fetch user data using the token
-        // This would be an API call in a real application
-        // For now, we'll simulate it with a timeout
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock user data
-        const userData = {
-          id: '1',
-          firstName: 'ישראל',
-          lastName: 'ישראלי',
-          email: 'user@example.com',
-          role: 'user',
-          preferences: {
-            language: 'he',
-            theme: 'light'
-          }
-        };
-        
-        setUser(userData);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error loading user:', error);
-        setError('Failed to authenticate user');
-        setIsAuthenticated(false);
-        setUser(null);
-        
-        // Clean up localStorage on authentication error
-        localStorage.removeItem('authToken');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadUser();
-  }, []);
-  
-  // Login function
-  const login = async (email, password) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // This would be an API call in a real application
-      // For now, we'll simulate it with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login
-      const mockResponse = {
-        success: true,
-        token: 'mock_jwt_token_123456',
-        user: {
-          id: '1',
-          firstName: 'ישראל',
-          lastName: 'ישראלי',
-          email: email,
-          role: 'user',
-          preferences: {
-            language: 'he',
-            theme: 'light'
-          }
-        }
-      };
-      
-      // Save token to localStorage
-      localStorage.setItem('authToken', mockResponse.token);
-      
-      // Update state
-      setUser(mockResponse.user);
+      const response = await axios.get('/api/user/profile');
+      setUser(response.data);
       setIsAuthenticated(true);
       
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-      setError(error.message || 'Failed to login');
-      return { success: false, error: error.message || 'Failed to login' };
+      // Load user settings
+      const settingsResponse = await axios.get('/api/user/settings');
+      setUserSettings(settingsResponse.data);
+      
+      return response.data;
+    } catch (err) {
+      console.error('Error loading user profile:', err);
+      setError(err.message || 'Failed to load user profile');
+      setIsAuthenticated(false);
+      setAuthToken(null);
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-  
-  // Logout function
-  const logout = () => {
-    // Clear token from localStorage
-    localStorage.removeItem('authToken');
-    
-    // Update state
+  }, [setAuthToken]);
+
+  /**
+   * Login user
+   * 
+   * @param {Object} credentials - User credentials
+   * @param {string} credentials.email - User email
+   * @param {string} credentials.password - User password
+   * @returns {Object} User data
+   */
+  const login = useCallback(async (credentials) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post('/api/auth/login', credentials);
+      
+      const { token, user } = response.data;
+      
+      setAuthToken(token);
+      setUser(user);
+      setIsAuthenticated(true);
+      
+      // Load user settings
+      const settingsResponse = await axios.get('/api/user/settings');
+      setUserSettings(settingsResponse.data);
+      
+      return user;
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'Login failed');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [setAuthToken]);
+
+  /**
+   * Logout user
+   */
+  const logout = useCallback(() => {
+    setAuthToken(null);
     setUser(null);
     setIsAuthenticated(false);
-  };
-  
-  // Register function
-  const register = async (firstName, lastName, email, password) => {
-    setIsLoading(true);
-    setError(null);
-    
+    setUserSettings({
+      defaultLanguage: 'he',
+      theme: 'light',
+      notifications: true,
+    });
+  }, [setAuthToken]);
+
+  /**
+   * Update user settings
+   * 
+   * @param {Object} settings - User settings
+   * @returns {Object} Updated settings
+   */
+  const updateUserSettings = useCallback(async (settings) => {
     try {
-      // This would be an API call in a real application
-      // For now, we'll simulate it with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoading(true);
+      setError(null);
       
-      // Mock successful registration
-      const mockResponse = {
-        success: true,
-        message: 'User registered successfully'
-      };
+      const response = await axios.put('/api/user/settings', settings);
+      setUserSettings(response.data);
       
-      return { success: true };
-    } catch (error) {
-      console.error('Registration error:', error);
-      setError(error.message || 'Failed to register');
-      return { success: false, error: error.message || 'Failed to register' };
+      return response.data;
+    } catch (err) {
+      console.error('Error updating user settings:', err);
+      setError(err.message || 'Failed to update user settings');
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-  
-  // Update user profile
-  const updateProfile = async (profileData) => {
-    setIsLoading(true);
-    setError(null);
-    
+  }, []);
+
+  /**
+   * Update user profile
+   * 
+   * @param {Object} profileData - User profile data
+   * @returns {Object} Updated user profile
+   */
+  const updateUserProfile = useCallback(async (profileData) => {
     try {
-      // This would be an API call in a real application
-      // For now, we'll simulate it with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoading(true);
+      setError(null);
       
-      // Update user state with new profile data
-      setUser(prev => ({ ...prev, ...profileData }));
+      const response = await axios.put('/api/user/profile', profileData);
+      setUser(response.data);
       
-      return { success: true };
-    } catch (error) {
-      console.error('Profile update error:', error);
-      setError(error.message || 'Failed to update profile');
-      return { success: false, error: error.message || 'Failed to update profile' };
+      return response.data;
+    } catch (err) {
+      console.error('Error updating user profile:', err);
+      setError(err.message || 'Failed to update user profile');
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-  
-  // Update user preferences
-  const updatePreferences = async (preferences) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // This would be an API call in a real application
-      // For now, we'll simulate it with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update user state with new preferences
-      setUser(prev => ({
-        ...prev,
-        preferences: { ...prev.preferences, ...preferences }
-      }));
-      
-      return { success: true };
-    } catch (error) {
-      console.error('Preferences update error:', error);
-      setError(error.message || 'Failed to update preferences');
-      return { success: false, error: error.message || 'Failed to update preferences' };
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  // Value object to be provided by the context
-  const value = {
+  }, []);
+
+  // Context value
+  const contextValue = {
     user,
     isAuthenticated,
-    isLoading,
+    userSettings,
+    loading,
     error,
     login,
     logout,
-    register,
-    updateProfile,
-    updatePreferences
+    updateUserSettings,
+    updateUserProfile,
   };
-  
+
   return (
-    <UserContext.Provider value={value}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
-}
+};
 
-// Custom hook for using the user context
-export function useUser() {
-  const context = useContext(UserContext);
-  
-  if (!context) {
-    throw new Error('useUser must be used within a UserContextProvider');
-  }
-  
-  return context;
-}
-
-export default UserContextProvider;
+export default UserContext;
