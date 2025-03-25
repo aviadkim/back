@@ -19,7 +19,7 @@ def test_health_check(client):
 
 def test_file_upload_no_file(client):
     """Test file upload with no file."""
-    response = client.post('/api/upload')
+    response = client.post('/api/upload', data={})
     assert response.status_code == 400
     data = json.loads(response.data)
     assert 'error' in data
