@@ -42,22 +42,29 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
-# ייבוא נתיבים
-from routes.document_routes import document_routes
-from routes.langchain_routes import langchain_routes
+# Import feature blueprints (Vertical Slice Architecture)
+from features.pdf_scanning import pdf_scanning_bp
 
-# הקטע החדש (להחליף):
-# Import the diagnostic routes
+# רישום נתיבים
+app.register_blueprint(pdf_scanning_bp)
+
+# We'll continue to support legacy route structures during migration
+try:
+    from routes.document_routes import document_routes
+    from routes.langchain_routes import langchain_routes
+    app.register_blueprint(document_routes)
+    app.register_blueprint(langchain_routes)
+    logger.info("Legacy routes registered")
+except ImportError:
+    logger.info("Legacy routes not found")
+
+# Import diagnostic module if available
 try:
     from diagnostic import diagnostic_bp
     has_diagnostic = True
 except ImportError:
     has_diagnostic = False
     logger.warning("Diagnostic module not found. Diagnostic routes will not be available.")
-
-# רישום נתיבים
-app.register_blueprint(document_routes)
-app.register_blueprint(langchain_routes)
 
 # Register diagnostic routes if available
 if has_diagnostic:
@@ -83,7 +90,11 @@ def serve(path):
 # נתיב בדיקת תקינות
 @app.route('/health')
 def health_check():
-    return jsonify({"status": "ok", "message": "System is operational"})
+    return jsonify({
+        "status": "ok", 
+        "message": "System is operational",
+        "architecture": "Vertical Slice"
+    })
 
 # נתיב להגשת קבצים סטטיים מתיקיית build
 @app.route('/static/<path:path>')
@@ -194,7 +205,12 @@ def test_page():
                     
                     uploadStatus.textContent = 'שולח קובץ...';
                     
-                    fetch('/api/upload', {{
+                    // Use the new PDF scanning endpoint for PDFs
+                    const endpoint = fileInput.files[0].name.toLowerCase().endsWith('.pdf')
+                        ? '/api/pdf/upload'
+                        : '/api/upload';
+                    
+                    fetch(endpoint, {{
                         method: 'POST',
                         body: formData
                     }})
@@ -266,7 +282,7 @@ def test_page():
                 }});
                 
                 // Test initial API health
-                fetch('/api/health')
+                fetch('/health')
                     .then(response => response.json())
                     .then(data => {{
                         console.log('API health:', data);
@@ -287,4 +303,5 @@ if __name__ == '__main__':
     debug = os.environ.get('FLASK_ENV', 'development') == 'development'
     
     logger.info(f"Starting server on port {port}, debug mode: {debug}")
+    logger.info(f"Using Vertical Slice Architecture")
     app.run(host='0.0.0.0', port=port, debug=debug)
