@@ -11,7 +11,8 @@ import {
   ThemeProvider, 
   createTheme,
   Container,
-  useMediaQuery
+  useMediaQuery,
+  Typography
 } from '@mui/material';
 import { 
   blue, 
