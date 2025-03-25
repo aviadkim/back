@@ -1,278 +1,494 @@
-import React, { useState } from 'react';
-import { Box, Button, CircularProgress, Paper, Typography, LinearProgress, Alert } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import React, { useState, useRef } from 'react';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress,
+  Alert,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+  Divider,
+  Grid,
+  LinearProgress
+} from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DescriptionIcon from '@mui/icons-material/Description';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-import ExtractedDataView from './ExtractedDataView';
 
 /**
- * DocumentUploader component handles the file upload process for financial PDFs
+ * DocumentUploader component for uploading financial documents
  * 
- * This component provides a complete upload workflow:
- * 1. File selection/drag & drop
- * 2. Upload with progress indicator
- * 3. Processing status
- * 4. Success confirmation with extracted data preview
+ * Features:
+ * - File selection via button or drag-and-drop
+ * - Language selection for document processing
+ * - Upload progress indicator
+ * - Success/error feedback
+ * - Upload history display
  */
-function DocumentUploader() {
-  // Track the current upload state
-  const [uploadStep, setUploadStep] = useState('upload'); // upload, uploading, processing, complete, error
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [documentId, setDocumentId] = useState(null);
-  const [extractedData, setExtractedData] = useState(null);
-  const [error, setError] = useState(null);
+function DocumentUploader({ onUploadSuccess, language = 'he' }) {
+  // File selection state
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [fileLanguage, setFileLanguage] = useState(language);
+  const fileInputRef = useRef(null);
+  
+  // Upload state
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadResult, setUploadResult] = useState(null);
+  
+  // Upload history
+  const [recentUploads, setRecentUploads] = useState([]);
+  
+  // Drag and drop state
+  const [isDragging, setIsDragging] = useState(false);
+  
   /**
-   * Handles when a file is selected either via input or drag & drop
+   * Handles file selection from the file input
    */
-  const handleFileSelect = (file) => {
-    // Reset any previous state
-    setUploadStep('upload');
-    setUploadProgress(0);
-    setError(null);
-    
-    // Validate the file is a PDF
-    if (file && file.type === 'application/pdf') {
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
       setSelectedFile(file);
-    } else {
-      setError('Please select a valid PDF file');
+      setUploadError(null);
+      setUploadResult(null);
     }
   };
-
+  
+  /**
+   * Triggers the hidden file input
+   */
+  const handleBrowseClick = () => {
+    fileInputRef.current.click();
+  };
+  
+  /**
+   * Handles drag events for the dropzone
+   */
+  const handleDragEvents = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Update dragging state based on event type
+    if (event.type === 'dragenter' || event.type === 'dragover') {
+      setIsDragging(true);
+    } else if (event.type === 'dragleave' || event.type === 'drop') {
+      setIsDragging(false);
+    }
+    
+    // Handle file drop
+    if (event.type === 'drop') {
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        setSelectedFile(file);
+        setUploadError(null);
+        setUploadResult(null);
+      }
+    }
+  };
+  
+  /**
+   * Resets the uploader state
+   */
+  const resetUploader = () => {
+    setSelectedFile(null);
+    setUploadProgress(0);
+    setUploadError(null);
+    setUploadResult(null);
+    // Keep the language setting and recent uploads
+  };
+  
   /**
    * Handles the file upload process
    */
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select a file first');
-      return;
-    }
-
-    setUploadStep('uploading');
-    setError(null);
+    if (!selectedFile) return;
     
-    // Create form data for the file upload
+    setIsUploading(true);
+    setUploadProgress(0);
+    setUploadError(null);
+    setUploadResult(null);
+    
+    // Create FormData for the upload
     const formData = new FormData();
     formData.append('file', selectedFile);
-    formData.append('language', 'he'); // Default to Hebrew, can be made configurable
+    formData.append('language', fileLanguage);
     
     try {
-      // Upload the file to the PDF scanning endpoint
-      const uploadResponse = await fetch('/api/pdf/upload', {
-        method: 'POST',
-        body: formData,
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.lengthComputable) {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setUploadProgress(progress);
-          }
-        },
+      // Create custom XMLHttpRequest to track progress
+      const xhr = new XMLHttpRequest();
+      
+      // Set up progress tracking
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(progress);
+        }
       });
       
-      // Check if upload was successful
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.error || 'Error uploading file');
+      // Create a promise for the XHR request
+      const uploadPromise = new Promise((resolve, reject) => {
+        xhr.open('POST', '/api/upload', true);
+        
+        xhr.onload = function() {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              resolve(response);
+            } catch (error) {
+              reject(new Error('Invalid response format'));
+            }
+          } else {
+            try {
+              const errorData = JSON.parse(xhr.responseText);
+              reject(new Error(errorData.error || 'Upload failed'));
+            } catch (error) {
+              reject(new Error(`Upload failed with status ${xhr.status}`));
+            }
+          }
+        };
+        
+        xhr.onerror = function() {
+          reject(new Error('Network error during upload'));
+        };
+        
+        xhr.send(formData);
+      });
+      
+      // Wait for the upload to complete
+      const response = await uploadPromise;
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Upload failed');
       }
       
-      // Upload completed, now processing on server
-      setUploadStep('processing');
+      // Processing animation (simulate processing time)
+      setUploadProgress(100);
       
-      // Get the response with document ID
-      const uploadResult = await uploadResponse.json();
-      setDocumentId(uploadResult.document_id);
+      // Success state
+      setUploadResult({
+        success: true,
+        documentId: response.document_id,
+        processingResults: response.processing_results || {}
+      });
       
-      // Wait a moment for processing to complete
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Add to recent uploads
+      const newUpload = {
+        id: response.document_id,
+        filename: selectedFile.name,
+        uploadTime: new Date().toISOString(),
+        language: fileLanguage,
+        size: selectedFile.size,
+        success: true
+      };
       
-      // Fetch the extracted data for the uploaded document
-      const documentResponse = await fetch(`/api/pdf/${uploadResult.document_id}`);
+      setRecentUploads(prevUploads => [newUpload, ...prevUploads].slice(0, 5));
       
-      if (!documentResponse.ok) {
-        const errorData = await documentResponse.json();
-        throw new Error(errorData.error || 'Error retrieving document data');
+      // Callback for parent component
+      if (typeof onUploadSuccess === 'function') {
+        onUploadSuccess(response.document_id, response);
       }
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      setUploadError(error.message || 'An error occurred during upload');
       
-      const documentData = await documentResponse.json();
-      setExtractedData(documentData.document);
-      setUploadStep('complete');
+      // Add failed upload to history
+      const failedUpload = {
+        id: `failed-${Date.now()}`,
+        filename: selectedFile.name,
+        uploadTime: new Date().toISOString(),
+        language: fileLanguage,
+        size: selectedFile.size,
+        success: false,
+        error: error.message
+      };
       
-      // Return the document ID for parent components
-      return uploadResult.document_id;
-    } catch (err) {
-      console.error('Upload error:', err);
-      setError(err.message || 'An error occurred during upload');
-      setUploadStep('error');
-      return null;
+      setRecentUploads(prevUploads => [failedUpload, ...prevUploads].slice(0, 5));
+    } finally {
+      setIsUploading(false);
     }
   };
-
-  return (
-    <Paper elevation={3} sx={{ p: 3, maxWidth: '800px', mx: 'auto', mb: 4 }}>
-      {/* Upload Step */}
-      {uploadStep === 'upload' && (
-        <Box textAlign="center" p={3}>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Upload Financial Document
-          </Typography>
+  
+  /**
+   * Formats file size for display
+   */
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    
+    return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+  };
+  
+  /**
+   * Renders the file selection area
+   */
+  const renderFileSelection = () => (
+    <Box 
+      sx={{ 
+        border: '2px dashed',
+        borderColor: isDragging ? 'primary.main' : 'divider',
+        borderRadius: 2,
+        p: 3,
+        textAlign: 'center',
+        backgroundColor: isDragging ? 'action.hover' : 'background.paper',
+        transition: 'all 0.3s ease'
+      }}
+      onDragEnter={handleDragEvents}
+      onDragOver={handleDragEvents}
+      onDragLeave={handleDragEvents}
+      onDrop={handleDragEvents}
+    >
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+      />
+      
+      <UploadFileIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+      
+      <Typography variant="h6" gutterBottom>
+        {language === 'he' 
+          ? 'גרור ושחרר קובץ כאן או'
+          : 'Drag & drop a file here or'}
+      </Typography>
+      
+      <Button 
+        variant="contained" 
+        onClick={handleBrowseClick}
+        sx={{ mt: 1 }}
+      >
+        {language === 'he' ? 'בחר קובץ' : 'Browse Files'}
+      </Button>
+      
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+        {language === 'he'
+          ? 'סוגי קבצים נתמכים: PDF, Word, Excel, CSV, Text'
+          : 'Supported file types: PDF, Word, Excel, CSV, Text'}
+      </Typography>
+    </Box>
+  );
+  
+  /**
+   * Renders the selected file info
+   */
+  const renderSelectedFileInfo = () => {
+    if (!selectedFile) return null;
+    
+    return (
+      <Card variant="outlined" sx={{ mt: 3 }}>
+        <CardContent>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <DescriptionIcon color="primary" sx={{ fontSize: 40 }} />
+            </Grid>
+            
+            <Grid item xs>
+              <Typography variant="subtitle1" component="div" noWrap>
+                {selectedFile.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {formatFileSize(selectedFile.size)}
+              </Typography>
+            </Grid>
+            
+            <Grid item>
+              <Button 
+                color="error" 
+                size="small" 
+                onClick={resetUploader}
+                disabled={isUploading}
+              >
+                {language === 'he' ? 'הסר' : 'Remove'}
+              </Button>
+            </Grid>
+          </Grid>
           
-          <Box 
-            sx={{ 
-              border: '2px dashed #ccc', 
-              borderRadius: 2, 
-              p: 3, 
-              my: 2,
-              bgcolor: 'rgba(0, 0, 0, 0.02)',
-              cursor: 'pointer',
-              '&:hover': {
-                bgcolor: 'rgba(0, 0, 0, 0.05)',
-              }
-            }}
-            onClick={() => document.getElementById('file-input').click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const file = e.dataTransfer.files[0];
-              handleFileSelect(file);
-            }}
-          >
-            <input
-              id="file-input"
-              type="file"
-              accept=".pdf"
-              style={{ display: 'none' }}
-              onChange={(e) => handleFileSelect(e.target.files[0])}
-            />
-            <CloudUploadIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-            <Typography variant="body1">
-              {selectedFile ? `Selected: ${selectedFile.name}` : 'Drag and drop a PDF file here, or click to browse'}
-            </Typography>
+          <Box sx={{ mt: 2 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel>
+                {language === 'he' ? 'שפת המסמך' : 'Document Language'}
+              </InputLabel>
+              <Select
+                value={fileLanguage}
+                label={language === 'he' ? 'שפת המסמך' : 'Document Language'}
+                onChange={(e) => setFileLanguage(e.target.value)}
+                disabled={isUploading}
+              >
+                <MenuItem value="he">עברית (Hebrew)</MenuItem>
+                <MenuItem value="en">English</MenuItem>
+                <MenuItem value="auto">
+                  {language === 'he' ? 'זיהוי אוטומטי' : 'Auto Detect'}
+                </MenuItem>
+              </Select>
+            </FormControl>
           </Box>
           
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
+          <Box sx={{ mt: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleUpload}
+              disabled={isUploading}
+              startIcon={isUploading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {isUploading
+                ? (language === 'he' ? 'מעלה...' : 'Uploading...')
+                : (language === 'he' ? 'העלה מסמך' : 'Upload Document')}
+            </Button>
+          </Box>
+          
+          {isUploading && (
+            <Box sx={{ width: '100%', mt: 2 }}>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+                {uploadProgress}%
+              </Typography>
+            </Box>
           )}
-          
-          <Button 
-            variant="contained" 
-            color="primary" 
-            size="large"
-            onClick={handleUpload}
-            disabled={!selectedFile}
-          >
-            Upload and Process Document
-          </Button>
-        </Box>
-      )}
-      
-      {/* Uploading Step */}
-      {uploadStep === 'uploading' && (
-        <Box textAlign="center" p={3}>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Uploading Document
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  /**
+   * Renders the upload result
+   */
+  const renderUploadResult = () => {
+    if (uploadError) {
+      return (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            {language === 'he' ? 'שגיאה בהעלאת המסמך' : 'Error Uploading Document'}
+          </Typography>
+          <Typography variant="body2">
+            {uploadError}
+          </Typography>
+        </Alert>
+      );
+    }
+    
+    if (uploadResult && uploadResult.success) {
+      return (
+        <Alert severity="success" sx={{ mt: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            {language === 'he' ? 'המסמך הועלה בהצלחה' : 'Document Uploaded Successfully'}
+          </Typography>
+          <Typography variant="body2">
+            {language === 'he'
+              ? `מזהה מסמך: ${uploadResult.documentId}`
+              : `Document ID: ${uploadResult.documentId}`}
           </Typography>
           
-          <Box sx={{ my: 3 }}>
-            <LinearProgress 
-              variant="determinate" 
-              value={uploadProgress} 
-              sx={{ height: 10, borderRadius: 5 }}
-            />
-            <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-              {uploadProgress}% Complete
-            </Typography>
-          </Box>
-          
-          <Typography variant="body1">
-            Uploading {selectedFile?.name}...
-          </Typography>
-        </Box>
-      )}
-      
-      {/* Processing Step */}
-      {uploadStep === 'processing' && (
-        <Box textAlign="center" p={3}>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Processing Document
-          </Typography>
-          
-          <CircularProgress sx={{ my: 3 }} />
-          
-          <Typography variant="body1">
-            Extracting text, tables, and financial data...
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            This may take a few moments depending on document size and complexity.
-          </Typography>
-        </Box>
-      )}
-      
-      {/* Complete Step */}
-      {uploadStep === 'complete' && extractedData && (
-        <Box p={3}>
-          <Box display="flex" alignItems="center" mb={3}>
-            <CheckCircleIcon color="success" sx={{ fontSize: 30, mr: 1 }} />
-            <Typography variant="h5" component="h2">
-              Document Processed Successfully
-            </Typography>
-          </Box>
-          
-          <ExtractedDataView data={extractedData} />
-          
-          <Box mt={2} display="flex" justifyContent="center" gap={2}>
+          <Box sx={{ mt: 2 }}>
             <Button 
               variant="outlined" 
-              onClick={() => {
-                setUploadStep('upload');
-                setSelectedFile(null);
-              }}
+              size="small"
+              onClick={resetUploader}
             >
-              Upload Another Document
-            </Button>
-            
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => {
-                // Navigate to document detail view, can be handled by parent component
-                window.location.href = `/documents/${documentId}`;
-              }}
-            >
-              View Full Document Details
+              {language === 'he' ? 'העלה מסמך נוסף' : 'Upload Another Document'}
             </Button>
           </Box>
-        </Box>
-      )}
+        </Alert>
+      );
+    }
+    
+    return null;
+  };
+  
+  /**
+   * Renders the recent uploads section
+   */
+  const renderRecentUploads = () => {
+    if (recentUploads.length === 0) return null;
+    
+    return (
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          {language === 'he' ? 'העלאות אחרונות' : 'Recent Uploads'}
+        </Typography>
+        
+        <Paper variant="outlined">
+          {recentUploads.map((upload, index) => (
+            <React.Fragment key={upload.id}>
+              {index > 0 && <Divider />}
+              <Box sx={{ p: 2 }}>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item>
+                    {upload.success ? (
+                      <CheckCircleIcon color="success" />
+                    ) : (
+                      <ErrorIcon color="error" />
+                    )}
+                  </Grid>
+                  
+                  <Grid item xs>
+                    <Typography variant="subtitle2" component="div" noWrap>
+                      {upload.filename}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatFileSize(upload.size)} • {new Date(upload.uploadTime).toLocaleString()}
+                    </Typography>
+                    
+                    {!upload.success && upload.error && (
+                      <Typography variant="body2" color="error" sx={{ mt: 0.5 }}>
+                        {upload.error}
+                      </Typography>
+                    )}
+                  </Grid>
+                  
+                  {upload.success && (
+                    <Grid item>
+                      <Button 
+                        variant="outlined" 
+                        size="small"
+                        onClick={() => {
+                          if (typeof onUploadSuccess === 'function') {
+                            onUploadSuccess(upload.id, { document_id: upload.id });
+                          }
+                        }}
+                      >
+                        {language === 'he' ? 'בחר' : 'Select'}
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
+              </Box>
+            </React.Fragment>
+          ))}
+        </Paper>
+      </Box>
+    );
+  };
+  
+  return (
+    <Box>
+      <Typography variant="h5" component="h2" gutterBottom>
+        {language === 'he' ? 'העלאת מסמך פיננסי' : 'Upload Financial Document'}
+      </Typography>
       
-      {/* Error Step */}
-      {uploadStep === 'error' && (
-        <Box textAlign="center" p={3}>
-          <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
-            <ErrorIcon color="error" sx={{ fontSize: 30, mr: 1 }} />
-            <Typography variant="h5" component="h2">
-              Upload Failed
-            </Typography>
-          </Box>
-          
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error || 'An error occurred while processing your document.'}
-          </Alert>
-          
-          <Button 
-            variant="contained" 
-            onClick={() => {
-              setUploadStep('upload');
-              setError(null);
-            }}
-          >
-            Try Again
-          </Button>
-        </Box>
-      )}
-    </Paper>
+      <Typography variant="body1" paragraph>
+        {language === 'he'
+          ? 'העלה מסמכים פיננסיים לניתוח ועיבוד אוטומטי. המערכת תחלץ נתונים, טבלאות ומידע רלוונטי.'
+          : 'Upload financial documents for automatic analysis and processing. The system will extract data, tables, and relevant information.'}
+      </Typography>
+      
+      {renderFileSelection()}
+      {renderSelectedFileInfo()}
+      {renderUploadResult()}
+      {renderRecentUploads()}
+    </Box>
   );
 }
 
