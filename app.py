@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 import logging
 from features.chatbot import chatbot_bp
 
-# טעינת משתני סביבה מקובץ .env
-load_dotenv()
+# Check if running in AWS environment
+is_aws = os.environ.get('AWS_EXECUTION_ENV') is not None or os.environ.get('AWS_REGION') is not None
 
-# הגדרת לוגר
+# Set up logging first
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -18,12 +18,27 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# יצירת תיקיות נדרשות אם אינן קיימות
+# Create required directories
 required_dirs = ['uploads', 'data', 'data/embeddings', 'logs', 'templates']
 for directory in required_dirs:
     os.makedirs(directory, exist_ok=True)
 
-# יצירת אפליקציית Flask
+# Load environment variables from .env file (local development)
+if not is_aws:
+    logger.info("Loading environment variables from .env file")
+    load_dotenv()
+else:
+    # Load environment variables from AWS Secrets Manager in production
+    try:
+        logger.info("Loading environment variables from AWS Secrets Manager")
+        from utils.aws_helpers import init_aws_secrets
+        init_aws_secrets()
+    except Exception as e:
+        logger.error(f"Failed to load AWS secrets: {e}")
+        # Still try to load from .env as fallback
+        load_dotenv()
+
+# Create Flask application
 app = Flask(__name__, 
             static_folder='frontend/build/static')
 
@@ -33,7 +48,7 @@ app.jinja_loader = jinja2.ChoiceLoader([
     jinja2.FileSystemLoader('frontend/build')
 ])
 
-# הגדרת CORS כדי לאפשר גישה מהפרונטאנד (כל מקור)
+# Enable CORS to allow cross-origin requests
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 @app.after_request
@@ -46,7 +61,7 @@ def after_request(response):
 # Import feature blueprints (Vertical Slice Architecture)
 from features.pdf_scanning import pdf_scanning_bp
 
-# רישום נתיבים
+# Register API routes
 app.register_blueprint(pdf_scanning_bp)
 app.register_blueprint(chatbot_bp)
 
@@ -76,7 +91,7 @@ if has_diagnostic:
     def diagnostic_page():
         return render_template('diagnostic.html')
 
-# נתיב ברירת מחדל להצגת הפרונטאנד
+# Default route to serve frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
@@ -89,21 +104,22 @@ def serve(path):
         logger.error(f"Error serving path {path}: {e}")
         return render_template('index.html')
 
-# נתיב בדיקת תקינות
+# Health check endpoint
 @app.route('/health')
 def health_check():
     return jsonify({
         "status": "ok", 
         "message": "System is operational",
-        "architecture": "Vertical Slice"
+        "architecture": "Vertical Slice",
+        "environment": "AWS" if is_aws else "Development"
     })
 
-# נתיב להגשת קבצים סטטיים מתיקיית build
+# Static file serving
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
-# נתיב למניפסט ופייקון
+# Manifest and favicon
 @app.route('/manifest.json')
 def serve_manifest():
     try:
@@ -300,10 +316,11 @@ def test_page():
     return html
 
 if __name__ == '__main__':
-    # קביעת פורט לשרת
+    # Set server port
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV', 'development') == 'development'
     
     logger.info(f"Starting server on port {port}, debug mode: {debug}")
     logger.info(f"Using Vertical Slice Architecture")
+    logger.info(f"Environment: {'AWS' if is_aws else 'Development'}")
     app.run(host='0.0.0.0', port=port, debug=debug)
