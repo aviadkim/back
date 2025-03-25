@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    image: ${AWS_LIGHTSAIL_SERVICE_NAME}.app.latest
+    ports:
+      - "10000:10000"
+    environment:
+      - FLASK_ENV=production
+      - PORT=10000
+      - MONGO_URI=${MONGO_URI}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - DEFAULT_LANGUAGE=he
+    volumes:
+      - ${AWS_LIGHTSAIL_VOLUME_NAME}:/app/uploads
+
+# Lightsail container services automatically manage persistent storage volumes
+# for your container. This is defined in the AWS console or CLI.
