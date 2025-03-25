@@ -1,386 +1,349 @@
-import pytesseract
-from PyPDF2 import PdfReader, PdfWriter
-from PIL import Image
-import io
-import re
 import os
-import tempfile
 import logging
-from typing import Dict, List, Tuple, Optional, Any
-import pdf2image
+import tempfile
+import pytesseract
+from pdf2image import convert_from_path
+from PyPDF2 import PdfReader
+import re
+from datetime import datetime
 
-# הגדרת לוגר
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
-
-# Configure Tesseract path from environment or default
-TESSERACT_PATH = os.environ.get('TESSERACT_PATH', '/usr/bin/tesseract')
-if TESSERACT_PATH:
-    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
-
-# Simple function to extract text from PDF - used by tests
-def extract_text_from_pdf(file_path: str) -> str:
-    """
-    פונקציה פשוטה לחילוץ טקסט מקובץ PDF.
-    משמשת בעיקר לטסטים.
-    
-    Args:
-        file_path: נתיב לקובץ PDF
-        
-    Returns:
-        str: הטקסט המחולץ
-    """
-    try:
-        with open(file_path, 'rb') as file:
-            reader = PdfReader(file)
-            text = ""
-            
-            for page in reader.pages:
-                text += page.extract_text() or ""
-                
-            return text.strip()
-    except Exception as e:
-        logger.error(f"Error extracting text from PDF: {e}")
-        return ""
 
 class PDFProcessor:
     """
-    מעבד קבצי PDF - מחלץ טקסט, טבלאות ומידע פיננסי מדוחות.
+    Utility class for processing PDF files
+    
+    This class handles PDF text extraction with OCR if needed.
     """
     
-    def __init__(self, ocr_enabled: bool = True, lang: str = "heb+eng"):
-        """
-        אתחול מעבד ה-PDF
-        
-        Args:
-            ocr_enabled: האם להפעיל זיהוי תווים אוטומטי
-            lang: שפת הטקסט לזיהוי ב-OCR
-        """
-        self.ocr_enabled = ocr_enabled
-        self.lang = lang
-        
-        # אם OCR מופעל, וודא שהספרייה זמינה
-        if self.ocr_enabled:
-            try:
-                pytesseract.get_tesseract_version()
-                logger.info(f"Tesseract version: {pytesseract.get_tesseract_version()}")
-                
-                # Check if Hebrew language is available
-                langs = pytesseract.get_languages()
-                logger.info(f"Available languages: {langs}")
-                
-                if 'heb' not in langs and self.lang.startswith('heb'):
-                    logger.warning("Hebrew language data not found for Tesseract OCR")
-            except Exception as e:
-                logger.warning(f"OCR לא זמין: {e}. מבטל OCR.")
-                self.ocr_enabled = False
+    def __init__(self):
+        """Initialize the PDF processor"""
+        # Configure pytesseract path if needed
+        if os.name == 'nt':  # Windows
+            pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     
-    def extract_text(self, pdf_path: str) -> str:
+    def process_pdf(self, file_path, language='he'):
         """
-        חילוץ טקסט מקובץ PDF
+        Process a PDF file and extract text content
         
         Args:
-            pdf_path: נתיב לקובץ PDF
+            file_path (str): Path to the PDF file
+            language (str): Language code for OCR (default: 'he')
             
         Returns:
-            str: הטקסט המחולץ
+            tuple: (extracted_text, metadata, page_count)
         """
-        logger.info(f"מחלץ טקסט מ-{pdf_path}")
-        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"PDF file not found: {file_path}")
+            
         try:
-            # פתיחת קובץ PDF
-            with open(pdf_path, "rb") as file:
-                reader = PdfReader(file)
-                text = ""
+            # Extract text using PyPDF2
+            extracted_text, metadata, page_count = self._extract_text_with_pypdf(file_path)
+            
+            # Check if significant text was extracted
+            if not self._has_significant_text(extracted_text, page_count):
+                logger.info(f"PDF has insufficient text, using OCR for: {file_path}")
+                # Use OCR if PDF has insufficient text
+                extracted_text = self._extract_text_with_ocr(file_path, language)
                 
-                # חילוץ טקסט מכל עמוד
-                for page_num, page in enumerate(reader.pages):
-                    logger.info(f"מעבד עמוד {page_num + 1}/{len(reader.pages)}")
-                    
-                    # ניסיון לחלץ טקסט ישירות
-                    page_text = page.extract_text() or ""
-                    
-                    # אם הטקסט חסר או OCR מופעל, מנסה OCR
-                    if self.ocr_enabled and (not page_text or len(page_text) < 100):
-                        logger.info(f"משתמש ב-OCR עבור עמוד {page_num + 1}")
-                        page_text = self._extract_text_with_ocr(pdf_path, page_num)
-                    
-                    text += page_text + "\n\n"
+            # Extract additional metadata
+            metadata = self._extract_metadata(file_path, extracted_text, metadata)
                 
-                return text.strip()
-                
-        except Exception as e:
-            logger.error(f"שגיאה בחילוץ טקסט מ-PDF: {e}")
-            return ""
-    
-    def extract_tables(self, pdf_path: str) -> List[Dict[str, Any]]:
-        """
-        חילוץ טבלאות מקובץ PDF
-        
-        Args:
-            pdf_path: נתיב לקובץ PDF
-            
-        Returns:
-            List[Dict]: רשימת טבלאות מחולצות עם מטה-דאטה
-        """
-        logger.info(f"מחלץ טבלאות מ-{pdf_path}")
-        
-        # רשימת הטבלאות שיוחזרו
-        tables = []
-        
-        try:
-            # מחלץ טקסט מלא
-            full_text = self.extract_text(pdf_path)
-            
-            # מחפש תבניות טבלאות בטקסט
-            # חיפוש פשוט של שורות שנראות כמו טבלה
-            table_candidates = self._identify_table_patterns(full_text)
-            
-            for i, candidate in enumerate(table_candidates):
-                tables.append({
-                    "id": f"table_{i+1}",
-                    "page": candidate.get("page", 0),
-                    "content": candidate.get("content", ""),
-                    "rows": candidate.get("rows", []),
-                    "columns": candidate.get("columns", [])
-                })
-            
-            return tables
+            return extracted_text, metadata, page_count
             
         except Exception as e:
-            logger.error(f"שגיאה בחילוץ טבלאות מ-PDF: {e}")
-            return []
+            logger.exception(f"Error processing PDF: {str(e)}")
+            raise
     
-    def extract_financial_data(self, pdf_path: str) -> Dict[str, Any]:
+    def _extract_text_with_pypdf(self, file_path):
         """
-        חילוץ מידע פיננסי ספציפי מדוחות
+        Extract text from PDF using PyPDF2
         
         Args:
-            pdf_path: נתיב לקובץ PDF
+            file_path (str): Path to the PDF file
             
         Returns:
-            Dict: מידע פיננסי מחולץ
-        """
-        logger.info(f"מחלץ מידע פיננסי מ-{pdf_path}")
-        
-        financial_data = {
-            "amounts": [],
-            "percentages": [],
-            "dates": [],
-            "securities": []
-        }
-        
-        try:
-            # מחלץ טקסט מלא
-            full_text = self.extract_text(pdf_path)
-            
-            # חיפוש סכומי כסף
-            financial_data["amounts"] = self._extract_money_amounts(full_text)
-            
-            # חיפוש אחוזים
-            financial_data["percentages"] = self._extract_percentages(full_text)
-            
-            # חיפוש תאריכים
-            financial_data["dates"] = self._extract_dates(full_text)
-            
-            # חיפוש מספרי ISIN וקודי ניירות ערך
-            financial_data["securities"] = self._extract_securities_identifiers(full_text)
-            
-            return financial_data
-            
-        except Exception as e:
-            logger.error(f"שגיאה בחילוץ מידע פיננסי מ-PDF: {e}")
-            return financial_data
-    
-    def _extract_text_with_ocr(self, pdf_path: str, page_num: int) -> str:
-        """
-        חילוץ טקסט מעמוד PDF באמצעות OCR
-        
-        Args:
-            pdf_path: נתיב לקובץ PDF
-            page_num: מספר העמוד לחילוץ
-            
-        Returns:
-            str: הטקסט המחולץ
+            tuple: (extracted_text, metadata, page_count)
         """
         try:
-            logger.info(f"Starting OCR for page {page_num+1} of {pdf_path}")
+            pdf_reader = PdfReader(file_path)
+            page_count = len(pdf_reader.pages)
             
-            # Convert PDF page to image
-            images = pdf2image.convert_from_path(
-                pdf_path,
-                first_page=page_num+1,
-                last_page=page_num+1
-            )
+            # Extract metadata
+            metadata = {}
+            if pdf_reader.metadata:
+                metadata = {
+                    'title': pdf_reader.metadata.get('/Title', ''),
+                    'author': pdf_reader.metadata.get('/Author', ''),
+                    'creator': pdf_reader.metadata.get('/Creator', ''),
+                    'producer': pdf_reader.metadata.get('/Producer', ''),
+                    'created_date': pdf_reader.metadata.get('/CreationDate', ''),
+                }
             
-            if not images:
-                logger.warning(f"No images generated from page {page_num+1}")
-                return ""
-            
-            # Get the first (and only) image
-            image = images[0]
-            
-            # Extract text with pytesseract
-            extracted_text = pytesseract.image_to_string(image, lang=self.lang)
-            
-            return extracted_text
+            # Extract text from each page
+            full_text = ""
+            for i, page in enumerate(pdf_reader.pages):
+                page_text = page.extract_text() or ""
+                full_text += f"\n--- Page {i+1} ---\n{page_text}\n"
+                
+            return full_text, metadata, page_count
             
         except Exception as e:
-            logger.error(f"שגיאה ב-OCR: {e}")
-            # במקרה של כישלון, החזר מחרוזת שמציינת את הבעיה
-            return f"[OCR נכשל: {str(e)}]"
+            logger.exception(f"Error extracting text with PyPDF2: {str(e)}")
+            raise
     
-    def _identify_table_patterns(self, text: str) -> List[Dict[str, Any]]:
+    def _extract_text_with_ocr(self, file_path, language='he'):
         """
-        זיהוי תבניות טבלה בטקסט
+        Extract text from PDF using OCR
         
         Args:
-            text: טקסט לחיפוש
+            file_path (str): Path to the PDF file
+            language (str): Language code for OCR
             
         Returns:
-            List[Dict]: רשימת טבלאות מזוהות
+            str: Extracted text
         """
-        table_candidates = []
-        
-        # חיפוש שורות שנראות כמו טבלה (עם מספר ערכים מופרדים)
-        lines = text.split('\n')
-        
-        # מעקב אחר שורות רציפות שעשויות להיות טבלה
-        current_table = {"content": "", "rows": [], "columns": []}
-        table_active = False
-        
-        for line in lines:
-            # בדיקה אם השורה עשויה להיות חלק מטבלה
-            is_table_row = bool(re.findall(r'[\t|]+', line)) or len(re.findall(r'\s{3,}', line)) >= 2
+        try:
+            # Map language code to Tesseract language
+            ocr_language = 'heb' if language == 'he' else 'eng'
             
-            if is_table_row:
-                if not table_active:
-                    # התחלת טבלה חדשה
-                    table_active = True
-                    current_table = {"content": line, "rows": [line], "columns": []}
-                else:
-                    # המשך הטבלה הנוכחית
-                    current_table["content"] += "\n" + line
-                    current_table["rows"].append(line)
-            elif table_active and line.strip():
-                # שורה שאינה חלק מהטבלה, אך הטבלה היתה פעילה וזו אינה שורה ריקה
-                # ייתכן שזה התיאור של הטבלה או תוכן אחר
-                current_table["content"] += "\n" + line
-            elif table_active and not line.strip():
-                # שורה ריקה אחרי טבלה פעילה - סיום הטבלה
-                if len(current_table["rows"]) > 1:  # לפחות שתי שורות לטבלה תקפה
-                    table_candidates.append(current_table)
-                table_active = False
-        
-        # בדיקה האם הטבלה האחרונה עדיין פעילה בסוף הטקסט
-        if table_active and len(current_table["rows"]) > 1:
-            table_candidates.append(current_table)
-        
-        return table_candidates
-    
-    def _extract_money_amounts(self, text: str) -> List[Dict[str, Any]]:
-        """חילוץ סכומי כסף מטקסט"""
-        amounts = []
-        
-        # חיפוש סכומים בפורמט ישראלי/אירופאי (נקודה כמפריד אלפים, פסיק כמפריד עשרוני)
-        # ש"ח, ₪, אלפי ₪, אלף ₪, מיליון ₪, מיליוני ₪, מיליארד ₪, מיליארדי ₪, דולר, יורו, €, $
-        money_pattern = r'([\d.,]+)(\s*)(אלפי|אלף|מיליון|מיליוני|מיליארד|מיליארדי)?(\s*)(₪|ש"ח|דולר|יורו|€|\$)'
-        
-        matches = re.finditer(money_pattern, text)
-        for match in matches:
-            value_str = match.group(1).replace(',', '')
-            try:
-                value = float(value_str)
-                multiplier = match.group(3) or ""
-                currency = match.group(5)
+            # Convert PDF to images
+            images = convert_from_path(file_path)
+            
+            full_text = ""
+            for i, image in enumerate(images):
+                # Use pytesseract to extract text
+                page_text = pytesseract.image_to_string(image, lang=ocr_language)
+                full_text += f"\n--- Page {i+1} ---\n{page_text}\n"
                 
-                # המרת מכפיל למספר
-                if multiplier in ["אלף", "אלפי"]:
-                    value *= 1_000
-                elif multiplier in ["מיליון", "מיליוני"]:
-                    value *= 1_000_000
-                elif multiplier in ["מיליארד", "מיליארדי"]:
-                    value *= 1_000_000_000
+            return full_text
+            
+        except Exception as e:
+            logger.exception(f"Error extracting text with OCR: {str(e)}")
+            raise
+    
+    def _has_significant_text(self, text, page_count):
+        """
+        Check if the extracted text has significant content
+        
+        Args:
+            text (str): Extracted text
+            page_count (int): Number of pages
+            
+        Returns:
+            bool: True if text is significant, False otherwise
+        """
+        # Remove whitespace and newlines
+        clean_text = text.replace('\n', ' ').replace('\r', ' ').strip()
+        
+        # Calculate expected minimum characters per page (very rough heuristic)
+        min_chars_per_page = 100
+        expected_min_chars = page_count * min_chars_per_page
+        
+        return len(clean_text) >= expected_min_chars
+    
+    def _extract_metadata(self, file_path, text, existing_metadata):
+        """
+        Extract additional metadata from the text content
+        
+        Args:
+            file_path (str): Path to the PDF file
+            text (str): Extracted text
+            existing_metadata (dict): Existing metadata
+            
+        Returns:
+            dict: Enhanced metadata
+        """
+        metadata = existing_metadata.copy()
+        
+        # Try to detect document type from content
+        metadata['detected_document_type'] = self._detect_document_type(text)
+        
+        # Extract dates
+        dates = self._extract_dates(text)
+        if dates:
+            metadata['extracted_dates'] = dates
+            # Use the first date as the document date
+            metadata['document_date'] = dates[0]
+        
+        # Extract financial entities
+        financial_entities = self._extract_financial_entities(text)
+        if financial_entities:
+            metadata['financial_entities'] = financial_entities
+        
+        return metadata
+    
+    def _detect_document_type(self, text):
+        """
+        Detect document type from text content
+        
+        Args:
+            text (str): Document text
+            
+        Returns:
+            str: Detected document type
+        """
+        text_lower = text.lower()
+        
+        # Bank statement indicators
+        bank_indicators = [
+            'דף חשבון', 'bank statement', 'תנועות בחשבון', 'יתרה', 'balance',
+            'פעולות אחרונות', 'recent transactions', 'מצב חשבון'
+        ]
+        
+        # Investment report indicators
+        investment_indicators = [
+            'דוח השקעות', 'investment report', 'תיק השקעות', 'portfolio',
+            'נכסים פיננסיים', 'financial assets', 'נירות ערך', 'securities'
+        ]
+        
+        # Tax document indicators
+        tax_indicators = [
+            'דוח מס', 'tax report', 'מס הכנסה', 'income tax',
+            'אישור מס', 'tax certificate', 'אישור ניכוי מס', 'tax withholding'
+        ]
+        
+        # Invoice indicators
+        invoice_indicators = [
+            'חשבונית מס', 'tax invoice', 'חשבונית', 'invoice',
+            'מספר חשבונית', 'invoice number', 'פרטי חשבונית'
+        ]
+        
+        # Receipt indicators
+        receipt_indicators = [
+            'קבלה', 'receipt', 'אישור תשלום', 'payment confirmation',
+            'תודה על קנייתך', 'thank you for your purchase'
+        ]
+        
+        # Check for document type indicators
+        for indicator in bank_indicators:
+            if indicator in text_lower:
+                return 'bankStatement'
                 
-                amounts.append({
-                    "value": value,
-                    "original_text": match.group(0),
-                    "currency": currency
-                })
-            except ValueError:
-                pass
-        
-        return amounts
+        for indicator in investment_indicators:
+            if indicator in text_lower:
+                return 'investmentReport'
+                
+        for indicator in tax_indicators:
+            if indicator in text_lower:
+                return 'taxDocument'
+                
+        for indicator in invoice_indicators:
+            if indicator in text_lower:
+                return 'invoice'
+                
+        for indicator in receipt_indicators:
+            if indicator in text_lower:
+                return 'receipt'
+                
+        # Default to other if no known type is detected
+        return 'other'
     
-    def _extract_percentages(self, text: str) -> List[Dict[str, float]]:
-        """חילוץ אחוזים מטקסט"""
-        percentages = []
+    def _extract_dates(self, text):
+        """
+        Extract dates from text
         
-        # חיפוש אחוזים (מספר כלשהו ואז סימן אחוז)
-        percent_pattern = r'([\d.,]+)(\s*)(%|אחוז|אחוזים)'
+        Args:
+            text (str): Document text
+            
+        Returns:
+            list: List of extracted dates
+        """
+        # Patterns for common date formats in Hebrew and English documents
+        patterns = [
+            # DD/MM/YYYY
+            r'(\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4})',
+            # MM/DD/YYYY (US format)
+            r'(\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4})',
+            # YYYY-MM-DD (ISO format)
+            r'(\d{4}[/.-]\d{1,2}[/.-]\d{1,2})',
+            # Hebrew date formats with month names
+            r'(\d{1,2}\s+(?:ינואר|פברואר|מרץ|מרס|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s+\d{4})',
+            # English date formats with month names
+            r'(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})',
+            r'((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4})',
+        ]
         
-        matches = re.finditer(percent_pattern, text)
-        for match in matches:
-            value_str = match.group(1).replace(',', '')
-            try:
-                value = float(value_str)
-                percentages.append({
-                    "value": value,
-                    "original_text": match.group(0)
-                })
-            except ValueError:
-                pass
-        
-        return percentages
-    
-    def _extract_dates(self, text: str) -> List[Dict[str, str]]:
-        """חילוץ תאריכים מטקסט"""
         dates = []
-        
-        # חיפוש תאריכים בפורמט ישראלי (DD/MM/YYYY)
-        date_pattern = r'(\d{1,2})[/.-](\d{1,2})[/.-](\d{2,4})'
-        
-        matches = re.finditer(date_pattern, text)
-        for match in matches:
-            day, month, year = match.groups()
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            dates.extend(matches)
             
-            # תיקון שנה דו-ספרתית
-            if len(year) == 2:
-                year = '20' + year
-            
-            dates.append({
-                "day": int(day),
-                "month": int(month),
-                "year": int(year),
-                "original_text": match.group(0)
-            })
-        
-        return dates
+        # Remove duplicates while preserving order
+        unique_dates = []
+        for date in dates:
+            if date not in unique_dates:
+                unique_dates.append(date)
+                
+        return unique_dates
     
-    def _extract_securities_identifiers(self, text: str) -> List[Dict[str, str]]:
-        """חילוץ מזהי ניירות ערך כמו מספרי ISIN"""
-        securities = []
+    def _extract_financial_entities(self, text):
+        """
+        Extract financial entities like account numbers, amounts, etc.
         
-        # חיפוש מספרי ISIN (מתחילים ב-IL או US ולאחר מכן 10 תווים)
-        isin_pattern = r'(IL|US)[0-9A-Z]{10}'
+        Args:
+            text (str): Document text
+            
+        Returns:
+            dict: Dictionary of extracted financial entities
+        """
+        entities = {}
         
-        matches = re.finditer(isin_pattern, text)
-        for match in matches:
-            securities.append({
-                "type": "ISIN",
-                "value": match.group(0),
-                "original_text": match.group(0)
-            })
+        # Extract currency amounts
+        currency_pattern = r'₪\s*([\d,.]+)|(\d+(?:,\d+)*(?:\.\d+)?)\s*₪|\$\s*([\d,.]+)|€\s*([\d,.]+)'
+        currency_matches = re.findall(currency_pattern, text)
         
-        # חיפוש מספרי נייר ערך ישראליים (בד"כ 6 ספרות)
-        il_security_pattern = r'נייר\s*ערך\s*(\d{6})'
+        if currency_matches:
+            amounts = []
+            for match in currency_matches:
+                # Each match is a tuple of capture groups
+                amount = next((group for group in match if group), None)
+                if amount:
+                    # Clean up amount (remove commas)
+                    amount = amount.replace(',', '')
+                    try:
+                        amount = float(amount)
+                        amounts.append(amount)
+                    except ValueError:
+                        pass
+                        
+            if amounts:
+                entities['currency_amounts'] = amounts
+                
+                # Get statistics
+                entities['max_amount'] = max(amounts)
+                entities['min_amount'] = min(amounts)
+                entities['avg_amount'] = sum(amounts) / len(amounts)
         
-        matches = re.finditer(il_security_pattern, text)
-        for match in matches:
-            securities.append({
-                "type": "IL_SECURITY",
-                "value": match.group(1),
-                "original_text": match.group(0)
-            })
+        # Extract account numbers
+        account_pattern = r'חשבון\s*(?:מספר)?\s*:?\s*(\d{3,}[-\s]?\d{4,})|ח-ן\s*:?\s*(\d{3,}[-\s]?\d{4,})|account\s*(?:number)?\s*:?\s*(\d{3,}[-\s]?\d{4,})'
+        account_matches = re.findall(account_pattern, text, re.IGNORECASE)
         
-        return securities
+        if account_matches:
+            account_numbers = []
+            for match in account_matches:
+                # Each match is a tuple of capture groups
+                account = next((group for group in match if group), None)
+                if account:
+                    account_numbers.append(account.strip())
+                    
+            if account_numbers:
+                entities['account_numbers'] = account_numbers
+        
+        # Extract IDs (Israeli ID numbers are 9 digits)
+        id_pattern = r'ת\.?ז\.?\s*:?\s*(\d{9})|תעודת\s*זהות\s*:?\s*(\d{9})|ID\s*(?:number)?\s*:?\s*(\d{9})'
+        id_matches = re.findall(id_pattern, text, re.IGNORECASE)
+        
+        if id_matches:
+            ids = []
+            for match in id_matches:
+                # Each match is a tuple of capture groups
+                id_num = next((group for group in match if group), None)
+                if id_num:
+                    ids.append(id_num.strip())
+                    
+            if ids:
+                entities['id_numbers'] = ids
+        
+        return entities
