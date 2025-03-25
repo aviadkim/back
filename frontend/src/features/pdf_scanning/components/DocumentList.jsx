@@ -1,586 +1,351 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Box,
-  Typography,
-  Paper,
   Button,
-  Grid,
   Card,
   CardContent,
   CardActions,
   Chip,
-  IconButton,
-  Menu,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   CircularProgress,
+  Divider,
+  Grid,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  Typography,
   Alert,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TablePagination,
-  InputBase,
-  Divider
+  useTheme,
 } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import SearchIcon from '@mui/icons-material/Search';
-import ChatIcon from '@mui/icons-material/Chat';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Visibility as VisibilityIcon,
+  Download as DownloadIcon,
+  ListAlt as ListAltIcon,
+  Search as SearchIcon,
+} from '@mui/icons-material';
+import { format } from 'date-fns';
+import DocumentContext from '../../../shared/contexts/DocumentContext';
 
-// Import document context
-import { DocumentContext } from '../../../shared/contexts/DocumentContext';
+// Translations for the component
+const translations = {
+  en: {
+    title: 'Document Library',
+    uploadNewDocument: 'Upload New Document',
+    noDocuments: 'No documents found. Upload a new document to get started.',
+    searchPlaceholder: 'Search documents...',
+    documentType: 'Document Type',
+    uploadDate: 'Upload Date',
+    status: 'Status',
+    actions: 'Actions',
+    view: 'View',
+    delete: 'Delete',
+    download: 'Download',
+    processing: 'Processing',
+    completed: 'Completed',
+    failed: 'Failed',
+    documentDeleted: 'Document deleted successfully',
+    errorLoading: 'Error loading documents',
+    confirmDelete: 'Are you sure you want to delete this document?',
+  },
+  he: {
+    title: 'ספריית מסמכים',
+    uploadNewDocument: 'העלאת מסמך חדש',
+    noDocuments: 'לא נמצאו מסמכים. העלה מסמך חדש כדי להתחיל.',
+    searchPlaceholder: 'חיפוש מסמכים...',
+    documentType: 'סוג מסמך',
+    uploadDate: 'תאריך העלאה',
+    status: 'סטטוס',
+    actions: 'פעולות',
+    view: 'צפייה',
+    delete: 'מחיקה',
+    download: 'הורדה',
+    processing: 'מעבד',
+    completed: 'הושלם',
+    failed: 'נכשל',
+    documentDeleted: 'המסמך נמחק בהצלחה',
+    errorLoading: 'שגיאה בטעינת המסמכים',
+    confirmDelete: 'האם אתה בטוח שברצונך למחוק את המסמך הזה?',
+  },
+};
 
 /**
- * DocumentList component displays all available documents with filtering and search
+ * DocumentList component displays all uploaded documents and provides actions like view, download, and delete
  * 
- * Features:
- * - List of all documents with key metadata
- * - Search and filter capabilities
- * - Document selection for active use
- * - Actions for each document (view, chat, generate tables)
- * - Pagination for large document sets
+ * @param {Object} props - Component properties
+ * @param {string} props.language - Current language (en/he)
+ * @returns {JSX.Element} The rendered component
  */
-function DocumentList({ language = 'he' }) {
+const DocumentList = ({ language = 'en' }) => {
+  const theme = useTheme();
+  const { documents, loadDocuments, deleteDocument } = useContext(DocumentContext);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const navigate = useNavigate();
-  const { activeDocuments, addActiveDocument, removeActiveDocument, isDocumentActive } = useContext(DocumentContext);
-  
-  // Documents state
-  const [documents, setDocuments] = useState([]);
-  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
-  const [documentsError, setDocumentsError] = useState(null);
-  
-  // Pagination state
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  
-  // Search and filter state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredDocuments, setFilteredDocuments] = useState([]);
-  
-  // Action menu state
-  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState(null);
-  
-  // Delete confirmation dialog state
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
-  // Load documents on component mount
+  const t = translations[language];
+
+  // Load documents when component mounts
   useEffect(() => {
-    loadDocuments();
-  }, []);
-  
-  // Filter documents when search query or documents change
-  useEffect(() => {
-    filterDocuments();
-  }, [searchQuery, documents]);
-  
-  /**
-   * Loads all documents from the API
-   */
-  const loadDocuments = async () => {
-    setIsLoadingDocuments(true);
-    setDocumentsError(null);
-    
-    try {
-      const response = await fetch('/api/pdf');
-      
-      if (!response.ok) {
-        throw new Error('Failed to load documents');
+    const fetchDocuments = async () => {
+      try {
+        setLoading(true);
+        await loadDocuments();
+        setError(null);
+      } catch (err) {
+        setError(t.errorLoading);
+        console.error('Error loading documents:', err);
+      } finally {
+        setLoading(false);
       }
-      
-      const result = await response.json();
-      
-      if (result.success && result.documents) {
-        setDocuments(result.documents);
-      } else {
-        throw new Error(result.error || 'No documents found');
+    };
+
+    fetchDocuments();
+  }, [loadDocuments, t.errorLoading]);
+
+  // Handle document deletion
+  const handleDeleteDocument = async (id) => {
+    if (window.confirm(t.confirmDelete)) {
+      try {
+        await deleteDocument(id);
+        setDeleteSuccess(true);
+        setTimeout(() => setDeleteSuccess(false), 3000);
+      } catch (err) {
+        console.error('Error deleting document:', err);
       }
-    } catch (error) {
-      console.error('Error loading documents:', error);
-      setDocumentsError(error.message || 'Failed to load documents');
-      
-      // Use empty array if we couldn't load documents
-      setDocuments([]);
-    } finally {
-      setIsLoadingDocuments(false);
     }
   };
-  
-  /**
-   * Filters documents based on search query
-   */
-  const filterDocuments = () => {
-    if (!searchQuery.trim()) {
-      setFilteredDocuments(documents);
-      return;
-    }
-    
-    const query = searchQuery.toLowerCase();
-    const filtered = documents.filter(doc => {
-      // Search in title, file name, and metadata
-      const titleMatch = (doc.title || '').toLowerCase().includes(query);
-      const fileNameMatch = (doc.file_name || '').toLowerCase().includes(query);
-      
-      // Search in metadata
-      let metadataMatch = false;
-      if (doc.metadata) {
-        metadataMatch = Object.values(doc.metadata).some(value => 
-          String(value).toLowerCase().includes(query)
-        );
-      }
-      
-      return titleMatch || fileNameMatch || metadataMatch;
-    });
-    
-    setFilteredDocuments(filtered);
-  };
-  
-  /**
-   * Handles page change in pagination
-   */
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  
-  /**
-   * Handles rows per page change in pagination
-   */
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-  
-  /**
-   * Opens the action menu for a document
-   */
-  const handleOpenActionMenu = (event, documentId) => {
-    event.stopPropagation(); // Prevent row click
-    setActionMenuAnchorEl(event.currentTarget);
-    setSelectedDocumentId(documentId);
-  };
-  
-  /**
-   * Closes the action menu
-   */
-  const handleCloseActionMenu = () => {
-    setActionMenuAnchorEl(null);
-    setSelectedDocumentId(null);
-  };
-  
-  /**
-   * Opens delete confirmation dialog
-   */
-  const handleOpenDeleteDialog = (document) => {
-    setDocumentToDelete(document);
-    setDeleteDialogOpen(true);
-    handleCloseActionMenu();
-  };
-  
-  /**
-   * Closes delete confirmation dialog
-   */
-  const handleCloseDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-    setDocumentToDelete(null);
-  };
-  
-  /**
-   * Deletes a document
-   */
-  const handleDeleteDocument = async () => {
-    if (!documentToDelete) return;
-    
-    setIsDeleting(true);
-    
-    try {
-      const response = await fetch(`/api/pdf/${documentToDelete.id}`, {
-        method: 'DELETE'
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete document');
-      }
-      
-      // Remove from active documents if active
-      if (isDocumentActive(documentToDelete.id)) {
-        removeActiveDocument(documentToDelete.id);
-      }
-      
-      // Remove from documents list
-      setDocuments(prev => prev.filter(doc => doc.id !== documentToDelete.id));
-      
-      // Close dialog
-      handleCloseDeleteDialog();
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      alert(error.message || 'Failed to delete document');
-    } finally {
-      setIsDeleting(false);
+
+  // Filter documents based on search term
+  const filteredDocuments = documents.filter(doc => 
+    doc.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    doc.documentType?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Get status chip color based on status
+  const getStatusChipColor = (status) => {
+    switch (status) {
+      case 'processing':
+        return 'warning';
+      case 'completed':
+        return 'success';
+      case 'failed':
+        return 'error';
+      default:
+        return 'default';
     }
   };
-  
-  /**
-   * Toggles a document's active status
-   */
-  const toggleDocumentActive = (document) => {
-    if (isDocumentActive(document.id)) {
-      removeActiveDocument(document.id);
-    } else {
-      addActiveDocument({
-        id: document.id,
-        title: document.title || document.file_name || document.id
-      });
-    }
-    
-    handleCloseActionMenu();
-  };
-  
-  /**
-   * Navigates to chat with specific document
-   */
-  const handleChatWithDocument = (documentId) => {
-    navigate(`/chat?document=${documentId}`);
-    handleCloseActionMenu();
-  };
-  
-  /**
-   * Navigates to table generation with specific document
-   */
-  const handleGenerateTable = (documentId) => {
-    navigate(`/tables/new?document=${documentId}`);
-    handleCloseActionMenu();
-  };
-  
-  /**
-   * Extracts document type from metadata
-   */
-  const getDocumentType = (document) => {
-    if (!document || !document.metadata) {
-      return language === 'he' ? 'מסמך פיננסי' : 'Financial Document';
-    }
-    
-    if (document.metadata.document_type) {
-      return document.metadata.document_type;
-    }
-    
-    // Try to infer document type from file name
-    const fileName = document.file_name || '';
-    
-    if (fileName.includes('statement')) {
-      return language === 'he' ? 'דף חשבון' : 'Account Statement';
-    }
-    
-    if (fileName.includes('report')) {
-      return language === 'he' ? 'דוח' : 'Report';
-    }
-    
-    if (fileName.includes('portfolio') || fileName.includes('valuation')) {
-      return language === 'he' ? 'דוח תיק השקעות' : 'Portfolio Valuation';
-    }
-    
-    return language === 'he' ? 'מסמך פיננסי' : 'Financial Document';
-  };
-  
-  /**
-   * Formats a date for display
-   */
+
+  // Format date for display
   const formatDate = (dateString) => {
-    if (!dateString) return '';
-    
     try {
-      return new Date(dateString).toLocaleDateString();
-    } catch (e) {
+      const date = new Date(dateString);
+      return format(date, 'PPP');
+    } catch (err) {
       return dateString;
     }
   };
-  
-  /**
-   * Formats file size for display
-   */
-  const formatFileSize = (bytes) => {
-    if (!bytes || isNaN(parseInt(bytes))) return '';
-    
-    bytes = parseInt(bytes);
-    if (bytes === 0) return '0 B';
-    
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    
-    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
-  };
-  
-  // Calculate pagination
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, filteredDocuments.length - page * rowsPerPage);
-  
-  // Get selected document (for action menu)
-  const selectedDocument = documents.find(doc => doc.id === selectedDocumentId);
-  
+
   return (
-    <Paper sx={{ p: 3 }}>
-      {/* Header with title and actions */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" component="h1">
-          {language === 'he' ? 'המסמכים שלי' : 'My Documents'}
+    <Box>
+      {/* Page header */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 3
+        }}
+      >
+        <Typography variant="h4" component="h1" gutterBottom>
+          {t.title}
         </Typography>
         
         <Button
           variant="contained"
           color="primary"
-          startIcon={<UploadFileIcon />}
-          onClick={() => navigate('/documents/upload')}
+          startIcon={<AddIcon />}
+          component={RouterLink}
+          to="/documents/upload"
         >
-          {language === 'he' ? 'העלאת מסמך' : 'Upload Document'}
+          {t.uploadNewDocument}
         </Button>
       </Box>
-      
-      {/* Search and filter bar */}
-      <Paper 
-        sx={{ 
-          p: '2px 4px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          width: '100%',
-          mb: 3 
-        }}
-      >
-        <IconButton sx={{ p: '10px' }} aria-label="menu">
-          <FilterListIcon />
-        </IconButton>
-        
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
-          placeholder={language === 'he' ? 'חיפוש מסמכים...' : 'Search documents...'}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        
-        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-      </Paper>
-      
-      {/* Error alert */}
-      {documentsError && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {documentsError}
+
+      {/* Notifications */}
+      {deleteSuccess && (
+        <Alert 
+          severity="success" 
+          sx={{ mb: 2 }}
+          onClose={() => setDeleteSuccess(false)}
+        >
+          {t.documentDeleted}
         </Alert>
       )}
       
-      {/* Loading indicator */}
-      {isLoadingDocuments ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+      {error && (
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          onClose={() => setError(null)}
+        >
+          {error}
+        </Alert>
+      )}
+
+      {/* Search bar */}
+      <Paper 
+        sx={{ 
+          p: 2, 
+          mb: 3, 
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />
+        <input
+          type="text"
+          placeholder={t.searchPlaceholder}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            border: 'none',
+            outline: 'none',
+            width: '100%',
+            background: 'transparent',
+            fontSize: '1rem',
+            fontFamily: theme.typography.fontFamily,
+          }}
+        />
+      </Paper>
+
+      {/* Loading state */}
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
-      ) : filteredDocuments.length === 0 ? (
-        <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            {searchQuery.trim() 
-              ? (language === 'he' ? 'לא נמצאו תוצאות' : 'No results found')
-              : (language === 'he' ? 'אין מסמכים' : 'No documents')}
+      )}
+
+      {/* Empty state */}
+      {!loading && filteredDocuments.length === 0 && (
+        <Paper 
+          sx={{ 
+            p: 4, 
+            textAlign: 'center',
+            backgroundColor: theme.palette.background.default
+          }}
+        >
+          <ListAltIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+          <Typography variant="h6" gutterBottom>
+            {searchTerm ? 'No documents match your search' : t.noDocuments}
           </Typography>
-          
-          {!searchQuery.trim() && (
+          {!searchTerm && (
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
-              startIcon={<UploadFileIcon />}
-              onClick={() => navigate('/documents/upload')}
+              startIcon={<AddIcon />}
+              component={RouterLink}
+              to="/documents/upload"
               sx={{ mt: 2 }}
             >
-              {language === 'he' ? 'העלאת המסמך הראשון שלך' : 'Upload Your First Document'}
+              {t.uploadNewDocument}
             </Button>
           )}
-        </Box>
-      ) : (
-        <>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    {language === 'he' ? 'שם מסמך' : 'Document Name'}
-                  </TableCell>
-                  <TableCell>
-                    {language === 'he' ? 'סוג' : 'Type'}
-                  </TableCell>
-                  <TableCell>
-                    {language === 'he' ? 'תאריך' : 'Date'}
-                  </TableCell>
-                  <TableCell>
-                    {language === 'he' ? 'גודל' : 'Size'}
-                  </TableCell>
-                  <TableCell align="center">
-                    {language === 'he' ? 'פעיל' : 'Active'}
-                  </TableCell>
-                  <TableCell align="right">
-                    {language === 'he' ? 'פעולות' : 'Actions'}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredDocuments
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((document) => (
-                    <TableRow 
-                      key={document.id}
-                      hover
-                      sx={{ 
-                        cursor: 'pointer',
-                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
-                      }}
-                      onClick={() => navigate(`/documents/${document.id}`)}
-                    >
-                      <TableCell component="th" scope="row">
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <DescriptionIcon sx={{ mr: 1, color: 'primary.main' }} />
-                          <Typography variant="body1">
-                            {document.title || document.file_name || document.id}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={getDocumentType(document)} 
-                          size="small"
-                          variant="outlined" 
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(document.created_at || document.metadata?.date)}
-                      </TableCell>
-                      <TableCell>
-                        {formatFileSize(document.size || document.metadata?.size)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {isDocumentActive(document.id) ? (
-                          <CheckIcon color="success" />
-                        ) : (
-                          <ClearIcon color="disabled" />
-                        )}
-                      </TableCell>
-                      <TableCell align="right">
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          <IconButton
-                            size="small"
-                            onClick={(e) => handleOpenActionMenu(e, document.id)}
-                            sx={{ ml: 1 }}
-                          >
-                            <MoreVertIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredDocuments.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage={language === 'he' ? 'שורות בעמוד:' : 'Rows per page:'}
-            labelDisplayedRows={({ from, to, count }) => 
-              language === 'he'
-                ? `${from}-${to} מתוך ${count}`
-                : `${from}-${to} of ${count}`
-            }
-          />
-        </>
+        </Paper>
       )}
-      
-      {/* Document action menu */}
-      <Menu
-        anchorEl={actionMenuAnchorEl}
-        open={Boolean(actionMenuAnchorEl)}
-        onClose={handleCloseActionMenu}
-      >
-        <MenuItem 
-          onClick={() => selectedDocument && toggleDocumentActive(selectedDocument)}
-        >
-          {selectedDocument && isDocumentActive(selectedDocument.id) 
-            ? (language === 'he' ? 'הסר מפעילים' : 'Remove from active')
-            : (language === 'he' ? 'הוסף לפעילים' : 'Add to active')}
-        </MenuItem>
-        <MenuItem 
-          onClick={() => selectedDocumentId && handleChatWithDocument(selectedDocumentId)}
-        >
-          <ChatIcon fontSize="small" sx={{ mr: 1 }} />
-          {language === 'he' ? 'צ\'אט עם מסמך' : 'Chat with document'}
-        </MenuItem>
-        <MenuItem 
-          onClick={() => selectedDocumentId && handleGenerateTable(selectedDocumentId)}
-        >
-          <TableChartIcon fontSize="small" sx={{ mr: 1 }} />
-          {language === 'he' ? 'צור טבלה' : 'Generate table'}
-        </MenuItem>
-        <Divider />
-        <MenuItem 
-          onClick={() => selectedDocument && handleOpenDeleteDialog(selectedDocument)}
-          sx={{ color: 'error.main' }}
-        >
-          <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-          {language === 'he' ? 'מחק מסמך' : 'Delete document'}
-        </MenuItem>
-      </Menu>
-      
-      {/* Delete confirmation dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={handleCloseDeleteDialog}
-      >
-        <DialogTitle>
-          {language === 'he' ? 'מחיקת מסמך' : 'Delete Document'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {language === 'he'
-              ? `האם אתה בטוח שברצונך למחוק את המסמך "${documentToDelete?.title || documentToDelete?.file_name || documentToDelete?.id}"? לא ניתן לבטל פעולה זו.`
-              : `Are you sure you want to delete the document "${documentToDelete?.title || documentToDelete?.file_name || documentToDelete?.id}"? This action cannot be undone.`}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} disabled={isDeleting}>
-            {language === 'he' ? 'ביטול' : 'Cancel'}
-          </Button>
-          <Button 
-            onClick={handleDeleteDocument} 
-            color="error" 
-            disabled={isDeleting}
-            startIcon={isDeleting ? <CircularProgress size={20} /> : <DeleteIcon />}
-          >
-            {language === 'he' ? 'מחק' : 'Delete'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
+
+      {/* Document grid */}
+      {!loading && filteredDocuments.length > 0 && (
+        <Grid container spacing={3}>
+          {filteredDocuments.map((document) => (
+            <Grid item xs={12} sm={6} md={4} key={document.id}>
+              <Card 
+                sx={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: theme.shadows[4],
+                  }
+                }}
+              >
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography 
+                    variant="h6" 
+                    component="h2" 
+                    gutterBottom
+                    sx={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {document.title || 'Untitled Document'}
+                  </Typography>
+                  
+                  <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+                    <Chip 
+                      label={document.documentType || 'Unknown Type'} 
+                      size="small" 
+                      color="primary"
+                      variant="outlined"
+                    />
+                    <Chip 
+                      label={t[document.status] || document.status} 
+                      size="small" 
+                      color={getStatusChipColor(document.status)}
+                    />
+                  </Stack>
+                  
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    {t.uploadDate}: {formatDate(document.uploadDate || document.createdAt)}
+                  </Typography>
+                </CardContent>
+                
+                <Divider />
+                
+                <CardActions>
+                  <IconButton 
+                    aria-label={t.view}
+                    onClick={() => navigate(`/documents/${document.id}`)}
+                    title={t.view}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  
+                  <IconButton 
+                    aria-label={t.download}
+                    onClick={() => window.open(`/api/documents/${document.id}/download`, '_blank')}
+                    title={t.download}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
+                  
+                  <Box sx={{ flexGrow: 1 }} />
+                  
+                  <IconButton 
+                    aria-label={t.delete}
+                    onClick={() => handleDeleteDocument(document.id)}
+                    color="error"
+                    title={t.delete}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Box>
   );
-}
+};
 
 export default DocumentList;
