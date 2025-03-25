@@ -1,91 +1,183 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useCallback } from 'react';
+import axios from 'axios';
+
+// Create the document context
+const DocumentContext = createContext();
 
 /**
- * DocumentContext provides state management for active documents across the application
+ * Document Context Provider component
+ * Manages document state across the application following Vertical Slice Architecture
  * 
- * This context:
- * - Stores information about documents the user is currently working with
- * - Maintains a document selection across different features
- * - Persists active documents in localStorage
- * - Provides methods to add/remove documents from the active set
+ * Responsibilities:
+ * - Loading documents from the API
+ * - Uploading new documents
+ * - Fetching document details
+ * - Deleting documents
+ * - Analyzing document content
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} The provider component
  */
-export const DocumentContext = createContext({
-  activeDocuments: [],
-  setActiveDocuments: () => {},
-  addActiveDocument: () => {},
-  removeActiveDocument: () => {},
-  clearActiveDocuments: () => {},
-  isDocumentActive: () => false
-});
+export const DocumentContextProvider = ({ children }) => {
+  // State for documents
+  const [documents, setDocuments] = useState([]);
+  const [currentDocument, setCurrentDocument] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-/**
- * Provider component for the DocumentContext
- */
-const DocumentContextProvider = ({ children }) => {
-  // Initialize state from localStorage if available
-  const [activeDocuments, setActiveDocuments] = useState(() => {
-    const savedDocuments = localStorage.getItem('activeDocuments');
-    return savedDocuments ? JSON.parse(savedDocuments) : [];
-  });
-  
-  // Save to localStorage when active documents change
-  useEffect(() => {
-    localStorage.setItem('activeDocuments', JSON.stringify(activeDocuments));
-  }, [activeDocuments]);
-  
   /**
-   * Adds a document to the active documents list
+   * Load all documents from the API
+   */
+  const loadDocuments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get('/api/documents');
+      setDocuments(response.data);
+      
+      return response.data;
+    } catch (err) {
+      console.error('Error loading documents:', err);
+      setError(err.message || 'Failed to load documents');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * Fetch a single document by ID
    * 
-   * @param {Object} document The document to add
-   * @param {string} document.id Unique ID of the document
-   * @param {string} document.title Optional display title
-   * @param {Object} document.metadata Optional metadata for the document
+   * @param {string} id - Document ID
+   * @returns {Object} Document data
    */
-  const addActiveDocument = (document) => {
-    if (!document || !document.id) return;
-    
-    // Don't add if already in the list
-    if (activeDocuments.some(doc => doc.id === document.id)) return;
-    
-    setActiveDocuments(prev => [...prev, document]);
-  };
-  
+  const getDocumentById = useCallback(async (id) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get(`/api/documents/${id}`);
+      setCurrentDocument(response.data);
+      
+      return response.data;
+    } catch (err) {
+      console.error(`Error loading document ${id}:`, err);
+      setError(err.message || 'Failed to load document');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   /**
-   * Removes a document from the active documents list
+   * Upload a new document
    * 
-   * @param {string} documentId ID of the document to remove
+   * @param {FormData} formData - Form data with document file and metadata
+   * @param {Function} onProgress - Progress callback
+   * @returns {Object} Uploaded document data
    */
-  const removeActiveDocument = (documentId) => {
-    setActiveDocuments(prev => prev.filter(doc => doc.id !== documentId));
-  };
-  
+  const uploadDocument = useCallback(async (formData, onProgress) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post('/api/documents', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: onProgress,
+      });
+      
+      // Add the new document to the list
+      setDocuments(prev => [...prev, response.data]);
+      
+      return response.data;
+    } catch (err) {
+      console.error('Error uploading document:', err);
+      setError(err.message || 'Failed to upload document');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   /**
-   * Clears all active documents
-   */
-  const clearActiveDocuments = () => {
-    setActiveDocuments([]);
-  };
-  
-  /**
-   * Checks if a document is in the active documents list
+   * Delete a document by ID
    * 
-   * @param {string} documentId ID of the document to check
-   * @returns {boolean} True if the document is active
+   * @param {string} id - Document ID
+   * @returns {boolean} Success status
    */
-  const isDocumentActive = (documentId) => {
-    return activeDocuments.some(doc => doc.id === documentId);
-  };
-  
+  const deleteDocument = useCallback(async (id) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      await axios.delete(`/api/documents/${id}`);
+      
+      // Remove the document from the list
+      setDocuments(prev => prev.filter(doc => doc.id !== id));
+      
+      if (currentDocument && currentDocument.id === id) {
+        setCurrentDocument(null);
+      }
+      
+      return true;
+    } catch (err) {
+      console.error(`Error deleting document ${id}:`, err);
+      setError(err.message || 'Failed to delete document');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDocument]);
+
+  /**
+   * Analyze a document to extract specific data
+   * 
+   * @param {string} id - Document ID
+   * @param {Object} options - Analysis options
+   * @returns {Object} Analysis results
+   */
+  const analyzeDocument = useCallback(async (id, options = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post(`/api/documents/${id}/analyze`, options);
+      
+      // Update the current document with analysis results
+      if (currentDocument && currentDocument.id === id) {
+        setCurrentDocument(prev => ({
+          ...prev,
+          analysis: response.data,
+        }));
+      }
+      
+      return response.data;
+    } catch (err) {
+      console.error(`Error analyzing document ${id}:`, err);
+      setError(err.message || 'Failed to analyze document');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDocument]);
+
   // Context value
   const contextValue = {
-    activeDocuments,
-    setActiveDocuments,
-    addActiveDocument,
-    removeActiveDocument,
-    clearActiveDocuments,
-    isDocumentActive
+    documents,
+    currentDocument,
+    loading,
+    error,
+    loadDocuments,
+    getDocumentById,
+    uploadDocument,
+    deleteDocument,
+    analyzeDocument,
   };
-  
+
   return (
     <DocumentContext.Provider value={contextValue}>
       {children}
@@ -93,4 +185,4 @@ const DocumentContextProvider = ({ children }) => {
   );
 };
 
-export default DocumentContextProvider;
+export default DocumentContext;
