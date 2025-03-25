@@ -1,239 +1,314 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 import os
+import uuid
 import json
-import logging
 from datetime import datetime
-from agent_framework import AgentCoordinator
 
-# הגדרת לוגר
-logger = logging.getLogger(__name__)
+from models.document_models import Document, db
+from agent_framework.coordinator import AgentCoordinator
+from agent_framework.memory_agent import MemoryAgent
 
-# יצירת Blueprint
-langchain_routes = Blueprint('langchain_routes', __name__)
+# Create blueprint
+langchain_bp = Blueprint('langchain', __name__, url_prefix='/api')
 
-# יצירת מתאם הסוכנים
+# Create agent instances
+memory_agent = MemoryAgent()
 agent_coordinator = AgentCoordinator()
 
-@langchain_routes.route('/api/chat', methods=['POST'])
-def chat():
-    """
-    נקודת קצה לצ'אט עם המערכת
-    """
+# Chat sessions storage
+# In a production environment, this should be stored in a database
+chat_sessions = {}
+
+@langchain_bp.route('/chat/session', methods=['POST'])
+def create_chat_session():
+    """Create a new chat session"""
     try:
-        # קבלת נתוני הבקשה
-        data = request.json
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-        
-        # חילוץ המידע הנדרש מהבקשה
-        question = data.get('question')
-        session_id = data.get('session_id')
+        # Get request data
+        data = request.json or {}
         language = data.get('language', 'he')
-        document_ids = data.get('document_ids', [])
+        document_ids = data.get('documentIds', [])
         
-        if not question:
-            return jsonify({"error": "No question provided"}), 400
+        # Generate session ID
+        session_id = str(uuid.uuid4())
         
-        # אם לא סופק מזהה שיחה, יצור חדש
-        if not session_id:
-            session_id = agent_coordinator.get_memory_agent().session_id
-        
-        # עיבוד השאלה
-        result = agent_coordinator.process_query(
-            session_id=session_id,
-            query=question,
-            document_ids=document_ids,
-            language=language
-        )
-        
-        return jsonify({
-            "session_id": session_id,
-            "question": question,
-            "answer": result["answer"],
-            "language": language,
-            "document_references": result["document_references"]
-        })
-        
-    except Exception as e:
-        logger.error(f"Error in chat endpoint: {str(e)}", exc_info=True)
-        return jsonify({"error": f"Error processing chat: {str(e)}"}), 500
-
-@langchain_routes.route('/api/sessions', methods=['GET'])
-def get_sessions():
-    """
-    קבלת רשימת שיחות פעילות
-    """
-    try:
-        language = request.args.get('language', 'he')
-        
-        # קבלת רשימת השיחות
-        sessions = agent_coordinator.get_active_sessions()
-        
-        message = "שיחות נטענו בהצלחה" if language == "he" else "Sessions loaded successfully"
-        
-        return jsonify({
-            "message": message,
-            "sessions": sessions,
-            "count": len(sessions),
-            "language": language
-        })
-        
-    except Exception as e:
-        logger.error(f"Error getting sessions: {str(e)}", exc_info=True)
-        error_message = f"שגיאה בטעינת שיחות: {str(e)}" if language == "he" else f"Error loading sessions: {str(e)}"
-        return jsonify({"error": error_message}), 500
-
-@langchain_routes.route('/api/sessions/<session_id>', methods=['GET'])
-def get_session(session_id):
-    """
-    קבלת פרטי שיחה ספציפית
-    """
-    try:
-        language = request.args.get('language', 'he')
-        
-        # קבלת סוכן הזיכרון לשיחה
-        memory_agent = agent_coordinator.get_memory_agent(session_id)
-        
-        # קבלת היסטוריית ההודעות
-        message_history = memory_agent.get_message_history()
-        
-        # קבלת הפניות למסמכים
-        document_references = memory_agent.get_document_references()
-        
-        # קבלת סיכום הזיכרון
-        summary = memory_agent.get_memory_summary()
-        
-        message = "שיחה נטענה בהצלחה" if language == "he" else "Session loaded successfully"
-        
-        return jsonify({
-            "message": message,
-            "session_id": session_id,
-            "message_history": message_history,
-            "document_references": document_references,
-            "summary": summary,
-            "language": language
-        })
-        
-    except Exception as e:
-        logger.error(f"Error getting session {session_id}: {str(e)}", exc_info=True)
-        error_message = f"שגיאה בטעינת שיחה: {str(e)}" if language == "he" else f"Error loading session: {str(e)}"
-        return jsonify({"error": error_message}), 500
-
-@langchain_routes.route('/api/sessions/<session_id>', methods=['DELETE'])
-def delete_session(session_id):
-    """
-    מחיקת שיחה ספציפית
-    """
-    try:
-        language = request.args.get('language', 'he')
-        
-        # מחיקת השיחה
-        success = agent_coordinator.clear_session(session_id)
-        
-        if not success:
-            error_message = "שגיאה במחיקת שיחה" if language == "he" else "Error deleting session"
-            return jsonify({"error": error_message}), 500
-        
-        message = "שיחה נמחקה בהצלחה" if language == "he" else "Session deleted successfully"
-        
-        return jsonify({
-            "message": message,
-            "session_id": session_id,
-            "language": language
-        })
-        
-    except Exception as e:
-        logger.error(f"Error deleting session {session_id}: {str(e)}", exc_info=True)
-        error_message = f"שגיאה במחיקת שיחה: {str(e)}" if language == "he" else f"Error deleting session: {str(e)}"
-        return jsonify({"error": error_message}), 500
-
-@langchain_routes.route('/api/analyze', methods=['POST'])
-def analyze_document():
-    """
-    ניתוח מסמך ושאלה ספציפית
-    """
-    try:
-        # קבלת נתוני הבקשה
-        data = request.json
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-        
-        # חילוץ המידע הנדרש מהבקשה
-        document_id = data.get('document_id')
-        question = data.get('question')
-        session_id = data.get('session_id')
-        language = data.get('language', 'he')
-        
-        if not document_id:
-            return jsonify({"error": "No document_id provided"}), 400
-            
-        if not question:
-            return jsonify({"error": "No question provided"}), 400
-        
-        # אם לא סופק מזהה שיחה, יצור חדש
-        if not session_id:
-            session_id = agent_coordinator.get_memory_agent().session_id
-        
-        # עיבוד השאלה עם הפניה למסמך ספציפי
-        result = agent_coordinator.process_query(
-            session_id=session_id,
-            query=question,
-            document_ids=[document_id],
-            language=language
-        )
-        
-        return jsonify({
-            "session_id": session_id,
-            "document_id": document_id,
-            "question": question,
-            "answer": result["answer"],
-            "language": language
-        })
-        
-    except Exception as e:
-        logger.error(f"Error in analyze endpoint: {str(e)}", exc_info=True)
-        return jsonify({"error": f"Error analyzing document: {str(e)}"}), 500
-
-@langchain_routes.route('/api/health', methods=['GET'])
-def ai_health():
-    """
-    בדיקת זמינות מערכת ה-AI
-    """
-    try:
-        # בדיקת מפתחות API
-        huggingface_api_key = os.environ.get('HUGGINGFACE_API_KEY')
-        mistral_api_key = os.environ.get('MISTRAL_API_KEY')
-        openai_api_key = os.environ.get('OPENAI_API_KEY')
-        
-        # בדיקת תיקיות נדרשות
-        required_dirs = [
-            os.path.join('data', 'memory'),
-            os.path.join('data', 'embeddings'),
-            os.path.join('data', 'templates')
-        ]
-        
-        dir_status = {}
-        for dir_path in required_dirs:
-            dir_status[dir_path] = os.path.exists(dir_path)
-        
-        # מידע על מפתחות API
-        api_keys = {
-            "huggingface": bool(huggingface_api_key),
-            "mistral": bool(mistral_api_key),
-            "openai": bool(openai_api_key)
+        # Create session
+        chat_sessions[session_id] = {
+            'id': session_id,
+            'created_at': datetime.now().isoformat(),
+            'language': language,
+            'document_ids': document_ids.copy() if document_ids else [],
+            'messages': [],
         }
         
+        # Load documents into memory agent if provided
+        if document_ids:
+            for doc_id in document_ids:
+                # Load document if it exists
+                document = Document.query.get(doc_id)
+                if document and document.analysis_path and os.path.exists(document.analysis_path):
+                    # Load document into memory agent
+                    memory_agent.add_document(doc_id, document.analysis_path)
+        
         return jsonify({
-            "status": "ok",
-            "message": "AI system is operational",
-            "api_keys": api_keys,
-            "directories": dir_status,
-            "coordinator": {
-                "active_sessions": len(agent_coordinator.active_memory_agents)
-            },
-            "timestamp": datetime.now().isoformat()
-        })
+            'success': True,
+            'sessionId': session_id,
+        }), 201
         
     except Exception as e:
-        logger.error(f"Error in AI health check: {str(e)}", exc_info=True)
-        return jsonify({"status": "error", "message": f"AI system error: {str(e)}"}), 500
+        current_app.logger.error(f"Error creating chat session: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@langchain_bp.route('/chat/session/<session_id>', methods=['GET'])
+def get_chat_session(session_id):
+    """Get chat session history"""
+    try:
+        # Check if session exists
+        if session_id not in chat_sessions:
+            return jsonify({'error': 'Chat session not found'}), 404
+            
+        session = chat_sessions[session_id]
+        
+        return jsonify({
+            'success': True,
+            'session': {
+                'id': session['id'],
+                'created_at': session['created_at'],
+                'language': session['language'],
+                'document_ids': session['document_ids'],
+            },
+            'messages': session['messages'],
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting chat session {session_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@langchain_bp.route('/chat/session/<session_id>/documents', methods=['POST'])
+def update_session_documents(session_id):
+    """Update documents for a chat session"""
+    try:
+        # Check if session exists
+        if session_id not in chat_sessions:
+            return jsonify({'error': 'Chat session not found'}), 404
+            
+        # Get request data
+        data = request.json or {}
+        document_ids = data.get('documentIds', [])
+        
+        if not isinstance(document_ids, list):
+            return jsonify({'error': 'documentIds must be an array'}), 400
+            
+        # Get current document IDs
+        current_document_ids = chat_sessions[session_id]['document_ids']
+        
+        # Get new document IDs to add
+        new_document_ids = [doc_id for doc_id in document_ids if doc_id not in current_document_ids]
+        
+        # Get document IDs to remove
+        remove_document_ids = [doc_id for doc_id in current_document_ids if doc_id not in document_ids]
+        
+        # Update memory agent
+        for doc_id in new_document_ids:
+            # Load document if it exists
+            document = Document.query.get(doc_id)
+            if document and document.analysis_path and os.path.exists(document.analysis_path):
+                # Load document into memory agent
+                memory_agent.add_document(doc_id, document.analysis_path)
+        
+        # Remove documents from memory agent
+        for doc_id in remove_document_ids:
+            memory_agent.forget_document(doc_id)
+        
+        # Update session
+        chat_sessions[session_id]['document_ids'] = document_ids
+        
+        return jsonify({
+            'success': True,
+            'documentIds': document_ids,
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error updating chat session documents {session_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@langchain_bp.route('/chat/query', methods=['POST'])
+def chat_query():
+    """Process a chat query"""
+    try:
+        # Get request data
+        data = request.json or {}
+        session_id = data.get('sessionId')
+        message = data.get('message')
+        document_ids = data.get('documentIds', [])
+        
+        # Validate data
+        if not session_id:
+            return jsonify({'error': 'sessionId is required'}), 400
+            
+        if not message:
+            return jsonify({'error': 'message is required'}), 400
+            
+        # Check if session exists
+        if session_id not in chat_sessions:
+            return jsonify({'error': 'Chat session not found'}), 404
+            
+        session = chat_sessions[session_id]
+        language = session.get('language', 'he')
+        
+        # Add user message to session
+        user_message = {
+            'role': 'user',
+            'content': message,
+            'timestamp': datetime.now().isoformat(),
+        }
+        
+        chat_sessions[session_id]['messages'].append(user_message)
+        
+        # Process query with agent coordinator
+        result = agent_coordinator.process_query(
+            query=message,
+            document_ids=document_ids if document_ids else session['document_ids'],
+            language=language,
+            chat_history=session['messages']
+        )
+        
+        # Add assistant response to session
+        assistant_message = {
+            'role': 'assistant',
+            'content': result['answer'],
+            'timestamp': datetime.now().isoformat(),
+            'document_references': result.get('document_references', []),
+        }
+        
+        chat_sessions[session_id]['messages'].append(assistant_message)
+        
+        return jsonify({
+            'success': True,
+            'response': result['answer'],
+            'document_references': result.get('document_references', []),
+            'suggested_questions': result.get('suggested_questions', []),
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error processing chat query: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@langchain_bp.route('/chat/document-suggestions/<document_id>', methods=['GET'])
+def document_suggestions(document_id):
+    """Get suggested questions for a document"""
+    try:
+        # Get document
+        document = Document.query.get(document_id)
+        
+        if not document:
+            return jsonify({'error': 'Document not found'}), 404
+            
+        # Get document type
+        document_type = document.document_type
+        language = request.args.get('language', 'he')
+        
+        # Generate suggestions based on document type
+        suggestions = []
+        
+        if document_type == 'bankStatement':
+            if language == 'he':
+                suggestions = [
+                    'מה היתרה בחשבון?',
+                    'מהן ההוצאות הגדולות ביותר בחודש האחרון?',
+                    'כמה כסף הוצאתי על מצרכים?',
+                    'הראה לי את כל העברות מעל 1000 ש"ח',
+                ]
+            else:
+                suggestions = [
+                    'What is my account balance?',
+                    'What are my largest expenses last month?',
+                    'How much money did I spend on groceries?',
+                    'Show me all transactions over 1000 NIS',
+                ]
+        elif document_type == 'investmentReport':
+            if language == 'he':
+                suggestions = [
+                    'מה שווי תיק ההשקעות שלי?',
+                    'מהי הקצאת הנכסים שלי?',
+                    'אילו השקעות הניבו את התשואה הטובה ביותר ברבעון האחרון?',
+                    'מהן העמלות שאני משלם על ההשקעות שלי?',
+                ]
+            else:
+                suggestions = [
+                    'What is my portfolio value?',
+                    'What is my asset allocation?',
+                    'Which investments performed best last quarter?',
+                    'What fees am I paying on my investments?',
+                ]
+        else:
+            # Default questions for any document
+            if language == 'he':
+                suggestions = [
+                    'על מה המסמך הזה?',
+                    'מהם המספרים העיקריים במסמך זה?',
+                    'תוכל לסכם עבורי את המסמך הזה?',
+                    'האם יש תובנות פיננסיות מהמסמך הזה?',
+                ]
+            else:
+                suggestions = [
+                    'What is this document about?',
+                    'What are the key numbers in this document?',
+                    'Can you summarize this document for me?',
+                    'Are there any financial insights from this document?',
+                ]
+        
+        return jsonify({
+            'success': True,
+            'suggestions': suggestions,
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting document suggestions for {document_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@langchain_bp.route('/tables/generate', methods=['POST'])
+def generate_table():
+    """Generate a table from document data"""
+    try:
+        # Get request data
+        data = request.json or {}
+        name = data.get('name')
+        table_type = data.get('type', 'summary')
+        document_ids = data.get('documentIds', [])
+        columns = data.get('columns', [])
+        filters = data.get('filters', [])
+        language = data.get('language', 'he')
+        
+        # Validate data
+        if not name:
+            return jsonify({'error': 'name is required'}), 400
+            
+        if not document_ids:
+            return jsonify({'error': 'documentIds is required'}), 400
+            
+        if not columns:
+            return jsonify({'error': 'columns is required'}), 400
+            
+        # Generate table spec
+        table_spec = {
+            'name': name,
+            'type': table_type,
+            'columns': columns,
+            'filters': filters,
+            'language': language,
+        }
+        
+        # Generate table with agent coordinator
+        result = agent_coordinator.generate_table(
+            document_ids=document_ids,
+            table_spec=table_spec
+        )
+        
+        return jsonify({
+            'success': True,
+            'tableData': result['table_data'],
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error generating table: {str(e)}")
+        return jsonify({'error': str(e)}), 500
