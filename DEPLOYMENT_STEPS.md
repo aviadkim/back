@@ -111,7 +111,39 @@ The service will take a few minutes to provision. While waiting, continue with t
 
 The script will save the credentials to `bucket_credentials.json`. Keep this file secure and don't commit it to your repository.
 
-## Step 5: Deploy Your Application
+## Step 5: Set Up GitHub Integration (Optional)
+
+To enable automatic deployment from GitHub:
+
+1. Make the GitHub integration script executable:
+   ```bash
+   chmod +x setup-github-integration.sh
+   ```
+
+2. Run the script:
+   ```bash
+   ./setup-github-integration.sh
+   ```
+
+3. The script will:
+   - Create an IAM policy for GitHub Actions
+   - Create an IAM user for GitHub Actions
+   - Generate and display access credentials
+
+4. Add the displayed secrets to your GitHub repository:
+   - Go to your repository on GitHub
+   - Click "Settings" > "Secrets and variables" > "Actions"
+   - Click "New repository secret" and add each of the secrets:
+     - `AWS_ACCESS_KEY_ID`
+     - `AWS_SECRET_ACCESS_KEY`
+     - `AWS_REGION`
+     - `SERVICE_NAME`
+
+The GitHub Actions workflow file (`.github/workflows/deploy-to-lightsail.yml`) is already in your repository. It will automatically deploy your application whenever you push changes to the master branch.
+
+## Step 6: Deploy Your Application
+
+### Manual Deployment
 
 1. Make the deployment script executable:
    ```bash
@@ -133,7 +165,22 @@ The script will save the credentials to `bucket_credentials.json`. Keep this fil
 
 5. The script will output your service URL when the deployment is complete
 
-## Step 6: Verify Deployment
+### Automatic Deployment via GitHub
+
+If you set up GitHub integration:
+
+1. Simply push your changes to the master branch:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   git push
+   ```
+
+2. GitHub Actions will automatically deploy your application
+
+3. Monitor the deployment in the "Actions" tab of your GitHub repository
+
+## Step 7: Verify Deployment
 
 1. Go to the AWS Lightsail Console: [https://lightsail.aws.amazon.com/ls/webapp/home/containers](https://lightsail.aws.amazon.com/ls/webapp/home/containers)
 
@@ -180,6 +227,11 @@ The script will save the credentials to `bucket_credentials.json`. Keep this fil
 - Consider upgrading your container power if the application is slow
 - Check if you're hitting any rate limits with external APIs
 
+#### GitHub Actions Issues
+- Check the Actions tab in your GitHub repository for error messages
+- Verify that all secrets are correctly set in your repository
+- Check the IAM user permissions if deployment fails
+
 ## Next Steps
 
 Once your application is successfully deployed, consider:
@@ -197,6 +249,10 @@ Once your application is successfully deployed, consider:
 3. **Backups**:
    - Set up regular MongoDB backups through Atlas
    - Consider backing up your document bucket regularly
+
+4. **Scaling your application**:
+   - Increase the power of your Lightsail container service as needed
+   - Consider migrating to ECS or EKS for more advanced scaling options
 
 ## Managing Your Application
 
@@ -225,11 +281,37 @@ For database management, use the MongoDB Atlas Dashboard:
 When you make changes to your code:
 
 1. Commit and push your changes to GitHub
-2. Pull the changes to your local environment
-3. Run the deployment script again:
+2. GitHub Actions will automatically deploy your changes (if you set up the integration)
+
+Or, for manual deployment:
+
+1. Pull the changes to your local environment
+2. Run the deployment script:
    ```bash
    ./deploy-to-lightsail.sh
    ```
+
+## Cost Management
+
+Keep an eye on your AWS costs:
+
+1. **AWS Cost Explorer**: [https://console.aws.amazon.com/cost-management/home](https://console.aws.amazon.com/cost-management/home)
+2. **AWS Budgets**: Set up budgets and alerts to avoid unexpected charges
+
+Typical monthly costs for your setup:
+- Lightsail Container Service (Micro): $7/month
+- Lightsail Object Storage: ~$1-5/month (depending on usage)
+- MongoDB Atlas (Free Tier): $0/month
+- AWS Secrets Manager: ~$0.50/month per secret
+
+## Security Best Practices
+
+1. **Rotate credentials regularly**: Update your API keys and database passwords periodically
+2. **Use HTTPS**: Always use encrypted connections for production deployments
+3. **Implement proper authentication**: Ensure your application has proper user authentication
+4. **Update dependencies**: Regularly update your dependencies to patch security vulnerabilities
+5. **Enable AWS CloudTrail**: For comprehensive audit logging
+6. **Review IAM permissions**: Follow the principle of least privilege
 
 ## Need Help?
 
@@ -238,3 +320,10 @@ If you encounter any issues with your deployment:
 1. Check the container logs in the AWS Lightsail Console
 2. Review the AWS_DEPLOYMENT.md file for additional guidance
 3. Check the AWS Lightsail documentation: [https://docs.aws.amazon.com/lightsail/](https://docs.aws.amazon.com/lightsail/)
+4. Get help from the AWS community: [https://repost.aws/](https://repost.aws/)
+
+## Conclusion
+
+You now have a fully-deployed Financial Document Analysis System running on AWS Lightsail with automatic GitHub integration. This setup provides a cost-effective, scalable solution that can grow with your needs.
+
+As your application evolves, you can easily update it by pushing changes to GitHub, and the automatic deployment will ensure your latest code is always running in production.
