@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 import os
 import json
 import logging
-from agent_framework.coordinator import AgentCoordinator
+from datetime import datetime
+from agent_framework import AgentCoordinator
 
 # הגדרת לוגר
 logger = logging.getLogger(__name__)
@@ -10,226 +11,229 @@ logger = logging.getLogger(__name__)
 # יצירת Blueprint
 langchain_routes = Blueprint('langchain_routes', __name__)
 
-# יצירת מתאם הסוכנים עם מפתח API
-try:
-    coordinator = AgentCoordinator(api_key=os.getenv('HUGGINGFACE_API_KEY', None))
-    logger.info("AgentCoordinator initialized successfully")
-except Exception as e:
-    logger.error(f"Error initializing AgentCoordinator: {str(e)}")
-    coordinator = None
+# יצירת מתאם הסוכנים
+agent_coordinator = AgentCoordinator()
 
 @langchain_routes.route('/api/chat', methods=['POST'])
 def chat():
     """
-    נקודת קצה לצ'אט עם המסמכים
-    
-    Request Body:
-    - question: שאלת המשתמש
-    - document_ids: רשימת מזהי מסמכים (אופציונלי)
-    - conversation_id: מזהה שיחה (אופציונלי)
-    - language: שפה מבוקשת (he/en, ברירת מחדל: he)
-    
-    Returns:
-    - תשובה מבוססת מסמכים
+    נקודת קצה לצ'אט עם המערכת
     """
     try:
+        # קבלת נתוני הבקשה
         data = request.json
-        logger.info(f"Received chat request: {data}")
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
         
+        # חילוץ המידע הנדרש מהבקשה
         question = data.get('question')
+        session_id = data.get('session_id')
+        language = data.get('language', 'he')
         document_ids = data.get('document_ids', [])
-        conversation_id = data.get('conversation_id')
-        language = data.get('language', 'he')  # ברירת מחדל היא עברית
         
         if not question:
-            error_message = "חסרה שאלה" if language == "he" else "Missing question"
-            return jsonify({"error": error_message}), 400
+            return jsonify({"error": "No question provided"}), 400
         
-        try:
-            response = coordinator.answer_question(
-                question=question, 
-                document_ids=document_ids, 
-                conversation_id=conversation_id,
-                language=language
-            )
-            return jsonify(response)
-        except Exception as e:
-            logger.error(f"Error in answer_question: {str(e)}")
-            error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
-            return jsonify({"error": error_message}), 500
-    except Exception as e:
-        logger.error(f"General error in chat endpoint: {str(e)}")
-        return jsonify({"error": f"General error: {str(e)}"}), 500
-
-@langchain_routes.route('/api/process_document', methods=['POST'])
-def upload_document():
-    """
-    נקודת קצה להעלאת מסמך לעיבוד
-    
-    Request Body:
-    - file: קובץ להעלאה
-    - metadata: מטה-דאטה נוסף על המסמך (אופציונלי)
-    - language: שפת המסמך (he/en, ברירת מחדל: he)
-    
-    Returns:
-    - סטטוס העלאה ומזהה מסמך
-    """
-    language = request.form.get('language', 'he')  # ברירת מחדל היא עברית
-    
-    if 'file' not in request.files:
-        error_message = "לא נשלח קובץ" if language == "he" else "No file sent"
-        return jsonify({"error": error_message}), 400
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        error_message = "לא נבחר קובץ" if language == "he" else "No file selected"
-        return jsonify({"error": error_message}), 400
-    
-    try:
-        # קבלת מטה-דאטה נוסף אם יש
-        metadata = {}
-        if 'metadata' in request.form:
-            try:
-                metadata = json.loads(request.form['metadata'])
-            except:
-                metadata = {}
+        # אם לא סופק מזהה שיחה, יצור חדש
+        if not session_id:
+            session_id = agent_coordinator.get_memory_agent().session_id
         
-        # שמירת הקובץ למיקום זמני
-        file_path = os.path.join('uploads', file.filename)
-        file.save(file_path)
-        
-        # קריאת תוכן הקובץ
-        with open(file_path, 'rb') as f:
-            content = f.read()
-        
-        # עיבוד המסמך
-        document_id = os.path.basename(file_path)
-        success = coordinator.process_document(
-            document_id=document_id, 
-            content=content,
-            metadata=metadata,
+        # עיבוד השאלה
+        result = agent_coordinator.process_query(
+            session_id=session_id,
+            query=question,
+            document_ids=document_ids,
             language=language
         )
         
-        if success:
-            success_message = "מסמך הועלה בהצלחה" if language == "he" else "Document uploaded successfully"
-            return jsonify({
-                "message": success_message,
-                "document_id": document_id
-            })
-        else:
-            error_message = "שגיאה בעיבוד המסמך" if language == "he" else "Error processing document"
+        return jsonify({
+            "session_id": session_id,
+            "question": question,
+            "answer": result["answer"],
+            "language": language,
+            "document_references": result["document_references"]
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error processing chat: {str(e)}"}), 500
+
+@langchain_routes.route('/api/sessions', methods=['GET'])
+def get_sessions():
+    """
+    קבלת רשימת שיחות פעילות
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # קבלת רשימת השיחות
+        sessions = agent_coordinator.get_active_sessions()
+        
+        message = "שיחות נטענו בהצלחה" if language == "he" else "Sessions loaded successfully"
+        
+        return jsonify({
+            "message": message,
+            "sessions": sessions,
+            "count": len(sessions),
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting sessions: {str(e)}", exc_info=True)
+        error_message = f"שגיאה בטעינת שיחות: {str(e)}" if language == "he" else f"Error loading sessions: {str(e)}"
+        return jsonify({"error": error_message}), 500
+
+@langchain_routes.route('/api/sessions/<session_id>', methods=['GET'])
+def get_session(session_id):
+    """
+    קבלת פרטי שיחה ספציפית
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # קבלת סוכן הזיכרון לשיחה
+        memory_agent = agent_coordinator.get_memory_agent(session_id)
+        
+        # קבלת היסטוריית ההודעות
+        message_history = memory_agent.get_message_history()
+        
+        # קבלת הפניות למסמכים
+        document_references = memory_agent.get_document_references()
+        
+        # קבלת סיכום הזיכרון
+        summary = memory_agent.get_memory_summary()
+        
+        message = "שיחה נטענה בהצלחה" if language == "he" else "Session loaded successfully"
+        
+        return jsonify({
+            "message": message,
+            "session_id": session_id,
+            "message_history": message_history,
+            "document_references": document_references,
+            "summary": summary,
+            "language": language
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting session {session_id}: {str(e)}", exc_info=True)
+        error_message = f"שגיאה בטעינת שיחה: {str(e)}" if language == "he" else f"Error loading session: {str(e)}"
+        return jsonify({"error": error_message}), 500
+
+@langchain_routes.route('/api/sessions/<session_id>', methods=['DELETE'])
+def delete_session(session_id):
+    """
+    מחיקת שיחה ספציפית
+    """
+    try:
+        language = request.args.get('language', 'he')
+        
+        # מחיקת השיחה
+        success = agent_coordinator.clear_session(session_id)
+        
+        if not success:
+            error_message = "שגיאה במחיקת שיחה" if language == "he" else "Error deleting session"
             return jsonify({"error": error_message}), 500
-            
-    except Exception as e:
-        error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
-        return jsonify({"error": error_message}), 500
-
-@langchain_routes.route('/api/document/<document_id>', methods=['GET'])
-def get_document_summary(document_id):
-    """
-    נקודת קצה לקבלת סיכום מסמך
-    
-    URL Params:
-    - document_id: מזהה המסמך
-    
-    Query Params:
-    - language: שפה מבוקשת (he/en, ברירת מחדל: he)
-    
-    Returns:
-    - סיכום המסמך ומידע נוסף
-    """
-    language = request.args.get('language', 'he')  # ברירת מחדל היא עברית
-    
-    try:
-        summary = coordinator.get_document_summary(document_id, language=language)
-        return jsonify(summary)
-    except Exception as e:
-        error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
-        return jsonify({"error": error_message}), 500
-
-@langchain_routes.route('/api/conversation/<conversation_id>', methods=['DELETE'])
-def clear_conversation(conversation_id):
-    """
-    נקודת קצה למחיקת היסטוריית שיחה
-    
-    URL Params:
-    - conversation_id: מזהה השיחה למחיקה
-    
-    Query Params:
-    - language: שפה מבוקשת (he/en, ברירת מחדל: he)
-    
-    Returns:
-    - סטטוס מחיקה
-    """
-    language = request.args.get('language', 'he')  # ברירת מחדל היא עברית
-    
-    try:
-        success = coordinator.clear_conversation(conversation_id)
         
-        if success:
-            success_message = "השיחה נמחקה בהצלחה" if language == "he" else "Conversation cleared successfully"
-            return jsonify({"message": success_message})
-        else:
-            error_message = "השיחה לא נמצאה" if language == "he" else "Conversation not found"
-            return jsonify({"error": error_message}), 404
-            
+        message = "שיחה נמחקה בהצלחה" if language == "he" else "Session deleted successfully"
+        
+        return jsonify({
+            "message": message,
+            "session_id": session_id,
+            "language": language
+        })
+        
     except Exception as e:
-        error_message = f"שגיאה: {str(e)}" if language == "he" else f"Error: {str(e)}"
+        logger.error(f"Error deleting session {session_id}: {str(e)}", exc_info=True)
+        error_message = f"שגיאה במחיקת שיחה: {str(e)}" if language == "he" else f"Error deleting session: {str(e)}"
         return jsonify({"error": error_message}), 500
 
-@langchain_routes.route('/api/language', methods=['POST'])
-def set_language():
+@langchain_routes.route('/api/analyze', methods=['POST'])
+def analyze_document():
     """
-    נקודת קצה לשינוי שפת ברירת המחדל של המערכת
-    
-    Request Body:
-    - language: שפה לשינוי (he/en)
-    
-    Returns:
-    - סטטוס שינוי השפה
+    ניתוח מסמך ושאלה ספציפית
     """
-    data = request.json
-    language = data.get('language')
-    
-    if not language:
-        return jsonify({"error": "Missing language parameter"}), 400
-    
     try:
-        success = coordinator.set_language(language)
+        # קבלת נתוני הבקשה
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
         
-        if success:
-            if language == "he":
-                return jsonify({"message": "שפת המערכת שונתה לעברית"})
-            else:
-                return jsonify({"message": "System language changed to English"})
-        else:
-            return jsonify({"error": "Invalid language. Supported languages: he, en"}), 400
+        # חילוץ המידע הנדרש מהבקשה
+        document_id = data.get('document_id')
+        question = data.get('question')
+        session_id = data.get('session_id')
+        language = data.get('language', 'he')
+        
+        if not document_id:
+            return jsonify({"error": "No document_id provided"}), 400
             
+        if not question:
+            return jsonify({"error": "No question provided"}), 400
+        
+        # אם לא סופק מזהה שיחה, יצור חדש
+        if not session_id:
+            session_id = agent_coordinator.get_memory_agent().session_id
+        
+        # עיבוד השאלה עם הפניה למסמך ספציפי
+        result = agent_coordinator.process_query(
+            session_id=session_id,
+            query=question,
+            document_ids=[document_id],
+            language=language
+        )
+        
+        return jsonify({
+            "session_id": session_id,
+            "document_id": document_id,
+            "question": question,
+            "answer": result["answer"],
+            "language": language
+        })
+        
     except Exception as e:
-        return jsonify({"error": f"Error: {str(e)}"}), 500
+        logger.error(f"Error in analyze endpoint: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Error analyzing document: {str(e)}"}), 500
 
 @langchain_routes.route('/api/health', methods=['GET'])
-def health_check():
+def ai_health():
     """
-    נקודת קצה לבדיקת תקינות המערכת
-    
-    Query Params:
-    - language: שפה מבוקשת (he/en, ברירת מחדל: he)
-    
-    Returns:
-    - סטטוס המערכת
+    בדיקת זמינות מערכת ה-AI
     """
-    language = request.args.get('language', 'he')  # ברירת מחדל היא עברית
-    
-    status = "warning"
-    status_message = "שירותי AI מוגבלים - משתמש במודל דמה" if language == "he" else "AI services limited - using dummy model"
-    
-    status_language = "עברית" if language == "he" else "English"
-    
-    return jsonify({
-        "status": status,
-        "message": status_message,
-        "language": status_language
-    })
+    try:
+        # בדיקת מפתחות API
+        huggingface_api_key = os.environ.get('HUGGINGFACE_API_KEY')
+        mistral_api_key = os.environ.get('MISTRAL_API_KEY')
+        openai_api_key = os.environ.get('OPENAI_API_KEY')
+        
+        # בדיקת תיקיות נדרשות
+        required_dirs = [
+            os.path.join('data', 'memory'),
+            os.path.join('data', 'embeddings'),
+            os.path.join('data', 'templates')
+        ]
+        
+        dir_status = {}
+        for dir_path in required_dirs:
+            dir_status[dir_path] = os.path.exists(dir_path)
+        
+        # מידע על מפתחות API
+        api_keys = {
+            "huggingface": bool(huggingface_api_key),
+            "mistral": bool(mistral_api_key),
+            "openai": bool(openai_api_key)
+        }
+        
+        return jsonify({
+            "status": "ok",
+            "message": "AI system is operational",
+            "api_keys": api_keys,
+            "directories": dir_status,
+            "coordinator": {
+                "active_sessions": len(agent_coordinator.active_memory_agents)
+            },
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in AI health check: {str(e)}", exc_info=True)
+        return jsonify({"status": "error", "message": f"AI system error: {str(e)}"}), 500
