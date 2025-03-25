@@ -4,6 +4,7 @@ import os
 import jinja2
 from dotenv import load_dotenv
 import logging
+from features.chatbot import chatbot_bp
 
 # טעינת משתני סביבה מקובץ .env
 load_dotenv()
@@ -47,6 +48,7 @@ from features.pdf_scanning import pdf_scanning_bp
 
 # רישום נתיבים
 app.register_blueprint(pdf_scanning_bp)
+app.register_blueprint(chatbot_bp)
 
 # We'll continue to support legacy route structures during migration
 try:
