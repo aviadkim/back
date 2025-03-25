@@ -420,19 +420,6 @@ Be precise and ensure all data is correctly extracted. If you cannot find data f
         Returns:
             str: Truncated text
         """
-
-
-    def _truncate_text(self, text: str, max_tokens: int) -> str:
-        """
-        Truncate text to fit within token limit
-        
-        Args:
-            text (str): The text to truncate
-            max_tokens (int): Maximum number of tokens
-            
-        Returns:
-            str: Truncated text
-        """
         # Very rough approximation: 1 token ~= 4 characters for English, ~= 2-3 characters for Hebrew
         avg_chars_per_token = 3  # Conservative estimate
         max_chars = max_tokens * avg_chars_per_token
@@ -756,5 +743,4 @@ Make sure the questions are:
                 "What are my largest expenses in the last month?",
                 "What is the overall return of my investment portfolio?",
                 "Are there any recommendations for saving on expenses?"
-            ]    
-        # Very rough approximation: 1 token ~= 4 characters for
+            ]
