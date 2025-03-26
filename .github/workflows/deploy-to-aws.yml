@@ -1,0 +1,43 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+
+    - name: Create Elastic Beanstalk application if it doesn't exist
+      run: |
+        # Check if the application exists
+        if ! aws elasticbeanstalk describe-applications --application-names financial-docs > /dev/null 2>&1; then
+          echo "Creating Elastic Beanstalk application 'financial-docs'"
+          aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Document Analysis Application"
+        else
+          echo "Application 'financial-docs' already exists"
+        fi
+
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x "*.git*" -x "node_modules/*" -x "venv/*"
+
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: financial-docs
+        environment_name: financial-docs-env
+        version_label: financial-docs-${{ github.sha }}
+        region: eu-central-1
+        deployment_package: deploy.zip
