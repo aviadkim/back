@@ -66,7 +66,7 @@ class AgentCoordinator:
             try:
                 from langchain.llms import HuggingFaceHub
                 self.llm = HuggingFaceHub(
-                    repo_id="meta-llama/Llama-2-70b-chat-hf",
+                    repo_id="google/flan-t5-large",
                     temperature=0,
                     huggingfacehub_api_token=self.huggingface_api_key
                 )
