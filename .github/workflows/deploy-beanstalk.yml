@@ -1,0 +1,137 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install awscli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Create Elastic Beanstalk application if it doesn't exist
+        run: |
+          # Check if application exists
+          if ! aws elasticbeanstalk describe-applications --application-names financial-docs > /dev/null 2>&1; then
+            echo "Creating Elastic Beanstalk application 'financial-docs'"
+            aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Documents Analysis Application"
+          else
+            echo "Application 'financial-docs' already exists"
+          fi
+
+      - name: Create application version zip
+        run: |
+          # Create Dockerrun.aws.json
+          cat > Dockerrun.aws.json << 'EOF'
+          {
+            "AWSEBDockerrunVersion": "1",
+            "Image": {
+              "Name": "financial-docs-app:latest",
+              "Update": "true"
+            },
+            "Ports": [
+              {
+                "ContainerPort": 8080,
+                "HostPort": 8080
+              }
+            ],
+            "Volumes": [
+              {
+                "HostDirectory": "/var/app/current/uploads",
+                "ContainerDirectory": "/app/uploads"
+              },
+              {
+                "HostDirectory": "/var/app/current/data",
+                "ContainerDirectory": "/app/data"
+              },
+              {
+                "HostDirectory": "/var/app/current/logs",
+                "ContainerDirectory": "/app/logs"
+              }
+            ],
+            "Logging": "/var/log/nginx"
+          }
+          EOF
+          
+          # Create ebextensions folder for configuration
+          mkdir -p .ebextensions
+          
+          # Create configuration for MongoDB
+          cat > .ebextensions/01_mongodb.config << 'EOF'
+          packages:
+            yum:
+              mongodb-org: []
+          
+          commands:
+            01_start_mongodb:
+              command: |
+                systemctl start mongod
+                systemctl enable mongod
+          EOF
+          
+          # Create configuration for environment variables
+          cat > .ebextensions/02_env_vars.config << 'EOF'
+          option_settings:
+            aws:elasticbeanstalk:application:environment:
+              FLASK_ENV: production
+              PORT: 8080
+              MONGO_URI: mongodb://localhost:27017/financial_documents
+              DEFAULT_LANGUAGE: he
+          EOF
+
+          # Create deployment package
+          zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*" "*.pyc" "uploads/*" "data/*" "logs/*"
+
+      - name: Check for existing environment
+        id: check-env
+        run: |
+          if aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env | grep -q "financial-docs-env"; then
+            echo "Environment exists"
+            echo "env_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Environment does not exist"
+            echo "env_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Elastic Beanstalk environment if it doesn't exist
+        if: steps.check-env.outputs.env_exists == 'false'
+        run: |
+          echo "Creating Elastic Beanstalk environment 'financial-docs-env'"
+          aws elasticbeanstalk create-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --solution-stack-name "64bit Amazon Linux 2 v3.5.4 running Docker" \
+            --option-settings file://.ebextensions/02_env_vars.config
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: financial-docs
+          environment_name: financial-docs-env
+          version_label: financial-docs-${{ github.sha }}
+          region: eu-central-1
+          deployment_package: deploy.zip
+          wait_for_environment_recovery: 300
