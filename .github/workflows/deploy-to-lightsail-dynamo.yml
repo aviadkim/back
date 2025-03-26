@@ -5,6 +5,9 @@ on:
     branches: [ master ]
   workflow_dispatch:  # Allow manual triggering
 
+env:
+  SERVICE_NAME: financial-docs
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -82,17 +85,11 @@ jobs:
       
       - name: Create Lightsail Container Service if it doesn't exist
         run: |
-          # Define service name
-          SERVICE_NAME="${{ secrets.SERVICE_NAME }}"
-          if [ -z "$SERVICE_NAME" ]; then
-            SERVICE_NAME="financial-docs"
-          fi
-          
           # Check if the service exists
-          if ! aws lightsail get-container-services --service-name "$SERVICE_NAME" --region eu-central-1 > /dev/null 2>&1; then
+          if ! aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 > /dev/null 2>&1; then
             echo "Creating Lightsail Container Service..."
             aws lightsail create-container-service \
-              --service-name "$SERVICE_NAME" \
+              --service-name "${{ env.SERVICE_NAME }}" \
               --power micro \
               --scale 1 \
               --region eu-central-1
@@ -102,52 +99,81 @@ jobs:
             sleep 30
             
             # Check service state
-            STATE=$(aws lightsail get-container-services --service-name "$SERVICE_NAME" --region eu-central-1 --query 'containerServices[0].state' --output text)
+            STATE=$(aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].state' --output text)
             echo "Service state: $STATE"
           else
-            echo "Container service $SERVICE_NAME already exists."
+            echo "Container service ${{ env.SERVICE_NAME }} already exists."
+          fi
+      
+      - name: Check for running deployment
+        id: check-deployment
+        run: |
+          CURRENT_STATE=$(aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].state' --output text)
+          echo "Current service state: $CURRENT_STATE"
+          
+          if [ "$CURRENT_STATE" == "DEPLOYING" ]; then
+            echo "Deployment already in progress. Will wait for it to complete."
+            echo "deployment_in_progress=true" >> $GITHUB_OUTPUT
+            
+            # Wait for the deployment to complete (max 5 minutes)
+            for i in {1..30}; do
+              echo "Checking deployment status ($i/30)..."
+              CURRENT_STATE=$(aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].state' --output text)
+              
+              if [ "$CURRENT_STATE" != "DEPLOYING" ]; then
+                echo "Deployment completed with state: $CURRENT_STATE"
+                echo "deployment_in_progress=false" >> $GITHUB_OUTPUT
+                break
+              fi
+              
+              sleep 10
+            done
+          else
+            echo "No deployment in progress."
+            echo "deployment_in_progress=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Build and push container image
+        if: steps.check-deployment.outputs.deployment_in_progress == 'false'
         run: |
-          # Define service name
-          SERVICE_NAME="${{ secrets.SERVICE_NAME }}"
-          if [ -z "$SERVICE_NAME" ]; then
-            SERVICE_NAME="financial-docs"
-          fi
-          
           # Build the Docker image
-          docker build -t "$SERVICE_NAME-app" .
+          docker build -t "${{ env.SERVICE_NAME }}-app" .
           
           # Push the image to AWS Lightsail
           aws lightsail push-container-image \
             --region eu-central-1 \
-            --service-name "$SERVICE_NAME" \
+            --service-name "${{ env.SERVICE_NAME }}" \
             --label app \
-            --image "$SERVICE_NAME-app"
+            --image "${{ env.SERVICE_NAME }}-app"
           
           # Get the latest image
-          IMAGE_TAG=$(aws lightsail get-container-images --service-name "$SERVICE_NAME" --region eu-central-1 --query 'containerImages[0].image' --output text)
+          IMAGE_TAG=$(aws lightsail get-container-images --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerImages[0].image' --output text)
           echo "Latest image: $IMAGE_TAG"
+      
+      - name: Deploy to Lightsail
+        if: steps.check-deployment.outputs.deployment_in_progress == 'false'
+        run: |
+          # Get the latest image
+          IMAGE_TAG=$(aws lightsail get-container-images --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerImages[0].image' --output text)
+          
+          # Create JSON for container definition
+          CONTAINER_JSON="{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"HUGGINGFACE_API_KEY\":\"{{ssm:HUGGINGFACE_API_KEY}}\",\"SECRET_KEY\":\"{{ssm:SECRET_KEY}}\",\"JWT_SECRET\":\"{{ssm:JWT_SECRET}}\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\"}}}"
+          
+          # Create JSON for public endpoint
+          ENDPOINT_JSON="{\"containerName\":\"app\",\"containerPort\":10000,\"healthCheck\":{\"path\":\"/health\",\"intervalSeconds\":10,\"timeoutSeconds\":5,\"successCodes\":\"200\",\"unhealthyThreshold\":2,\"healthyThreshold\":2}}"
           
           # Deploy the container
           aws lightsail create-container-service-deployment \
-            --service-name "$SERVICE_NAME" \
+            --service-name "${{ env.SERVICE_NAME }}" \
             --region eu-central-1 \
-            --containers "{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"HUGGINGFACE_API_KEY\":\"{{ssm:HUGGINGFACE_API_KEY}}\",\"SECRET_KEY\":\"{{ssm:SECRET_KEY}}\",\"JWT_SECRET\":\"{{ssm:JWT_SECRET}}\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\"}}}" \
-            --public-endpoint "{\"containerName\":\"app\",\"containerPort\":10000,\"healthCheck\":{\"path\":\"/health\",\"intervalSeconds\":10,\"timeoutSeconds\":5,\"successCodes\":\"200\",\"unhealthyThreshold\":2,\"healthyThreshold\":2}}"
+            --containers "$CONTAINER_JSON" \
+            --public-endpoint "$ENDPOINT_JSON"
       
       - name: Deployment information
         run: |
-          # Define service name
-          SERVICE_NAME="${{ secrets.SERVICE_NAME }}"
-          if [ -z "$SERVICE_NAME" ]; then
-            SERVICE_NAME="financial-docs"
-          fi
-          
           echo "Deployment initiated. The deployment may take several minutes to complete."
           echo "You can check the deployment status in the AWS Lightsail Console:"
           echo "https://lightsail.aws.amazon.com/ls/webapp/home/containers"
           echo ""
           echo "Once deployment is complete, your app will be available at:"
-          aws lightsail get-container-services --service-name "$SERVICE_NAME" --region eu-central-1 --query 'containerServices[0].url' --output text || echo "Unable to get URL yet. Please check the AWS Lightsail Console."
+          aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].url' --output text || echo "Unable to get URL yet. Please check the AWS Lightsail Console."
