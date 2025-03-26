@@ -1,49 +1,17 @@
-name: Deploy to AWS Lightsail
+# This workflow is deprecated, please use deploy-to-lightsail-dynamo.yml instead
+name: Deploy to AWS Lightsail (Deprecated)
 
+# Disable this workflow by not having any triggers
 on:
-  push:
-    branches: [ master ]
+  workflow_dispatch:  # Only manual triggers, for emergency use
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      
-      - name: Install AWS CLI
+      - name: Show deprecation notice
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-          aws --version
-      
-      - name: Build and deploy
-        run: |
-          # Build the Docker image
-          docker build -t ${SERVICE_NAME}-app .
-          
-          # Push the image to AWS Lightsail
-          aws lightsail push-container-image \
-            --region ${{ secrets.AWS_REGION }} \
-            --service-name ${{ secrets.SERVICE_NAME }} \
-            --label app \
-            --image ${SERVICE_NAME}-app
-          
-          # Get the latest image
-          IMAGE_TAG=$(aws lightsail get-container-images --service-name ${{ secrets.SERVICE_NAME }} --query 'containerImages[0].image' --output text)
-          
-          # Create a deployment
-          aws lightsail create-container-service-deployment \
-            --service-name ${{ secrets.SERVICE_NAME }} \
-            --region ${{ secrets.AWS_REGION }} \
-            --containers "{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"MONGO_URI\":\"{{ssm:MONGO_URI}}\",\"HUGGINGFACE_API_KEY\":\"{{ssm:HUGGINGFACE_API_KEY}}\",\"SECRET_KEY\":\"{{ssm:SECRET_KEY}}\",\"JWT_SECRET\":\"{{ssm:JWT_SECRET}}\"}}}" \
-            --public-endpoint "{\"containerName\":\"app\",\"containerPort\":10000,\"healthCheck\":{\"path\":\"/health\",\"intervalSeconds\":10,\"timeoutSeconds\":5,\"successCodes\":\"200\",\"unhealthyThreshold\":2,\"healthyThreshold\":2}}"
-      env:
-        SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+          echo "This workflow is deprecated."
+          echo "Please use the 'Deploy to AWS Lightsail with DynamoDB' workflow instead."
+          echo "See GITHUB_DEPLOYMENT.md for instructions."
+          exit 1  # Fail the workflow to prevent accidental use
