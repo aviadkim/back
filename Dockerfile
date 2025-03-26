@@ -2,7 +2,7 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies, including Tesseract OCR and poppler-utils
+# Install OS dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-heb \
@@ -10,21 +10,18 @@ RUN apt-get update && apt-get install -y \
     poppler-utils \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements file
+# Copy project files
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p uploads data/embeddings data/templates logs templates && chmod -R 755 uploads data logs templates
+# Create required directories
+RUN mkdir -p uploads data data/embeddings data/templates logs
 
 # Set environment variables
 ENV FLASK_ENV=production
-ENV PORT=10000
+ENV PORT=8080
 
-# Start the application
+# Set the command to run the application
 CMD gunicorn --bind 0.0.0.0:$PORT app:app
