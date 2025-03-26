@@ -28,6 +28,30 @@ jobs:
           echo "Application 'financial-docs' already exists"
         fi
 
+    - name: Check and create Elastic Beanstalk environment if needed
+      run: |
+        # Check if the environment exists
+        if ! aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env --include-deleted=false | grep -q "financial-docs-env"; then
+          echo "Creating Elastic Beanstalk environment 'financial-docs-env'"
+          
+          # Create solution stack name variable (Docker platform)
+          SOLUTION_STACK=$(aws elasticbeanstalk list-available-solution-stacks | grep -i docker | grep -v Multi | head -1 | cut -d'"' -f2)
+          
+          # Create the environment with basic settings
+          aws elasticbeanstalk create-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --solution-stack-name "$SOLUTION_STACK" \
+            --option-settings \
+              Namespace=aws:autoscaling:launchconfiguration,OptionName=IamInstanceProfile,Value=aws-elasticbeanstalk-ec2-role
+          
+          # Wait for environment to be created
+          echo "Waiting for environment to be created..."
+          aws elasticbeanstalk wait environment-exists --application-name financial-docs --environment-names financial-docs-env
+        else
+          echo "Environment 'financial-docs-env' already exists"
+        fi
+
     - name: Generate deployment package
       run: zip -r deploy.zip . -x "*.git*" -x "node_modules/*" -x "venv/*"
 
