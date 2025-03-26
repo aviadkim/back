@@ -62,6 +62,16 @@ jobs:
             aws ssm put-parameter --name "HUGGINGFACE_API_KEY" --value "${{ secrets.HUGGINGFACE_API_KEY }}" --type SecureString --overwrite --region eu-central-1 || true
           fi
       
+      - name: Create Elastic Beanstalk Application if it doesn't exist
+        run: |
+          # Check if application exists
+          if ! aws elasticbeanstalk describe-applications --application-names financial-docs > /dev/null 2>&1; then
+            echo "Creating Elastic Beanstalk application 'financial-docs'"
+            aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Documents Analysis Application"
+          else
+            echo "Application 'financial-docs' already exists"
+          fi
+      
       - name: Create .ebextensions directory
         run: |
           mkdir -p .ebextensions
@@ -111,16 +121,15 @@ jobs:
           cat > .ebextensions/03-packages.config << 'EOF'
           packages:
             yum:
-              tesseract-ocr: []
-              tesseract-ocr-heb: []
-              tesseract-ocr-eng: []
+              tesseract: []
               poppler-utils: []
             
           commands:
             01_install_tesseract:
               command: |
                 if ! command -v tesseract &> /dev/null; then
-                  yum install -y tesseract
+                  amazon-linux-extras install epel -y
+                  yum install -y tesseract tesseract-langpack-eng
                 fi
           EOF
           
@@ -137,6 +146,32 @@ jobs:
       - name: Create Procfile
         run: |
           echo "web: gunicorn --bind 0.0.0.0:\$PORT app:app" > Procfile
+      
+      - name: Check for existing environment
+        id: check-env
+        run: |
+          if aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env | grep -q "financial-docs-env"; then
+            echo "Environment exists"
+            echo "env_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Environment does not exist"
+            echo "env_exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Elastic Beanstalk environment if it doesn't exist
+        if: steps.check-env.outputs.env_exists == 'false'
+        run: |
+          echo "Creating Elastic Beanstalk environment 'financial-docs-env'"
+          aws elasticbeanstalk create-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --solution-stack-name "64bit Amazon Linux 2 v3.5.4 running Python 3.8" \
+            --option-settings '[
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "USE_DYNAMODB", "Value": "true"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DYNAMODB_REGION", "Value": "eu-central-1"}
+            ]'
       
       - name: Generate deployment package
         run: |
