@@ -1,9 +1,10 @@
 version: '3.8'
+
 services:
   app:
     build: .
     ports:
-      - "10000:10000"  # שיניתי ל-10000 לפי ה-PORT שמוגדר ב-Dockerfile שלך
+      - "8080:10000"
     env_file:
       - .env
     volumes:
@@ -11,18 +12,17 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
     depends_on:
-      - mongodb
+      - mongo
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/financial_documents  # שינוי חשוב - שימוש בשם השירות במקום localhost
+      - MONGO_URI=mongodb://mongo:27017/financial_documents
+      - LLM_PROVIDER=huggingface
   
-  mongodb:
-    image: mongo:latest
+  mongo:
+    image: mongo:6.0
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    # הסרתי את האימות כרגע כדי לפשט את הפתרון
-    # אם תרצה להפעיל עם אימות, תצטרך לעדכן גם את MONGO_URI בהתאם
 
 volumes:
   mongodb_data:
