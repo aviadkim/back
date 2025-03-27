@@ -28,41 +28,18 @@ class AgentCoordinator:
         self.huggingface_api_key = os.environ.get('HUGGINGFACE_API_KEY')
         self.mistral_api_key = os.environ.get('MISTRAL_API_KEY')
         
-        # Choose LLM based on available API keys
+        # Choose LLM based on available API keys and configured provider
+        self.llm_provider = os.environ.get('LLM_PROVIDER', '').lower()
         self._setup_llm()
         
         # Initialize memory agent
         self.memory_agent = MemoryAgent()
         
     def _setup_llm(self):
-        """Set up the Language Model based on available API keys"""
-        if self.openai_api_key:
-            # Use OpenAI GPT if available
-            self.llm = ChatOpenAI(
-                model_name="gpt-4o", 
-                temperature=0,
-                api_key=self.openai_api_key
-            )
-            self.llm_provider = "openai"
-            logger.info("Using OpenAI GPT-4o for agent.")
-        elif self.mistral_api_key:
-            # Use Mistral AI if available
-            # Note: Requires mistralai package to be installed
-            try:
-                from langchain.chat_models import ChatMistralAI
-                self.llm = ChatMistralAI(
-                    model="mistral-large-latest", 
-                    temperature=0,
-                    api_key=self.mistral_api_key
-                )
-                self.llm_provider = "mistral"
-                logger.info("Using Mistral AI for agent.")
-            except ImportError:
-                logger.warning("Mistral AI package not installed. Falling back to other providers.")
-                self.llm = None
-                self.llm_provider = None
-        elif self.huggingface_api_key:
-            # Use Hugging Face model if available
+        """Set up the Language Model based on available API keys and configuration"""
+        # Check if a specific provider is configured
+        if self.llm_provider == "huggingface" and self.huggingface_api_key:
+            # Prioritize HuggingFace if specifically configured
             try:
                 from langchain.llms import HuggingFaceHub
                 self.llm = HuggingFaceHub(
@@ -70,18 +47,79 @@ class AgentCoordinator:
                     temperature=0,
                     huggingfacehub_api_token=self.huggingface_api_key
                 )
-                self.llm_provider = "huggingface"
-                logger.info("Using Hugging Face model for agent.")
+                logger.info("Using Hugging Face model for agent (as configured in LLM_PROVIDER).")
             except ImportError:
-                logger.warning("Hugging Face Hub package not installed. No LLM available.")
+                logger.warning("Hugging Face Hub package not installed. Falling back to other providers.")
+                self.llm = None
+        elif self.llm_provider == "mistral" and self.mistral_api_key:
+            # Use Mistral AI if specifically configured
+            try:
+                from langchain.chat_models import ChatMistralAI
+                self.llm = ChatMistralAI(
+                    model="mistral-large-latest", 
+                    temperature=0,
+                    api_key=self.mistral_api_key
+                )
+                logger.info("Using Mistral AI for agent (as configured in LLM_PROVIDER).")
+            except ImportError:
+                logger.warning("Mistral AI package not installed. Falling back to other providers.")
+                self.llm = None
+        elif self.llm_provider == "openai" and self.openai_api_key:
+            # Use OpenAI if specifically configured
+            self.llm = ChatOpenAI(
+                model_name="gpt-4o", 
+                temperature=0,
+                api_key=self.openai_api_key
+            )
+            logger.info("Using OpenAI GPT-4o for agent (as configured in LLM_PROVIDER).")
+        else:
+            # If no specific provider configured or the configured one doesn't have a key,
+            # fall back to available providers with preference order
+            if self.huggingface_api_key:
+                # Default to HuggingFace
+                try:
+                    from langchain.llms import HuggingFaceHub
+                    self.llm = HuggingFaceHub(
+                        repo_id="google/flan-t5-large",
+                        temperature=0,
+                        huggingfacehub_api_token=self.huggingface_api_key
+                    )
+                    self.llm_provider = "huggingface"
+                    logger.info("Using Hugging Face model for agent (fallback).")
+                except ImportError:
+                    logger.warning("Hugging Face Hub package not installed. Falling back to other providers.")
+                    self.llm = None
+                    self.llm_provider = None
+            elif self.mistral_api_key:
+                # Try Mistral next
+                try:
+                    from langchain.chat_models import ChatMistralAI
+                    self.llm = ChatMistralAI(
+                        model="mistral-large-latest", 
+                        temperature=0,
+                        api_key=self.mistral_api_key
+                    )
+                    self.llm_provider = "mistral"
+                    logger.info("Using Mistral AI for agent (fallback).")
+                except ImportError:
+                    logger.warning("Mistral AI package not installed. Falling back to other providers.")
+                    self.llm = None
+                    self.llm_provider = None
+            elif self.openai_api_key:
+                # Try OpenAI last
+                self.llm = ChatOpenAI(
+                    model_name="gpt-4o", 
+                    temperature=0,
+                    api_key=self.openai_api_key
+                )
+                self.llm_provider = "openai"
+                logger.info("Using OpenAI GPT-4o for agent (fallback).")
+            else:
+                # No LLM available
+                logger.warning("No API keys found for any LLM provider. AI functionality will be limited.")
                 self.llm = None
                 self.llm_provider = None
-        else:
-            # No LLM available
-            logger.warning("No API keys found for any LLM provider. AI functionality will be limited.")
-            self.llm = None
-            self.llm_provider = None
-            
+                
     def analyze_document(self, document_id: str, text_content: str, document_type: str, language: str) -> Dict[str, Any]:
         """
         Analyze document content with AI
