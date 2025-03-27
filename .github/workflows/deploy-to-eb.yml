@@ -15,7 +15,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ secrets.AWS_REGION }}
       
       - name: Create Elastic Beanstalk Application if it doesn't exist
         run: |
@@ -53,11 +53,12 @@ jobs:
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "USE_DYNAMODB", "Value": "true"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DYNAMODB_REGION", "Value": "eu-central-1"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DYNAMODB_REGION", "Value": "${{ secrets.AWS_REGION }}"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DEFAULT_LANGUAGE", "Value": "he"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "HUGGINGFACE_API_KEY", "Value": "${{ secrets.HUGGINGFACE_API_KEY }}"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SECRET_KEY", "Value": "${{ secrets.SECRET_KEY }}"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "JWT_SECRET", "Value": "${{ secrets.JWT_SECRET }}"}
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SECRET_KEY", "Value": "28"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "JWT_SECRET", "Value": "210"},
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SERVICE_NAME", "Value": "${{ secrets.SERVICE_NAME }}"}
             ]'
       
       - name: Deploy to Elastic Beanstalk
@@ -68,7 +69,7 @@ jobs:
           application_name: financial-docs
           environment_name: financial-docs-env
           version_label: financial-docs-${{ github.sha }}
-          region: eu-central-1
+          region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy.zip
           use_existing_version_if_available: false
           wait_for_environment_recovery: 300
