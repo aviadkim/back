@@ -168,12 +168,15 @@ jobs:
           
           # Create JSON for container definition including all environment variables
           echo "Creating container definition with environment variables..."
-          CONTAINER_JSON="{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"SECRET_KEY\":\"$FLASK_SECRET_KEY\",\"JWT_SECRET\":\"$JWT_SECRET\",\"DEFAULT_LANGUAGE\":\"he\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\"}}}"
+          CONTAINER_JSON="{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"SECRET_KEY\":\"$FLASK_SECRET_KEY\",\"JWT_SECRET\":\"$JWT_SECRET\",\"DEFAULT_LANGUAGE\":\"he\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\""
           
           if [ -n "${{ secrets.HUGGINGFACE_API_KEY }}" ]; then
-            # Add HuggingFace API key if available (careful with JSON escaping)
-            CONTAINER_JSON=$(echo $CONTAINER_JSON | sed 's/"}}/"HUGGINGFACE_API_KEY":"${{ secrets.HUGGINGFACE_API_KEY }}"}}/')
+            # Add HuggingFace API key and LLM provider if available
+            CONTAINER_JSON="$CONTAINER_JSON,\"HUGGINGFACE_API_KEY\":\"${{ secrets.HUGGINGFACE_API_KEY }}\",\"LLM_PROVIDER\":\"huggingface\""
           fi
+          
+          # Close the JSON structure
+          CONTAINER_JSON="$CONTAINER_JSON}}}"
           
           # Create JSON for public endpoint
           ENDPOINT_JSON="{\"containerName\":\"app\",\"containerPort\":10000,\"healthCheck\":{\"path\":\"/health\",\"intervalSeconds\":10,\"timeoutSeconds\":5,\"successCodes\":\"200\",\"unhealthyThreshold\":2,\"healthyThreshold\":2}}"
