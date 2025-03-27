@@ -121,19 +121,30 @@ jobs:
             echo "Deployment already in progress. Will wait for it to complete."
             echo "deployment_in_progress=true" >> $GITHUB_OUTPUT
             
-            # Wait for the deployment to complete (max 5 minutes)
-            for i in {1..30}; do
-              echo "Checking deployment status ($i/30)..."
+            # Wait for the deployment to complete (max 15 minutes)
+            for i in {1..90}; do
+              echo "Checking deployment status ($i/90)..."
               CURRENT_STATE=$(aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].state' --output text)
               
               if [ "$CURRENT_STATE" != "DEPLOYING" ]; then
                 echo "Deployment completed with state: $CURRENT_STATE"
                 echo "deployment_in_progress=false" >> $GITHUB_OUTPUT
+                
+                # Wait an additional 30 seconds to ensure the service is fully ready
+                echo "Waiting an additional 30 seconds to ensure service is ready..."
+                sleep 30
                 break
               fi
               
               sleep 10
             done
+            
+            # If we've waited the maximum time and it's still deploying, fail the workflow
+            CURRENT_STATE=$(aws lightsail get-container-services --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerServices[0].state' --output text)
+            if [ "$CURRENT_STATE" == "DEPLOYING" ]; then
+              echo "Deployment is still in progress after maximum wait time. Failing workflow."
+              exit 1
+            fi
           else
             echo "No deployment in progress."
             echo "deployment_in_progress=false" >> $GITHUB_OUTPUT
