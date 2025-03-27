@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 # הגדרת לוגר
