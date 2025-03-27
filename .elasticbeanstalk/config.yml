@@ -1,12 +1,12 @@
 branch-defaults:
   master:
-    environment: financial-docs-env
+    environment: financial-docs-prod
     group_suffix: null
 global:
-  application_name: financial-docs
+  application_name: financial-docs-analyzer
   branch: null
   default_ec2_keyname: null
-  default_platform: Python 3.8
+  default_platform: Docker running on 64bit Amazon Linux 2023
   default_region: eu-central-1
   include_git_submodules: true
   instance_profile: null
