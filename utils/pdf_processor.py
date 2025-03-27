@@ -3,7 +3,7 @@ import logging
 import tempfile
 import pytesseract
 from pdf2image import convert_from_path
-from PyPDF2 import PdfReader
+from pypdf import PdfReader # Changed from PyPDF2
 import re
 from datetime import datetime
 
@@ -58,7 +58,7 @@ class PDFProcessor:
     
     def _extract_text_with_pypdf(self, file_path):
         """
-        Extract text from PDF using PyPDF2
+        Extract text from PDF using pypdf
         
         Args:
             file_path (str): Path to the PDF file
@@ -92,7 +92,7 @@ class PDFProcessor:
             return full_text, metadata, page_count
             
         except Exception as e:
-            logger.exception(f"Error extracting text with PyPDF2: {str(e)}")
+            logger.exception(f"Error extracting text with pypdf: {str(e)}")
             raise
     
     def _extract_text_with_ocr(self, file_path, language='he'):

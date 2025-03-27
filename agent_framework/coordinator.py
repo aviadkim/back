@@ -160,18 +160,21 @@ class AgentCoordinator:
             
             # Create LLM chain
             chain = LLMChain(llm=self.llm, prompt=prompt)
-            
-            # Track token usage
-            with get_openai_callback() as cb:
-                # Limit text content to avoid token limits
-                max_tokens = 12000  # Approximate limit for context
-                truncated_text = self._truncate_text(text_content, max_tokens)
-                
-                # Run the chain
+
+            # Limit text content to avoid token limits
+            max_tokens = 12000  # Approximate limit for context
+            truncated_text = self._truncate_text(text_content, max_tokens)
+
+            # Run the chain, conditionally tracking tokens for OpenAI
+            if self.llm_provider == "openai":
+                with get_openai_callback() as cb:
+                    result = chain.run(text=truncated_text)
+                    logger.info(f"OpenAI Analysis completed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
+            else:
+                # Run without OpenAI callback for other providers
                 result = chain.run(text=truncated_text)
-                
-                logger.info(f"Analysis completed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
-            
+                logger.info(f"Analysis completed using {self.llm_provider} provider.")
+
             # Parse the result
             try:
                 # The result should be in JSON format
@@ -293,23 +296,31 @@ class AgentCoordinator:
             
             # Create LLM chain
             chain = LLMChain(llm=self.llm, prompt=prompt)
-            
-            # Track token usage
-            with get_openai_callback() as cb:
-                # Ensure we don't exceed token limits
-                max_context_tokens = 6000  # Reserve space for the rest of the prompt
-                truncated_context = self._truncate_text(combined_context, max_context_tokens)
-                
-                # Run the chain
-                result = chain.run(
+
+            # Ensure we don't exceed token limits
+            max_context_tokens = 6000  # Reserve space for the rest of the prompt
+            truncated_context = self._truncate_text(combined_context, max_context_tokens)
+
+            # Run the chain, conditionally tracking tokens for OpenAI
+            if self.llm_provider == "openai":
+                with get_openai_callback() as cb:
+                    result = chain.run(
+                        context=truncated_context,
+                        history=formatted_history,
+                        query=query,
+                        language=language
+                    )
+                    logger.info(f"OpenAI Query processed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
+            else:
+                 # Run without OpenAI callback for other providers
+                 result = chain.run(
                     context=truncated_context,
                     history=formatted_history,
                     query=query,
                     language=language
-                )
-                
-                logger.info(f"Query processed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
-            
+                 )
+                 logger.info(f"Query processed using {self.llm_provider} provider.")
+
             # Generate suggested follow-up questions
             suggested_questions = self._generate_suggested_questions(query, result, language)
             
@@ -407,21 +418,27 @@ Be precise and ensure all data is correctly extracted. If you cannot find data f
             
             # Create LLM chain
             chain = LLMChain(llm=self.llm, prompt=prompt)
-            
-            # Track token usage
-            with get_openai_callback() as cb:
-                # Ensure we don't exceed token limits
-                max_context_tokens = 7000  # Reserve space for the rest of the prompt
-                truncated_context = self._truncate_text(combined_context, max_context_tokens)
-                
-                # Run the chain
+
+            # Ensure we don't exceed token limits
+            max_context_tokens = 7000  # Reserve space for the rest of the prompt
+            truncated_context = self._truncate_text(combined_context, max_context_tokens)
+
+            # Run the chain, conditionally tracking tokens for OpenAI
+            if self.llm_provider == "openai":
+                with get_openai_callback() as cb:
+                    result = chain.run(
+                        context=truncated_context,
+                        spec=formatted_spec
+                    )
+                    logger.info(f"OpenAI Table generation completed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
+            else:
+                # Run without OpenAI callback for other providers
                 result = chain.run(
                     context=truncated_context,
                     spec=formatted_spec
                 )
-                
-                logger.info(f"Table generation completed with {cb.total_tokens} tokens ({cb.prompt_tokens} prompt, {cb.completion_tokens} completion)")
-            
+                logger.info(f"Table generation completed using {self.llm_provider} provider.")
+
             # Parse the result
             try:
                 # The result should be in JSON format

@@ -4,7 +4,10 @@ import uuid
 import json
 from datetime import datetime
 
-from models.document_models import Document, db
+# Import db instance from shared module
+from shared.database import db as mongo_db # Renamed to avoid conflict if needed later
+# Removed unused SQLAlchemy Document model import
+# from models.document_models import Document
 from agent_framework.coordinator import AgentCoordinator
 from agent_framework.memory_agent import MemoryAgent
 
@@ -15,9 +18,7 @@ langchain_bp = Blueprint('langchain', __name__, url_prefix='/api')
 memory_agent = MemoryAgent()
 agent_coordinator = AgentCoordinator()
 
-# Chat sessions storage
-# In a production environment, this should be stored in a database
-chat_sessions = {}
+# Removed in-memory chat_sessions dictionary
 
 @langchain_bp.route('/chat/session', methods=['POST'])
 def create_chat_session():
@@ -31,23 +32,34 @@ def create_chat_session():
         # Generate session ID
         session_id = str(uuid.uuid4())
         
-        # Create session
-        chat_sessions[session_id] = {
-            'id': session_id,
-            'created_at': datetime.now().isoformat(),
+        # Create session metadata document
+        session_data = {
+            '_id': session_id, # Use session_id as MongoDB _id
+            'created_at': datetime.utcnow(), # Use UTC time
             'language': language,
             'document_ids': document_ids.copy() if document_ids else [],
-            'messages': [],
+            # Messages are stored separately in 'chat_history' collection
         }
         
+        # Store session metadata in MongoDB
+        session_collection = "chat_sessions"
+        stored_id = mongo_db.store_document(session_collection, session_data)
+        
+        if not stored_id:
+            current_app.logger.error(f"Failed to store session metadata for session {session_id}")
+            return jsonify({'error': 'Failed to create session in database'}), 500
+            
         # Load documents into memory agent if provided
         if document_ids:
+            doc_collection = "document_analysis_store" # Collection where MemoryAgent stores docs
             for doc_id in document_ids:
-                # Load document if it exists
-                document = Document.query.get(doc_id)
-                if document and document.analysis_path and os.path.exists(document.analysis_path):
-                    # Load document into memory agent
-                    memory_agent.add_document(doc_id, document.analysis_path)
+                # Fetch document metadata from MongoDB
+                document_data = mongo_db.find_document(doc_collection, {'_id': doc_id})
+                if document_data and 'analysis_path' in document_data and os.path.exists(document_data['analysis_path']):
+                    # Load document into memory agent using the path from MongoDB
+                    memory_agent.add_document(doc_id, document_data['analysis_path'])
+                else:
+                    current_app.logger.warning(f"Document metadata or analysis file not found for doc_id {doc_id} during session creation.")
         
         return jsonify({
             'success': True,
@@ -60,23 +72,36 @@ def create_chat_session():
 
 @langchain_bp.route('/chat/session/<session_id>', methods=['GET'])
 def get_chat_session(session_id):
-    """Get chat session history"""
+    """Get chat session metadata and message history"""
     try:
-        # Check if session exists
-        if session_id not in chat_sessions:
+        # Fetch session metadata from MongoDB
+        session_collection = "chat_sessions"
+        session_data = mongo_db.find_document(session_collection, {'_id': session_id})
+        
+        if not session_data:
             return jsonify({'error': 'Chat session not found'}), 404
             
-        session = chat_sessions[session_id]
+        # Fetch chat messages from MongoDB
+        # Convert ObjectId and datetime objects for JSON serialization if necessary
+        messages = mongo_db.get_chat_history(session_id)
+        serializable_messages = []
+        for msg in messages:
+            msg['_id'] = str(msg['_id']) # Convert ObjectId to string
+            msg['timestamp'] = msg['timestamp'].isoformat() # Convert datetime to ISO string
+            serializable_messages.append(msg)
+
+        # Prepare response data
+        response_session = {
+            'id': session_data['_id'],
+            'created_at': session_data['created_at'].isoformat(), # Convert datetime
+            'language': session_data['language'],
+            'document_ids': session_data['document_ids'],
+        }
         
         return jsonify({
             'success': True,
-            'session': {
-                'id': session['id'],
-                'created_at': session['created_at'],
-                'language': session['language'],
-                'document_ids': session['document_ids'],
-            },
-            'messages': session['messages'],
+            'session': response_session,
+            'messages': serializable_messages, # Use fetched messages
         }), 200
         
     except Exception as e:
@@ -85,48 +110,62 @@ def get_chat_session(session_id):
 
 @langchain_bp.route('/chat/session/<session_id>/documents', methods=['POST'])
 def update_session_documents(session_id):
-    """Update documents for a chat session"""
+    """Update documents associated with a chat session"""
     try:
-        # Check if session exists
-        if session_id not in chat_sessions:
+        # Fetch session metadata from MongoDB
+        session_collection = "chat_sessions"
+        session_data = mongo_db.find_document(session_collection, {'_id': session_id})
+        
+        if not session_data:
             return jsonify({'error': 'Chat session not found'}), 404
             
         # Get request data
         data = request.json or {}
-        document_ids = data.get('documentIds', [])
+        new_document_ids_list = data.get('documentIds', []) # Renamed for clarity
         
-        if not isinstance(document_ids, list):
+        if not isinstance(new_document_ids_list, list):
             return jsonify({'error': 'documentIds must be an array'}), 400
             
-        # Get current document IDs
-        current_document_ids = chat_sessions[session_id]['document_ids']
+        # --- Code below needs to be inside the try block ---
+        # Get current document IDs from the fetched session data
+        current_document_ids = session_data.get('document_ids', [])
         
-        # Get new document IDs to add
-        new_document_ids = [doc_id for doc_id in document_ids if doc_id not in current_document_ids]
-        
-        # Get document IDs to remove
-        remove_document_ids = [doc_id for doc_id in current_document_ids if doc_id not in document_ids]
-        
-        # Update memory agent
-        for doc_id in new_document_ids:
-            # Load document if it exists
-            document = Document.query.get(doc_id)
-            if document and document.analysis_path and os.path.exists(document.analysis_path):
-                # Load document into memory agent
-                memory_agent.add_document(doc_id, document.analysis_path)
+        # Determine which documents to add and remove
+        docs_to_add = [doc_id for doc_id in new_document_ids_list if doc_id not in current_document_ids]
+        docs_to_remove = [doc_id for doc_id in current_document_ids if doc_id not in new_document_ids_list]
+
+        # --- Update memory agent (logic remains similar) ---
+        # Add new documents to memory agent
+        doc_collection = "document_analysis_store" # Collection where MemoryAgent stores docs
+        for doc_id in docs_to_add:
+            # Fetch document metadata from MongoDB
+            document_data = mongo_db.find_document(doc_collection, {'_id': doc_id})
+            if document_data and 'analysis_path' in document_data and os.path.exists(document_data['analysis_path']):
+                # Load document into memory agent using the path from MongoDB
+                memory_agent.add_document(doc_id, document_data['analysis_path'])
+            else:
+                current_app.logger.warning(f"Document metadata or analysis file not found for doc_id {doc_id} during session update.")
         
         # Remove documents from memory agent
-        for doc_id in remove_document_ids:
+        for doc_id in docs_to_remove:
             memory_agent.forget_document(doc_id)
         
-        # Update session
-        chat_sessions[session_id]['document_ids'] = document_ids
+        # Update the document_ids list in the MongoDB session document
+        update_success = mongo_db.update_document(
+            session_collection,
+            {'_id': session_id},
+            {'document_ids': new_document_ids_list}
+        )
         
+        if not update_success:
+             # Log an error, but maybe don't fail the whole request if memory agent was updated
+             current_app.logger.warning(f"Failed to update document_ids in session {session_id} metadata, but memory agent changes applied.")
+
         return jsonify({
             'success': True,
-            'documentIds': document_ids,
+            'documentIds': new_document_ids_list, # Return the new list
         }), 200
-        
+
     except Exception as e:
         current_app.logger.error(f"Error updating chat session documents {session_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -148,39 +187,41 @@ def chat_query():
         if not message:
             return jsonify({'error': 'message is required'}), 400
             
-        # Check if session exists
-        if session_id not in chat_sessions:
+        # Fetch session metadata from MongoDB
+        session_collection = "chat_sessions"
+        session_data = mongo_db.find_document(session_collection, {'_id': session_id})
+        
+        if not session_data:
             return jsonify({'error': 'Chat session not found'}), 404
             
-        session = chat_sessions[session_id]
-        language = session.get('language', 'he')
+        language = session_data.get('language', 'he')
+        session_document_ids = session_data.get('document_ids', [])
         
-        # Add user message to session
-        user_message = {
-            'role': 'user',
-            'content': message,
-            'timestamp': datetime.now().isoformat(),
-        }
-        
-        chat_sessions[session_id]['messages'].append(user_message)
-        
+        # Save user message to DB
+        user_message_id = mongo_db.save_chat_message(session_id, 'user', message)
+        if not user_message_id:
+             # Log error but potentially continue if history isn't critical for this query
+             current_app.logger.error(f"Failed to save user message for session {session_id}")
+
+        # Fetch recent chat history from DB for context
+        # Note: The agent_coordinator might need adjustments to handle the DB message format
+        chat_history_from_db = mongo_db.get_chat_history(session_id, limit=20) # Limit history length
+
         # Process query with agent coordinator
+        # Use document_ids from request if provided, otherwise from session
+        active_document_ids = document_ids if document_ids else session_document_ids
         result = agent_coordinator.process_query(
             query=message,
-            document_ids=document_ids if document_ids else session['document_ids'],
+            document_ids=active_document_ids,
             language=language,
-            chat_history=session['messages']
+            chat_history=chat_history_from_db # Pass history from DB
         )
         
-        # Add assistant response to session
-        assistant_message = {
-            'role': 'assistant',
-            'content': result['answer'],
-            'timestamp': datetime.now().isoformat(),
-            'document_references': result.get('document_references', []),
-        }
-        
-        chat_sessions[session_id]['messages'].append(assistant_message)
+        # Save assistant response to DB
+        assistant_response_content = result.get('answer', 'Sorry, I could not process that.')
+        assistant_message_id = mongo_db.save_chat_message(session_id, 'assistant', assistant_response_content)
+        if not assistant_message_id:
+             current_app.logger.error(f"Failed to save assistant message for session {session_id}")
         
         return jsonify({
             'success': True,
@@ -197,14 +238,16 @@ def chat_query():
 def document_suggestions(document_id):
     """Get suggested questions for a document"""
     try:
-        # Get document
-        document = Document.query.get(document_id)
+        # Fetch document metadata from MongoDB
+        doc_collection = "document_analysis_store"
+        document_data = mongo_db.find_document(doc_collection, {'_id': document_id})
         
-        if not document:
-            return jsonify({'error': 'Document not found'}), 404
+        if not document_data:
+            return jsonify({'error': 'Document not found in store'}), 404
             
-        # Get document type
-        document_type = document.document_type
+        # Get document type from the metadata stored by MemoryAgent
+        # Assuming MemoryAgent stores it in 'metadata.detected_document_type'
+        document_type = document_data.get('metadata', {}).get('detected_document_type', 'other')
         language = request.args.get('language', 'he')
         
         # Generate suggestions based on document type
