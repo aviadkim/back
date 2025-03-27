@@ -110,33 +110,22 @@ jobs:
                 rm -f /tmp/secret_key /tmp/jwt_secret /tmp/huggingface_key
           EOF
           
-          # Create configuration for the application load balancer
-          cat > .ebextensions/02-alb.config << 'EOF'
-          option_settings:
-            aws:elasticbeanstalk:environment:
-              LoadBalancerType: application
-          EOF
-          
           # Create configuration for system packages
-          cat > .ebextensions/03-packages.config << 'EOF'
+          cat > .ebextensions/02-packages.config << 'EOF'
           packages:
             yum:
-              tesseract: []
+              python3-devel: []
+              gcc: []
+              postgresql-devel: []
               poppler-utils: []
             
           commands:
             01_install_tesseract:
               command: |
-                if ! command -v tesseract &> /dev/null; then
-                  amazon-linux-extras install epel -y
-                  yum install -y tesseract tesseract-langpack-eng
-                fi
-          EOF
-          
-          # Create directories structure
-          cat > .ebextensions/04-directories.config << 'EOF'
-          commands:
-            01_create_dirs:
+                amazon-linux-extras install epel -y
+                yum install -y tesseract tesseract-langpack-eng
+
+            02_create_required_dirs:
               command: |
                 mkdir -p /var/app/current/uploads /var/app/current/data/embeddings /var/app/current/data/templates /var/app/current/logs /var/app/current/templates
                 chmod -R 755 /var/app/current/uploads /var/app/current/data /var/app/current/logs /var/app/current/templates
@@ -145,7 +134,7 @@ jobs:
       
       - name: Create Procfile
         run: |
-          echo "web: gunicorn --bind 0.0.0.0:\$PORT app:app" > Procfile
+          echo "web: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 app:app" > Procfile
       
       - name: Check for existing environment
         id: check-env
@@ -158,6 +147,11 @@ jobs:
             echo "env_exists=false" >> $GITHUB_OUTPUT
           fi
       
+      - name: List available solution stacks
+        run: |
+          echo "Available solution stacks:"
+          aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks" --output text | grep "Python"
+      
       - name: Create Elastic Beanstalk environment if it doesn't exist
         if: steps.check-env.outputs.env_exists == 'false'
         run: |
@@ -165,7 +159,7 @@ jobs:
           aws elasticbeanstalk create-environment \
             --application-name financial-docs \
             --environment-name financial-docs-env \
-            --solution-stack-name "64bit Amazon Linux 2 v3.5.4 running Python 3.8" \
+            --solution-stack-name "64bit Amazon Linux 2023 v4.0.8 running Python 3.9" \
             --option-settings '[
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
@@ -178,6 +172,7 @@ jobs:
           zip -r deploy.zip . -x "*.git*" "*.github*" "node_modules/*" "*.zip" "venv/*"
       
       - name: Deploy to Elastic Beanstalk
+        if: steps.check-env.outputs.env_exists == 'true'
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -189,13 +184,3 @@ jobs:
           deployment_package: deploy.zip
           use_existing_version_if_available: false
           wait_for_environment_recovery: 300
-      
-      - name: Deployment information
-        run: |
-          echo "Deployment initiated. The deployment may take several minutes to complete."
-          echo "You can check the deployment status in the AWS Elastic Beanstalk Console:"
-          echo "https://eu-central-1.console.aws.amazon.com/elasticbeanstalk/home?region=eu-central-1#/environment/dashboard?applicationName=financial-docs&environmentId=financial-docs-env"
-          echo ""
-          echo "Once deployment is complete, your app will be available at:"
-          URL=$(aws elasticbeanstalk describe-environments --application-name financial-docs --environment-name financial-docs-env --query "Environments[0].CNAME" --output text)
-          echo "http://$URL"
