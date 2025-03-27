@@ -152,6 +152,11 @@ jobs:
           echo "Available solution stacks:"
           aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks" --output text | grep "Python"
       
+      - name: List available solution stacks
+        run: |
+          echo "Available solution stacks:"
+          aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'running Python')]" --output text | grep "Python 3"
+      
       - name: Create Elastic Beanstalk environment if it doesn't exist
         if: steps.check-env.outputs.env_exists == 'false'
         run: |
@@ -159,7 +164,7 @@ jobs:
           aws elasticbeanstalk create-environment \
             --application-name financial-docs \
             --environment-name financial-docs-env \
-            --solution-stack-name "64bit Amazon Linux 2023 v4.0.8 running Python 3.9" \
+            --solution-stack-name "64bit Amazon Linux 2 v3.4.1 running Python 3.8" \
             --option-settings '[
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
