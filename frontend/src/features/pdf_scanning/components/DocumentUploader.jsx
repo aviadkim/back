@@ -113,87 +113,91 @@ function DocumentUploader({ onUploadSuccess, language = 'he' }) {
     setUploadProgress(0);
     setUploadError(null);
     setUploadResult(null);
-    
-    // Create a FormData object to send the file
+
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('language', fileLanguage);
-    
-    try {
-      // Simulated upload progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return 95;
+
+    const xhr = new XMLHttpRequest();
+
+    // --- Real Progress Tracking ---
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = Math.round((event.loaded / event.total) * 100);
+        setUploadProgress(percentComplete);
+      }
+    };
+
+    // --- Handle Completion ---
+    xhr.onload = () => {
+      setUploadProgress(100); // Ensure it reaches 100 on completion
+      setIsUploading(false); // Upload finished
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const result = JSON.parse(xhr.responseText);
+          if (!result.success) {
+            throw new Error(result.error || 'Processing failed after upload');
           }
-          return prev + 5;
-        });
-      }, 300);
-      
-      // Upload the file
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+          // Handle successful upload
+          setUploadResult({
+            success: true,
+            documentId: result.document_id,
+            message: result.message || (language === 'he' ? 'המסמך הועלה ועובד בהצלחה' : 'Document uploaded and processed successfully')
+          });
+          const upload = {
+            id: result.document_id,
+            filename: selectedFile.name,
+            timestamp: new Date().toISOString(),
+            success: true
+          };
+          setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
+          setSelectedFile(null);
+          if (onUploadSuccess) {
+            onUploadSuccess(result.document_id, result);
+          }
+        } catch (parseError) {
+          console.error('Error parsing response:', parseError);
+          setUploadError('Failed to parse server response.');
+          // Add error to recent uploads
+          const upload = { id: null, filename: selectedFile.name, timestamp: new Date().toISOString(), success: false, error: 'Failed to parse server response.' };
+          setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
+        }
+      } else {
+        // Handle HTTP errors (4xx, 5xx)
+        let errorMsg = `Upload failed with status ${xhr.status}`;
+        try {
+          const errorData = JSON.parse(xhr.responseText);
+          errorMsg = errorData.error || errorMsg;
+        } catch (e) { /* Ignore parsing error if response is not JSON */ }
+        console.error('Upload error:', errorMsg);
+        setUploadError(errorMsg);
+        // Add error to recent uploads
+        const upload = { id: null, filename: selectedFile.name, timestamp: new Date().toISOString(), success: false, error: errorMsg };
+        setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
       }
-      
-      const result = await response.json();
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Processing failed');
-      }
-      
-      // Handle successful upload
-      setUploadResult({
-        success: true,
-        documentId: result.document_id,
-        message: result.message || (language === 'he' ? 'המסמך הועלה ועובד בהצלחה' : 'Document uploaded and processed successfully')
-      });
-      
-      // Add to recent uploads
-      const upload = {
-        id: result.document_id,
-        filename: selectedFile.name,
-        timestamp: new Date().toISOString(),
-        success: true
-      };
-      
-      setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
-      
-      // Reset selected file
-      setSelectedFile(null);
-      
-      // Callback
-      if (onUploadSuccess) {
-        onUploadSuccess(result.document_id, result);
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      setUploadError(error.message || 'An error occurred during upload');
-      
-      // Add to recent uploads
-      const upload = {
-        id: null,
-        filename: selectedFile.name,
-        timestamp: new Date().toISOString(),
-        success: false,
-        error: error.message
-      };
-      
-      setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
-    } finally {
+    };
+
+    // --- Handle Network Errors ---
+    xhr.onerror = () => {
+      console.error('Network error during upload');
+      setUploadError('Network error occurred during upload.');
       setIsUploading(false);
-    }
+      // Add error to recent uploads
+      const upload = { id: null, filename: selectedFile.name, timestamp: new Date().toISOString(), success: false, error: 'Network error' };
+      setRecentUploads((prev) => [upload, ...prev].slice(0, 5));
+    };
+
+    // --- Start the Request ---
+    xhr.open('POST', '/api/upload', true);
+    xhr.send(formData);
+
+    // --- Old try/catch/finally block and success handling removed ---
+    // --- Logic moved into xhr.onload and xhr.onerror callbacks ---
+
+    // --- Orphaned catch and finally blocks removed ---
   };
-  
+
   /**
    * Resets the form
    */

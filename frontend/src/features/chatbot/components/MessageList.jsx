@@ -62,16 +62,32 @@ function MessageList({ messages = [], language = 'he' }) {
     const isUser = role === 'user';
     const isAssistant = role === 'assistant';
     const isSystem = role === 'system';
-    
+    const theme = useTheme(); // Access theme object
+
     // Alignment and style based on role
     const messageAlign = isUser ? 'flex-end' : 'flex-start';
-    const messageBgColor = isUser 
-      ? 'primary.light' 
-      : isAssistant 
-        ? 'grey.100' 
-        : 'warning.light';
-    const messageTextColor = isUser ? 'white' : 'text.primary';
-    
+
+    // Theme-aware colors
+    let messageBgColor;
+    let messageTextColor;
+
+    if (isUser) {
+      messageBgColor = theme.palette.primary.main; // Use main primary color
+      messageTextColor = theme.palette.primary.contrastText; // Use contrast text
+    } else if (isAssistant) {
+      messageBgColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200]; // Darker grey for assistant
+      messageTextColor = theme.palette.text.primary;
+    } else { // System message (keep warning style)
+      messageBgColor = 'warning.light';
+      messageTextColor = 'warning.contrastText'; // Ensure contrast for warning
+    }
+
+    // Override for explicit error messages
+    if (isError) {
+      messageBgColor = theme.palette.error.light;
+      messageTextColor = theme.palette.error.contrastText;
+    }
+
     return (
       <Box
         key={index}

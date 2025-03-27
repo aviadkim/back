@@ -334,9 +334,10 @@ function UserSettingsPage({ language = 'he' }) {
             {language === 'he' ? 'פרטי פרופיל' : 'Profile Details'}
           </Typography>
           
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6}>
-              <TextField
+          <Card variant="outlined" sx={{ p: 3, mb: 4 }}> {/* Wrap in Card */}
+            <Grid container spacing={3}> {/* Removed mb from Grid */}
+              <Grid item xs={12} sm={6}>
+                <TextField
                 fullWidth
                 label={language === 'he' ? 'שם פרטי' : 'First Name'}
                 name="firstName"
@@ -373,6 +374,7 @@ function UserSettingsPage({ language = 'he' }) {
               />
             </Grid>
           </Grid>
+         </Card> {/* Close Card */}
           
           <Button
             variant="contained"
