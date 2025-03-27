@@ -1,41 +1,41 @@
 {
-  "name": "Python 3.12 with Rust & Project Dependencies",
-  "image": "python:3.12",
+	"name": "Financial Docs Backend",
+	// Use the Dockerfile in the parent directory to build the container
+	"build": {
+		"dockerfile": "../Dockerfile",
+		// Add context if Dockerfile needs files outside .devcontainer
+		"context": ".."
+	},
 
-  "features": {},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
 
-  // Commands to run after the container is created
-  "postCreateCommand": [
-    "apt-get update",
-    "apt-get install -y --no-install-recommends build-essential python3-dev poppler-utils tesseract-ocr tesseract-ocr-heb libjpeg-dev zlib1g-dev curl",
-    "apt-get clean",
-    "rm -rf /var/lib/apt/lists/*",
-    "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
-    // Add cargo to PATH for the current session and subsequent ones
-    "echo 'export PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.bashrc",
-    // Install Python dependencies (runs in workspace root by default)
-    "pip install --no-cache-dir -r requirements.txt"
-  ],
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [10000],
 
-  // Configure VS Code settings
-  "customizations": {
-    "vscode": {
-      "settings": {
-        // Use the Python interpreter installed in the container
-        "python.defaultInterpreterPath": "/usr/local/bin/python"
-      },
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "rust-lang.rust-analyzer"
-        // Add other recommended extensions if needed
-      ]
-    }
-  },
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "python3 -m venv .venv && .venv/bin/pip install --upgrade pip && .venv/bin/pip install -r requirements.txt",
 
-  // Forward port 10000 for the Flask app if needed
-  // "forwardPorts": [10000],
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {
+				// Set the default Python interpreter path
+				"python.defaultInterpreterPath": ".venv/bin/python",
+				// Optional: Configure linting/formatting tools if needed
+				"python.linting.flake8Enabled": true,
+				"python.linting.flake8Path": ".venv/bin/flake8",
+				"python.formatting.provider": "black",
+				"python.formatting.blackPath": ".venv/bin/black"
+			},
+			"extensions": [
+				"ms-python.python", // Microsoft Python Extension
+				"ms-python.flake8", // Flake8 linting support
+				"ms-python.black-formatter" // Black formatting support
+			]
+		}
+	}
 
-  // Run as the non-root 'vscode' user.
-  "remoteUser": "vscode"
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
 }
