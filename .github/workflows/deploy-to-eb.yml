@@ -17,47 +17,61 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
-      - name: List available solution stacks
-        id: solution-stacks
-        run: |
-          STACKS=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Docker') && contains(@, 'Amazon Linux 2023')] | [0]" --output text)
-          echo "DOCKER_STACK=${STACKS}" >> $GITHUB_OUTPUT
-          echo "Available Docker stack: ${STACKS}"
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*"
       
-      - name: Create Elastic Beanstalk Application
+      - name: Get Docker solution stack
+        id: solution-stack
         run: |
-          # Force create the application (ignore if it already exists)
+          STACK=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Docker') && contains(@, 'Amazon Linux 2023')] | [0]" --output text)
+          echo "DOCKER_STACK=${STACK}" >> $GITHUB_OUTPUT
+          echo "Using Docker stack: ${STACK}"
+      
+      - name: Ensure application exists
+        run: |
           aws elasticbeanstalk create-application \
             --application-name financial-docs \
             --description "Financial Documents Analysis Application" || true
       
-      - name: Check environment existence
+      - name: Check if environment exists
         id: check-env
         run: |
-          # Check if environment exists by trying to describe it
-          if aws elasticbeanstalk describe-environments \
-             --application-name financial-docs \
-             --environment-names financial-docs-env \
-             --query "Environments[0].EnvironmentName" \
-             --output text 2>/dev/null | grep -q "financial-docs-env"; then
+          ENVIRONMENT_COUNT=$(aws elasticbeanstalk describe-environments \
+            --application-name financial-docs \
+            --environment-names financial-docs-env \
+            --query "length(Environments)" \
+            --output text)
+          
+          echo "Environment count: $ENVIRONMENT_COUNT"
+          
+          if [ "$ENVIRONMENT_COUNT" -gt "0" ]; then
             echo "Environment exists"
-            echo "env_exists=true" >> $GITHUB_OUTPUT
+            echo "EXISTS=true" >> $GITHUB_OUTPUT
           else
             echo "Environment does not exist"
-            echo "env_exists=false" >> $GITHUB_OUTPUT
+            echo "EXISTS=false" >> $GITHUB_OUTPUT
           fi
       
-      - name: Generate deployment package
-        run: zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*"
-      
-      - name: Create Elastic Beanstalk environment
-        if: steps.check-env.outputs.env_exists == 'false'
+      - name: Create and deploy to new environment
+        if: steps.check-env.outputs.EXISTS == 'false'
         run: |
-          echo "Creating Elastic Beanstalk environment 'financial-docs-env'"
+          echo "Creating new environment financial-docs-env"
+          
+          # First, create a new application version
+          aws elasticbeanstalk create-application-version \
+            --application-name financial-docs \
+            --version-label financial-docs-${{ github.sha }} \
+            --source-bundle S3Bucket=elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.run_id }},S3Key=financial-docs-${{ github.sha }}.zip
+          
+          # Upload the application package to S3
+          aws s3 cp deploy.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.run_id }}/financial-docs-${{ github.sha }}.zip
+          
+          # Create the environment with the version
           aws elasticbeanstalk create-environment \
             --application-name financial-docs \
             --environment-name financial-docs-env \
-            --solution-stack-name "${{ steps.solution-stacks.outputs.DOCKER_STACK }}" \
+            --version-label financial-docs-${{ github.sha }} \
+            --solution-stack-name "${{ steps.solution-stack.outputs.DOCKER_STACK }}" \
             --option-settings '[
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
@@ -69,38 +83,9 @@ jobs:
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "JWT_SECRET", "Value": "210"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SERVICE_NAME", "Value": "${{ secrets.SERVICE_NAME }}"}
             ]'
-          
-          # Wait for the environment to be created and reach the "Ready" state
-          echo "Waiting for environment to be ready..."
-          MAX_ATTEMPTS=30
-          ATTEMPT=0
-          
-          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-            ATTEMPT=$((ATTEMPT+1))
-            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS..."
-            
-            STATUS=$(aws elasticbeanstalk describe-environments \
-              --application-name financial-docs \
-              --environment-names financial-docs-env \
-              --query "Environments[0].Status" --output text 2>/dev/null || echo "NOT_FOUND")
-            
-            echo "Current status: $STATUS"
-            
-            if [ "$STATUS" = "Ready" ]; then
-              echo "Environment is ready!"
-              break
-            elif [ "$STATUS" = "Launching" ] || [ "$STATUS" = "Updating" ] || [ "$STATUS" = "NOT_FOUND" ]; then
-              echo "Environment is still being created, waiting 30 seconds..."
-              sleep 30
-            else
-              echo "Environment is in an unexpected state: $STATUS"
-              # Continue anyway and let the deployment step handle errors
-              break
-            fi
-          done
       
-      - name: Deploy to Elastic Beanstalk
-        if: steps.check-env.outputs.env_exists == 'true'
+      - name: Deploy to existing environment
+        if: steps.check-env.outputs.EXISTS == 'true'
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -108,20 +93,6 @@ jobs:
           application_name: financial-docs
           environment_name: financial-docs-env
           version_label: financial-docs-${{ github.sha }}
-          region: ${{ secrets.AWS_REGION }}
-          deployment_package: deploy.zip
-          use_existing_version_if_available: false
-          wait_for_environment_recovery: 300
-      
-      - name: Initial deployment to new environment
-        if: steps.check-env.outputs.env_exists == 'false'
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: financial-docs
-          environment_name: financial-docs-env
-          version_label: financial-docs-${{ github.sha }}-initial
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy.zip
           use_existing_version_if_available: false
