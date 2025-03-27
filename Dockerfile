@@ -2,13 +2,11 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies excluding MongoDB initially
+# Install system dependencies excluding MongoDB
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
     poppler-utils \
-    gnupg \
-    curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create required directories with proper permissions
@@ -28,5 +26,5 @@ ENV MONGO_URI=mongodb://mongo:27017/financial_documents
 ENV DEFAULT_LANGUAGE=he
 ENV LLM_PROVIDER=huggingface
 
-# Run application without MongoDB (will use external MongoDB)
+# Run application
 CMD gunicorn --bind 0.0.0.0:$PORT app:app
