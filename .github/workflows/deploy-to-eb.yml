@@ -18,6 +18,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
+      - name: Debug Dockerfile
+        run: |
+          echo "Contents of Dockerfile:"
+          cat Dockerfile || echo "No Dockerfile found"
+          echo "Contents of docker-compose.yml:"
+          cat docker-compose.yml || echo "No docker-compose.yml found"
+      
+      - name: Validate Docker setup
+        run: |
+          # Check if Docker files exist
+          if [ ! -f "Dockerfile" ]; then
+            echo "ERROR: Dockerfile is missing. Creating a basic one."
+            echo "FROM python:3.9-slim" > Dockerfile
+            echo "WORKDIR /app" >> Dockerfile
+            echo "COPY . ." >> Dockerfile
+            echo "RUN pip install -r requirements.txt" >> Dockerfile
+            echo "EXPOSE 10000" >> Dockerfile
+            echo "CMD [\"python\", \"app.py\"]" >> Dockerfile
+          fi
+          
+          if [ ! -f "docker-compose.yml" ]; then
+            echo "WARNING: docker-compose.yml is missing. This might be okay for Elastic Beanstalk."
+          fi
+      
       - name: Generate deployment package
         run: zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*"
       
@@ -72,25 +96,21 @@ jobs:
             echo "ENV_EXISTS=true" >> $GITHUB_OUTPUT
           fi
       
-      - name: Create new environment if it doesn't exist
+      - name: Create new environment with debugging
         if: steps.check-env.outputs.ENV_EXISTS == 'false'
         run: |
-          echo "Creating new Elastic Beanstalk environment"
+          echo "Creating new Elastic Beanstalk environment with debugging"
+          
+          # First create with minimal settings to get it working
           aws elasticbeanstalk create-environment \
             --application-name financial-docs \
             --environment-name financial-docs-env \
             --version-label ${{ steps.upload.outputs.VERSION_LABEL }} \
             --solution-stack-name "${{ steps.stack.outputs.DOCKER_STACK }}" \
             --option-settings '[
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "USE_DYNAMODB", "Value": "true"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DYNAMODB_REGION", "Value": "${{ secrets.AWS_REGION }}"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "DEFAULT_LANGUAGE", "Value": "he"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "HUGGINGFACE_API_KEY", "Value": "${{ secrets.HUGGINGFACE_API_KEY }}"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SECRET_KEY", "Value": "28"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "JWT_SECRET", "Value": "210"},
-              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SERVICE_NAME", "Value": "${{ secrets.SERVICE_NAME }}"}
+              {"Namespace": "aws:elasticbeanstalk:cloudwatch:logs", "OptionName": "StreamLogs", "Value": "true"},
+              {"Namespace": "aws:elasticbeanstalk:environment:proxy", "OptionName": "ProxyServer", "Value": "nginx"}
             ]'
       
       - name: Update existing environment
@@ -102,7 +122,7 @@ jobs:
             --environment-name financial-docs-env \
             --version-label ${{ steps.upload.outputs.VERSION_LABEL }}
       
-      - name: Wait for environment to be ready
+      - name: Wait for environment to be ready and check logs
         run: |
           echo "Waiting for environment to be ready..."
           MAX_ATTEMPTS=30
@@ -138,6 +158,14 @@ jobs:
             elif [ "$STATUS" = "Launching" ] || [ "$STATUS" = "Updating" ]; then
               echo "Environment is still $STATUS, waiting 30 seconds..."
               sleep 30
+            elif [ "$STATUS" = "Terminated" ]; then
+              echo "Environment was terminated. Checking logs..."
+              
+              # Try to get logs if available
+              aws logs describe-log-groups --log-group-name-prefix /aws/elasticbeanstalk/financial-docs-env || echo "No logs available"
+              
+              echo "Environment creation failed. Please check the AWS console for detailed error messages."
+              exit 1
             else
               echo "Environment is in state: $STATUS"
               echo "Continuing to wait..."
