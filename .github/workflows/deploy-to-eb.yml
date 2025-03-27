@@ -155,8 +155,8 @@ jobs:
       - name: List available solution stacks
         run: |
           echo "Available solution stacks:"
-          aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'running Python')]" --output text | grep "Python 3"
-      
+          aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'running Python')]" --output text
+
       - name: Create Elastic Beanstalk environment if it doesn't exist
         if: steps.check-env.outputs.env_exists == 'false'
         run: |
