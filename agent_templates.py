@@ -4,10 +4,10 @@ def create_agent_script(agent_name):
     script = f"""
 import sys
 import os
-import google.generativeai as genai
+# import google.generativeai as genai # Removed, using centralized AIModel via agent_scripts
 from agent_scripts import generate_gemini_suggestions
 
-genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+# genai.configure(api_key=os.environ.get("GOOGLE_API_KEY")) # Removed, using centralized AIModel via agent_scripts
 
 def analyze(filepath):
     \"\"\"Analyzes the code for {agent_name} concerns.\"\"\"

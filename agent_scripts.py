@@ -1,9 +1,10 @@
 import sys
 import os
 import subprocess
-import google.generativeai as genai
+# Removed direct genai import
+from shared.ai_utils import AIModel # Import centralized AIModel
 
-genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+# Removed direct genai configuration
 
 def run_agent(agent_name, filepath):
     """Runs a specified agent script."""
@@ -14,9 +15,14 @@ def run_agent(agent_name, filepath):
     except subprocess.CalledProcessError as e:
         return f"Error running {agent_name} agent: {e.stderr}"
 
-def generate_gemini_suggestions(code, report):
-    """Generates Gemini API suggestions."""
-    model = genai.GenerativeModel('gemini-pro')
-    prompt = f"Analyze the following code and provide suggestions:\\n\\n{code}\\n\\nReport:\\n{report}"
-    response = model.generate_content(prompt)
-    return response.text
+def generate_gemini_suggestions(code, report, model_name='gemini-pro'):
+    """Generates Gemini API suggestions using the centralized AIModel."""
+    # Instantiate AIModel with gemini provider
+    # TODO: Consider making the model name configurable or passed in
+    ai_model = AIModel(model_name=model_name, provider="gemini")
+    
+    prompt = f"Analyze the following code and provide suggestions based on the report:\\n\\nCode:\\n```\\n{code}\\n```\\n\\nReport:\\n{report}\\n\\nSuggestions:"
+    
+    # Use the centralized generate_text method
+    suggestions = ai_model.generate_text(prompt, max_length=1000) # Increased max_length for potentially longer suggestions
+    return suggestions
