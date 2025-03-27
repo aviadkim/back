@@ -73,12 +73,14 @@ class PDFProcessor:
             # Extract metadata
             metadata = {}
             if pdf_reader.metadata:
+                # Use attribute access for metadata (PyPDF2 >= 3.0.0)
                 metadata = {
-                    'title': pdf_reader.metadata.get('/Title', ''),
-                    'author': pdf_reader.metadata.get('/Author', ''),
-                    'creator': pdf_reader.metadata.get('/Creator', ''),
-                    'producer': pdf_reader.metadata.get('/Producer', ''),
-                    'created_date': pdf_reader.metadata.get('/CreationDate', ''),
+                    'title': pdf_reader.metadata.title if pdf_reader.metadata.title else '',
+                    'author': pdf_reader.metadata.author if pdf_reader.metadata.author else '',
+                    'creator': pdf_reader.metadata.creator if pdf_reader.metadata.creator else '',
+                    'producer': pdf_reader.metadata.producer if pdf_reader.metadata.producer else '',
+                    # CreationDate might still need dictionary access or specific handling
+                    'created_date': pdf_reader.metadata.creation_date.isoformat() if pdf_reader.metadata.creation_date else '',
                 }
             
             # Extract text from each page

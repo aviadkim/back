@@ -110,3 +110,8 @@ test_documents/
 # OS
 .DS_Store
 Thumbs.db
+
+
+# Virtual environment
+.venv/
+venv/

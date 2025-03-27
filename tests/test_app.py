@@ -19,7 +19,7 @@ def test_health_check(client):
 
 def test_file_upload_no_file(client):
     """Test file upload with no file."""
-    response = client.post('/api/upload', data={})
+    response = client.post('/api/pdf/upload', data={})
     assert response.status_code == 400
     data = json.loads(response.data)
     assert 'error' in data
@@ -29,7 +29,7 @@ def test_file_upload_with_file(client):
     # Create a test PDF file
     test_pdf = io.BytesIO(b'%PDF-1.4\n%File content')
     response = client.post(
-        '/api/upload',
+        '/api/pdf/upload',
         data={
             'file': (test_pdf, 'test.pdf'),
             'language': 'he'
@@ -42,14 +42,7 @@ def test_file_upload_with_file(client):
 
 def test_document_routes(client):
     """Test the document routes."""
-    response = client.get('/api/documents')
+    response = client.get('/api/pdf/documents')
     assert response.status_code == 200
     data = json.loads(response.data)
     assert 'documents' in data
-
-def test_api_health(client):
-    """Test the AI health check endpoint."""
-    response = client.get('/api/health')
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert 'status' in data

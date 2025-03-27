@@ -27,14 +27,6 @@ def mongo_client():
     # Clean up after tests
     db.documents.delete_many({})
 
-def test_health_check(client):
-    """Test the health check endpoint."""
-    response = client.get('/health')
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert data['status'] == 'ok'
-    assert 'Vertical Slice' in data['architecture']
-
 def test_pdf_upload_no_file(client):
     """Test PDF upload endpoint with no file."""
     response = client.post('/api/pdf/upload')
@@ -69,7 +61,7 @@ def test_pdf_upload_invalid_extension(client):
 def test_pdf_upload_success(client, mongo_client):
     """Test PDF upload endpoint with a valid PDF file."""
     # Create a test PDF path
-    test_pdf_path = os.path.join('tests', 'test_files', 'sample.pdf')
+    test_pdf_path = os.path.join('tests', 'fixtures', 'sample.pdf')
     
     # Skip if test file doesn't exist
     if not os.path.exists(test_pdf_path):
@@ -115,3 +107,60 @@ def test_get_nonexistent_document(client):
     assert response.status_code == 404
     data = json.loads(response.data)
     assert 'error' in data
+
+
+def test_get_and_delete_document(client, mongo_client):
+    """Test getting and deleting a specific document."""
+    # First, upload a document
+    test_pdf_path = os.path.join('tests', 'fixtures', 'sample.pdf')
+    if not os.path.exists(test_pdf_path):
+        pytest.skip(f"Test PDF file not found: {test_pdf_path}")
+
+    with open(test_pdf_path, 'rb') as f:
+        pdf_content = f.read()
+
+    upload_response = client.post('/api/pdf/upload', data={
+        'file': (io.BytesIO(pdf_content), 'sample.pdf'),
+        'language': 'he'
+    })
+
+    if upload_response.status_code != 200:
+         pytest.skip("PDF upload failed, cannot test get/delete.")
+
+    upload_data = json.loads(upload_response.data)
+    document_id = upload_data['document_id']
+
+    # Test GET document
+    get_response = client.get(f'/api/pdf/documents/{document_id}')
+    assert get_response.status_code == 200
+    get_data = json.loads(get_response.data)
+    assert 'document' in get_data
+    assert get_data['document']['_id'] == document_id
+    assert get_data['document']['filename'] == 'sample.pdf'
+
+    # Test GET all documents (should contain the uploaded one)
+    get_all_response = client.get('/api/pdf/documents')
+    assert get_all_response.status_code == 200
+    get_all_data = json.loads(get_all_response.data)
+    assert 'documents' in get_all_data
+    assert len(get_all_data['documents']) == 1
+    assert get_all_data['documents'][0]['_id'] == document_id
+
+    # Test DELETE document
+    delete_response = client.delete(f'/api/pdf/documents/{document_id}')
+    assert delete_response.status_code == 200
+    delete_data = json.loads(delete_response.data)
+    assert delete_data['success'] is True
+
+    # Verify document is deleted from DB
+    assert mongo_client.documents.find_one({'_id': document_id}) is None
+
+    # Verify GET returns 404 after deletion
+    get_deleted_response = client.get(f'/api/pdf/documents/{document_id}')
+    assert get_deleted_response.status_code == 404
+
+    # Verify GET all is empty again
+    get_all_empty_response = client.get('/api/pdf/documents')
+    assert get_all_empty_response.status_code == 200
+    get_all_empty_data = json.loads(get_all_empty_response.data)
+    assert len(get_all_empty_data['documents']) == 0

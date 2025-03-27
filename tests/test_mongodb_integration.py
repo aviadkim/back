@@ -1,11 +1,12 @@
 import pytest
 from pymongo import MongoClient
 from datetime import datetime
+import os
 
 @pytest.fixture
 def mongo_client():
     """Setup test MongoDB client with proper connection string."""
-    connection_string = 'mongodb://localhost:27017/'
+    connection_string = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/')
     client = MongoClient(connection_string, serverSelectionTimeoutMS=2000)
     try:
         # Test connection
