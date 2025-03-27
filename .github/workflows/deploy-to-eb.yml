@@ -3,6 +3,7 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:  # Allow manual triggering
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,58 +21,66 @@ jobs:
       - name: Generate deployment package
         run: zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*"
       
-      - name: Get Docker solution stack
-        id: solution-stack
+      - name: Upload deployment package to S3
+        id: upload
+        run: |
+          # Create a timestamp for version uniqueness
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          VERSION_LABEL="financial-docs-${TIMESTAMP}-${{ github.sha }}"
+          echo "VERSION_LABEL=${VERSION_LABEL}" >> $GITHUB_OUTPUT
+          
+          # Create S3 bucket if it doesn't exist (will fail silently if bucket exists)
+          aws s3 mb s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }} || true
+          
+          # Upload the zip file
+          aws s3 cp deploy.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }}/${VERSION_LABEL}.zip
+          
+          echo "Uploaded deployment package to S3"
+      
+      - name: Create Elastic Beanstalk application if it doesn't exist
+        run: |
+          if ! aws elasticbeanstalk describe-applications --application-names financial-docs &> /dev/null; then
+            echo "Creating Elastic Beanstalk application 'financial-docs'"
+            aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Documents Analysis Application"
+          else
+            echo "Application 'financial-docs' already exists"
+          fi
+      
+      - name: Create application version
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name financial-docs \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }} \
+            --source-bundle S3Bucket=elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }},S3Key=${{ steps.upload.outputs.VERSION_LABEL }}.zip \
+            --auto-create-application
+      
+      - name: Get available Docker solution stack
+        id: stack
         run: |
           STACK=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Docker') && contains(@, 'Amazon Linux 2023')] | [0]" --output text)
           echo "DOCKER_STACK=${STACK}" >> $GITHUB_OUTPUT
-          echo "Using Docker stack: ${STACK}"
-      
-      - name: Ensure application exists
-        run: |
-          aws elasticbeanstalk create-application \
-            --application-name financial-docs \
-            --description "Financial Documents Analysis Application" || true
+          echo "Found Docker stack: ${STACK}"
       
       - name: Check if environment exists
         id: check-env
         run: |
-          ENVIRONMENT_COUNT=$(aws elasticbeanstalk describe-environments \
-            --application-name financial-docs \
-            --environment-names financial-docs-env \
-            --query "length(Environments)" \
-            --output text)
-          
-          echo "Environment count: $ENVIRONMENT_COUNT"
-          
-          if [ "$ENVIRONMENT_COUNT" -gt "0" ]; then
-            echo "Environment exists"
-            echo "EXISTS=true" >> $GITHUB_OUTPUT
+          if aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env --query "Environments[?Status!='Terminated'] | length(@)" --output text | grep -q "^0$"; then
+            echo "Environment does not exist or is terminated"
+            echo "ENV_EXISTS=false" >> $GITHUB_OUTPUT
           else
-            echo "Environment does not exist"
-            echo "EXISTS=false" >> $GITHUB_OUTPUT
+            echo "Environment exists"
+            echo "ENV_EXISTS=true" >> $GITHUB_OUTPUT
           fi
       
-      - name: Create and deploy to new environment
-        if: steps.check-env.outputs.EXISTS == 'false'
+      - name: Create new environment if it doesn't exist
+        if: steps.check-env.outputs.ENV_EXISTS == 'false'
         run: |
-          echo "Creating new environment financial-docs-env"
-          
-          # First, create a new application version
-          aws elasticbeanstalk create-application-version \
-            --application-name financial-docs \
-            --version-label financial-docs-${{ github.sha }} \
-            --source-bundle S3Bucket=elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.run_id }},S3Key=financial-docs-${{ github.sha }}.zip
-          
-          # Upload the application package to S3
-          aws s3 cp deploy.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.run_id }}/financial-docs-${{ github.sha }}.zip
-          
-          # Create the environment with the version
+          echo "Creating new Elastic Beanstalk environment"
           aws elasticbeanstalk create-environment \
             --application-name financial-docs \
             --environment-name financial-docs-env \
-            --version-label financial-docs-${{ github.sha }} \
-            --solution-stack-name "${{ steps.solution-stack.outputs.DOCKER_STACK }}" \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }} \
+            --solution-stack-name "${{ steps.stack.outputs.DOCKER_STACK }}" \
             --option-settings '[
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "FLASK_ENV", "Value": "production"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
@@ -84,16 +93,59 @@ jobs:
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SERVICE_NAME", "Value": "${{ secrets.SERVICE_NAME }}"}
             ]'
       
-      - name: Deploy to existing environment
-        if: steps.check-env.outputs.EXISTS == 'true'
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: financial-docs
-          environment_name: financial-docs-env
-          version_label: financial-docs-${{ github.sha }}
-          region: ${{ secrets.AWS_REGION }}
-          deployment_package: deploy.zip
-          use_existing_version_if_available: false
-          wait_for_environment_recovery: 300
+      - name: Update existing environment
+        if: steps.check-env.outputs.ENV_EXISTS == 'true'
+        run: |
+          echo "Updating existing Elastic Beanstalk environment"
+          aws elasticbeanstalk update-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }}
+      
+      - name: Wait for environment to be ready
+        run: |
+          echo "Waiting for environment to be ready..."
+          MAX_ATTEMPTS=30
+          ATTEMPT=0
+          
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT+1))
+            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --application-name financial-docs \
+              --environment-names financial-docs-env \
+              --query "Environments[0].Status" --output text)
+            
+            HEALTH=$(aws elasticbeanstalk describe-environments \
+              --application-name financial-docs \
+              --environment-names financial-docs-env \
+              --query "Environments[0].Health" --output text)
+            
+            echo "Status: $STATUS, Health: $HEALTH"
+            
+            if [ "$STATUS" = "Ready" ]; then
+              echo "Deployment successful! Environment is ready."
+              
+              # Get the environment URL
+              URL=$(aws elasticbeanstalk describe-environments \
+                --application-name financial-docs \
+                --environment-names financial-docs-env \
+                --query "Environments[0].CNAME" --output text)
+              
+              echo "Your application is available at: http://$URL"
+              break
+            elif [ "$STATUS" = "Launching" ] || [ "$STATUS" = "Updating" ]; then
+              echo "Environment is still $STATUS, waiting 30 seconds..."
+              sleep 30
+            else
+              echo "Environment is in state: $STATUS"
+              echo "Continuing to wait..."
+              sleep 30
+            fi
+          done
+          
+          if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+            echo "Timed out waiting for environment to be ready"
+            exit 1
+          fi
