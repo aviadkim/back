@@ -13,16 +13,20 @@ from shared.database import db
 try:
     from sentence_transformers import SentenceTransformer
     from sentence_transformers.util import cos_sim
+
     SENTENCE_TRANSFORMER_AVAILABLE = True
 except ImportError:
     SENTENCE_TRANSFORMER_AVAILABLE = False
     SentenceTransformer = None
     cos_sim = None
-    logging.warning("sentence-transformers library not found. Vector search will not be available.")
+    logging.warning(
+        "sentence-transformers library not found. Vector search will not be available."
+    )
 
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
 
 class MemoryAgent:
     """
@@ -40,17 +44,22 @@ class MemoryAgent:
         if SENTENCE_TRANSFORMER_AVAILABLE:
             try:
                 # Using a multilingual model suitable for both English and Hebrew
-                self.embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+                self.embedding_model = SentenceTransformer(
+                    "paraphrase-multilingual-MiniLM-L12-v2"
+                )
                 logger.info("Sentence Transformer model loaded successfully.")
             except Exception as e:
                 logger.error(f"Failed to load Sentence Transformer model: {e}")
                 self.embedding_model = None
         else:
-             logger.warning("Sentence Transformer library not available. Vector search disabled.")
-
+            logger.warning(
+                "Sentence Transformer library not available. Vector search disabled."
+            )
 
         if not db.use_mongo or not db.db:
-            logger.error("MongoDB connection not available for MemoryAgent. Persistence will not work.")
+            logger.error(
+                "MongoDB connection not available for MemoryAgent. Persistence will not work."
+            )
             # Optionally raise an error or handle this case appropriately
 
     def add_document(self, document_id: str, analysis_path: str) -> bool:
@@ -75,58 +84,67 @@ class MemoryAgent:
                 return False
 
             # Load analysis data
-            with open(analysis_path, 'r', encoding='utf-8') as f:
+            with open(analysis_path, "r", encoding="utf-8") as f:
                 analysis_data = json.load(f)
 
-            text_content = analysis_data.get('text_content', '')
+            text_content = analysis_data.get("text_content", "")
             chunks = self._create_chunks(text_content, 1000, 200)
             chunk_embeddings = []
 
             # Generate embeddings if model is available and chunks exist
             if self.embedding_model and chunks:
                 try:
-                    logger.info(f"Generating embeddings for {len(chunks)} chunks of document {document_id}...")
+                    logger.info(
+                        f"Generating embeddings for {len(chunks)} chunks of document {document_id}..."
+                    )
                     # Encode chunks - ensure model is available
-                    embeddings_np = self.embedding_model.encode(chunks, convert_to_numpy=True)
+                    embeddings_np = self.embedding_model.encode(
+                        chunks, convert_to_numpy=True
+                    )
                     # Convert numpy arrays to lists for JSON/BSON serialization
                     chunk_embeddings = [emb.tolist() for emb in embeddings_np]
                     logger.info(f"Embeddings generated for document {document_id}.")
                 except Exception as e:
-                    logger.error(f"Failed to generate embeddings for document {document_id}: {e}")
-                    chunk_embeddings = [] # Store empty list if embedding fails
-
+                    logger.error(
+                        f"Failed to generate embeddings for document {document_id}: {e}"
+                    )
+                    chunk_embeddings = []  # Store empty list if embedding fails
 
             # Prepare document data for MongoDB
             document_info = {
-                '_id': document_id, # Use document_id as MongoDB _id
-                'title': analysis_data.get('file_name', 'Unknown Document'),
-                'language': analysis_data.get('language', 'he'),
-                'content': text_content,
-                'metadata': analysis_data.get('metadata', {}),
-                'tables': analysis_data.get('tables', []),
-                'entities': analysis_data.get('entities', []),
-                'financial_data': analysis_data.get('financial_data', {}),
-                'chunks': chunks,
-                'chunk_embeddings': chunk_embeddings, # Store embeddings
-                'analysis_path': analysis_path
+                "_id": document_id,  # Use document_id as MongoDB _id
+                "title": analysis_data.get("file_name", "Unknown Document"),
+                "language": analysis_data.get("language", "he"),
+                "content": text_content,
+                "metadata": analysis_data.get("metadata", {}),
+                "tables": analysis_data.get("tables", []),
+                "entities": analysis_data.get("entities", []),
+                "financial_data": analysis_data.get("financial_data", {}),
+                "chunks": chunks,
+                "chunk_embeddings": chunk_embeddings,  # Store embeddings
+                "analysis_path": analysis_path,
             }
 
             # Use update_one with upsert=True to insert or update the document
             result = db.db[self.collection_name].update_one(
-                {'_id': document_id},
-                {'$set': document_info},
-                upsert=True
+                {"_id": document_id}, {"$set": document_info}, upsert=True
             )
 
             if result.upserted_id or result.modified_count > 0:
-                logger.info(f"Document {document_id} added/updated in persistent memory (MongoDB)")
+                logger.info(
+                    f"Document {document_id} added/updated in persistent memory (MongoDB)"
+                )
                 return True
             else:
-                logger.info(f"Document {document_id} data already up-to-date in persistent memory (MongoDB)")
+                logger.info(
+                    f"Document {document_id} data already up-to-date in persistent memory (MongoDB)"
+                )
                 return True
 
         except Exception as e:
-            logger.exception(f"Error adding/updating document {document_id} in persistent memory: {str(e)}")
+            logger.exception(
+                f"Error adding/updating document {document_id} in persistent memory: {str(e)}"
+            )
             return False
 
     def forget_document(self, document_id: str) -> bool:
@@ -144,19 +162,27 @@ class MemoryAgent:
             return False
 
         try:
-            deleted = db.delete_document(self.collection_name, {'_id': document_id})
+            deleted = db.delete_document(self.collection_name, {"_id": document_id})
             if deleted:
-                logger.info(f"Document {document_id} removed from persistent memory (MongoDB)")
+                logger.info(
+                    f"Document {document_id} removed from persistent memory (MongoDB)"
+                )
                 return True
             else:
-                logger.warning(f"Document {document_id} not found in persistent memory (MongoDB)")
+                logger.warning(
+                    f"Document {document_id} not found in persistent memory (MongoDB)"
+                )
                 return False
 
         except Exception as e:
-            logger.exception(f"Error removing document {document_id} from persistent memory: {str(e)}")
+            logger.exception(
+                f"Error removing document {document_id} from persistent memory: {str(e)}"
+            )
             return False
 
-    def get_document_context(self, document_id: str, query: str, top_k: int = 5) -> Optional[Dict[str, Any]]:
+    def get_document_context(
+        self, document_id: str, query: str, top_k: int = 5
+    ) -> Optional[Dict[str, Any]]:
         """
         Get relevant context from document based on query using vector similarity search.
 
@@ -173,77 +199,99 @@ class MemoryAgent:
             return None
 
         try:
-            document = db.find_document(self.collection_name, {'_id': document_id})
+            document = db.find_document(self.collection_name, {"_id": document_id})
 
             if not document:
-                logger.warning(f"Document {document_id} not found in persistent memory (MongoDB)")
+                logger.warning(
+                    f"Document {document_id} not found in persistent memory (MongoDB)"
+                )
                 return None
 
-            chunks = document.get('chunks', [])
-            chunk_embeddings_list = document.get('chunk_embeddings', [])
+            chunks = document.get("chunks", [])
+            chunk_embeddings_list = document.get("chunk_embeddings", [])
 
             relevant_chunks_content = []
 
             # Use vector search if embeddings and model are available
-            if self.embedding_model and chunks and chunk_embeddings_list and len(chunks) == len(chunk_embeddings_list):
+            if (
+                self.embedding_model
+                and chunks
+                and chunk_embeddings_list
+                and len(chunks) == len(chunk_embeddings_list)
+            ):
                 try:
-                    logger.info(f"Performing vector search for document {document_id}...")
+                    logger.info(
+                        f"Performing vector search for document {document_id}..."
+                    )
                     # Convert stored lists back to numpy array for calculations
                     chunk_embeddings = np.array(chunk_embeddings_list)
 
                     # Generate query embedding
-                    query_embedding = self.embedding_model.encode(query, convert_to_numpy=True)
+                    query_embedding = self.embedding_model.encode(
+                        query, convert_to_numpy=True
+                    )
 
                     # Calculate cosine similarities
                     # Ensure embeddings are 2D arrays for cos_sim
                     if query_embedding.ndim == 1:
                         query_embedding = query_embedding.reshape(1, -1)
-                    if chunk_embeddings.ndim == 1: # Should not happen if stored correctly
-                         chunk_embeddings = chunk_embeddings.reshape(1, -1)
+                    if (
+                        chunk_embeddings.ndim == 1
+                    ):  # Should not happen if stored correctly
+                        chunk_embeddings = chunk_embeddings.reshape(1, -1)
 
-
-                    similarities = cos_sim(query_embedding, chunk_embeddings)[0] # Get the similarity scores tensor/array
+                    similarities = cos_sim(query_embedding, chunk_embeddings)[
+                        0
+                    ]  # Get the similarity scores tensor/array
 
                     # Get top_k indices
                     # Using argsort for potentially better performance on large arrays
                     # We negate similarities because argsort sorts in ascending order
                     top_indices = np.argsort(-similarities)[:top_k]
 
-
                     # Filter out results below a certain threshold (optional)
-                    similarity_threshold = 0.3 # Adjust as needed
+                    similarity_threshold = 0.3  # Adjust as needed
                     relevant_chunks_content = [
-                         chunks[i] for i in top_indices if similarities[i] > similarity_threshold
+                        chunks[i]
+                        for i in top_indices
+                        if similarities[i] > similarity_threshold
                     ]
 
-
-                    logger.info(f"Found {len(relevant_chunks_content)} relevant chunks via vector search.")
+                    logger.info(
+                        f"Found {len(relevant_chunks_content)} relevant chunks via vector search."
+                    )
 
                 except Exception as e:
-                    logger.error(f"Vector search failed for document {document_id}: {e}. Falling back.")
-                    relevant_chunks_content = [] # Fallback handled below
+                    logger.error(
+                        f"Vector search failed for document {document_id}: {e}. Falling back."
+                    )
+                    relevant_chunks_content = []  # Fallback handled below
 
             # Fallback: If vector search failed or wasn't possible, return first few chunks
             if not relevant_chunks_content:
-                logger.warning(f"Vector search skipped or failed for document {document_id}. Returning first {top_k} chunks.")
+                logger.warning(
+                    f"Vector search skipped or failed for document {document_id}. Returning first {top_k} chunks."
+                )
                 relevant_chunks_content = chunks[:top_k]
-
 
             # Create context object to return
             context = {
-                'id': document_id,
-                'title': document.get('title', 'Unknown Document'),
-                'content': '\n\n'.join(relevant_chunks_content), # Join the content of relevant chunks
-                'metadata': document.get('metadata', {}),
-                'language': document.get('language', 'he')
+                "id": document_id,
+                "title": document.get("title", "Unknown Document"),
+                "content": "\n\n".join(
+                    relevant_chunks_content
+                ),  # Join the content of relevant chunks
+                "metadata": document.get("metadata", {}),
+                "language": document.get("language", "he"),
             }
 
             return context
 
         except Exception as e:
-            logger.exception(f"Error getting context for document {document_id} from persistent memory: {str(e)}")
+            logger.exception(
+                f"Error getting context for document {document_id} from persistent memory: {str(e)}"
+            )
             return None
-
 
     # --- Other retrieval methods remain the same ---
 
@@ -256,13 +304,17 @@ class MemoryAgent:
             logger.error("MongoDB not available. Cannot get document content.")
             return None
         try:
-            document = db.find_document(self.collection_name, {'_id': document_id})
+            document = db.find_document(self.collection_name, {"_id": document_id})
             if not document:
-                logger.warning(f"Document {document_id} not found in persistent memory (MongoDB)")
+                logger.warning(
+                    f"Document {document_id} not found in persistent memory (MongoDB)"
+                )
                 return None
-            return document.get('content', '')
+            return document.get("content", "")
         except Exception as e:
-            logger.exception(f"Error getting content for document {document_id} from persistent memory: {str(e)}")
+            logger.exception(
+                f"Error getting content for document {document_id} from persistent memory: {str(e)}"
+            )
             return None
 
     def get_document_financial_data(self, document_id: str) -> Optional[Dict[str, Any]]:
@@ -274,13 +326,17 @@ class MemoryAgent:
             logger.error("MongoDB not available. Cannot get document financial data.")
             return None
         try:
-            document = db.find_document(self.collection_name, {'_id': document_id})
+            document = db.find_document(self.collection_name, {"_id": document_id})
             if not document:
-                logger.warning(f"Document {document_id} not found in persistent memory (MongoDB)")
+                logger.warning(
+                    f"Document {document_id} not found in persistent memory (MongoDB)"
+                )
                 return None
-            return document.get('financial_data', {})
+            return document.get("financial_data", {})
         except Exception as e:
-            logger.exception(f"Error getting financial data for document {document_id} from persistent memory: {str(e)}")
+            logger.exception(
+                f"Error getting financial data for document {document_id} from persistent memory: {str(e)}"
+            )
             return None
 
     def get_document_tables(self, document_id: str) -> Optional[List[Dict[str, Any]]]:
@@ -292,13 +348,17 @@ class MemoryAgent:
             logger.error("MongoDB not available. Cannot get document tables.")
             return None
         try:
-            document = db.find_document(self.collection_name, {'_id': document_id})
+            document = db.find_document(self.collection_name, {"_id": document_id})
             if not document:
-                logger.warning(f"Document {document_id} not found in persistent memory (MongoDB)")
+                logger.warning(
+                    f"Document {document_id} not found in persistent memory (MongoDB)"
+                )
                 return None
-            return document.get('tables', [])
+            return document.get("tables", [])
         except Exception as e:
-            logger.exception(f"Error getting tables for document {document_id} from persistent memory: {str(e)}")
+            logger.exception(
+                f"Error getting tables for document {document_id} from persistent memory: {str(e)}"
+            )
             return None
 
     def update_document(self, document_id: str, analysis_path: str) -> bool:
@@ -330,11 +390,10 @@ class MemoryAgent:
             chunks.append(chunk)
             next_start = end - overlap
             if next_start <= start:
-                 next_start = start + 1
+                next_start = start + 1
             start = next_start
         # Filter out potentially empty chunks if text was very short
         return [c for c in chunks if c.strip()]
-
 
     def _find_sentence_end(self, text: str) -> int:
         """
@@ -342,8 +401,8 @@ class MemoryAgent:
         (Implementation remains the same)
         """
         for i in range(len(text) - 1, 0, -1):
-            if text[i] in ['.', '!', '?', ':', ';', '\n'] and i < len(text) - 1:
-                if i + 1 >= len(text) or text[i+1].isspace():
+            if text[i] in [".", "!", "?", ":", ";", "\n"] and i < len(text) - 1:
+                if i + 1 >= len(text) or text[i + 1].isspace():
                     return i + 1
         for i in range(len(text) - 1, 0, -1):
             if text[i].isspace() and i < len(text) - 1:

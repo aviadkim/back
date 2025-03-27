@@ -12,4 +12,4 @@ Components:
 from .memory_agent import MemoryAgent
 from .coordinator import AgentCoordinator
 
-__all__ = ['MemoryAgent', 'AgentCoordinator']
+__all__ = ["MemoryAgent", "AgentCoordinator"]

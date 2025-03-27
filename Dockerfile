@@ -1,5 +1,5 @@
-# Use the official Python 3.12 image.
-FROM python:3.12-slim
+# Use a Debian-based Python 3.12 slim image for better glibc compatibility (e.g., with PyTorch)
+FROM python:3.12-slim-bookworm
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
