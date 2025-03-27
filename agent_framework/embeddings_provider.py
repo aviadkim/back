@@ -40,39 +40,20 @@ class EmbeddingsProvider:
         """
         if self._embeddings is None:
             try:
-                # Try the newer import first
                 from langchain_huggingface import HuggingFaceEmbeddings
-                logger.info(f"Initializing HuggingFaceEmbeddings from langchain_huggingface with model {self.model_name}")
+                logger.info(f"Initializing HuggingFaceEmbeddings with model {self.model_name}")
                 
-                # Initialize without explicitly passing the token (uses environment variable)
+                # Initialize using langchain_huggingface.
+                # It should automatically use HUGGINGFACE_HUB_TOKEN if set in the environment.
                 self._embeddings = HuggingFaceEmbeddings(
                     model_name=self.model_name
                 )
+            except ImportError:
+                 logger.error("`langchain-huggingface` package not found. Please install it.")
+                 raise RuntimeError("Could not initialize embeddings provider: langchain-huggingface not installed.")
             except Exception as e:
-                logger.warning(f"Error initializing embeddings with newer version: {str(e)}")
-                
-                # Fall back to older version if needed
-                try:
-                    from langchain.embeddings import HuggingFaceEmbeddings
-                    logger.info(f"Falling back to older langchain.embeddings with model {self.model_name}")
-                    
-                    # Get the API key
-                    api_key = os.environ.get("HUGGINGFACE_API_KEY")
-                    
-                    # Initialize with explicit token if available
-                    if api_key:
-                        self._embeddings = HuggingFaceEmbeddings(
-                            model_name=self.model_name,
-                            huggingfacehub_api_token=api_key
-                        )
-                    else:
-                        # Try without token (may use environment variable)
-                        self._embeddings = HuggingFaceEmbeddings(
-                            model_name=self.model_name
-                        )
-                except Exception as e2:
-                    logger.error(f"Failed to initialize embeddings: {str(e2)}")
-                    raise RuntimeError("Could not initialize embeddings provider") from e2
+                logger.error(f"Failed to initialize HuggingFace embeddings: {str(e)}")
+                raise RuntimeError("Could not initialize embeddings provider") from e
         
         return self._embeddings
     
