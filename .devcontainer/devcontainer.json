@@ -1,0 +1,41 @@
+{
+  "name": "Python 3.12 with Rust & Project Dependencies",
+  "image": "python:3.12",
+
+  "features": {},
+
+  // Commands to run after the container is created
+  "postCreateCommand": [
+    "apt-get update",
+    "apt-get install -y --no-install-recommends build-essential python3-dev poppler-utils tesseract-ocr tesseract-ocr-heb libjpeg-dev zlib1g-dev curl",
+    "apt-get clean",
+    "rm -rf /var/lib/apt/lists/*",
+    "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+    // Add cargo to PATH for the current session and subsequent ones
+    "echo 'export PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.bashrc",
+    // Install Python dependencies (runs in workspace root by default)
+    "pip install --no-cache-dir -r requirements.txt"
+  ],
+
+  // Configure VS Code settings
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Use the Python interpreter installed in the container
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "rust-lang.rust-analyzer"
+        // Add other recommended extensions if needed
+      ]
+    }
+  },
+
+  // Forward port 10000 for the Flask app if needed
+  // "forwardPorts": [10000],
+
+  // Run as the non-root 'vscode' user.
+  "remoteUser": "vscode"
+}
