@@ -24,20 +24,25 @@ jobs:
           echo "DOCKER_STACK=${STACKS}" >> $GITHUB_OUTPUT
           echo "Available Docker stack: ${STACKS}"
       
-      - name: Create Elastic Beanstalk Application if it doesn't exist
+      - name: Create Elastic Beanstalk Application
         run: |
-          # Check if application exists
-          if ! aws elasticbeanstalk describe-applications --application-names financial-docs > /dev/null 2>&1; then
-            echo "Creating Elastic Beanstalk application 'financial-docs'"
-            aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Documents Analysis Application"
-          else
-            echo "Application 'financial-docs' already exists"
+          # Force create the application (ignore if it already exists)
+          aws elasticbeanstalk create-application \
+            --application-name financial-docs \
+            --description "Financial Documents Analysis Application" || true
+          
+          # Verify the application exists
+          if ! aws elasticbeanstalk describe-applications --application-names financial-docs; then
+            echo "Failed to create or verify application 'financial-docs'"
+            exit 1
           fi
       
       - name: Check for existing environment
         id: check-env
         run: |
-          if aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env | grep -q "financial-docs-env"; then
+          if aws elasticbeanstalk describe-environments \
+             --application-name financial-docs \
+             --environment-names financial-docs-env | grep -q "financial-docs-env"; then
             echo "Environment exists"
             echo "env_exists=true" >> $GITHUB_OUTPUT
           else
