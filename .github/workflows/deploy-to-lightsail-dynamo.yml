@@ -159,24 +159,28 @@ jobs:
       - name: Deploy to Lightsail
         if: steps.check-deployment.outputs.deployment_in_progress == 'false'
         run: |
-          # Generate a random secret key for Flask
+          # Generate random secrets
           FLASK_SECRET_KEY=$(openssl rand -hex 24)
           JWT_SECRET=$(openssl rand -hex 24)
           
           # Get the latest image
           IMAGE_TAG=$(aws lightsail get-container-images --service-name "${{ env.SERVICE_NAME }}" --region eu-central-1 --query 'containerImages[0].image' --output text)
           
-          # Create JSON for container definition including all environment variables
-          echo "Creating container definition with environment variables..."
-          CONTAINER_JSON="{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"SECRET_KEY\":\"$FLASK_SECRET_KEY\",\"JWT_SECRET\":\"$JWT_SECRET\",\"DEFAULT_LANGUAGE\":\"he\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\""
+          # Create base environment variables JSON
+          ENV_JSON="{\"FLASK_ENV\":\"production\",\"PORT\":\"10000\",\"SECRET_KEY\":\"$FLASK_SECRET_KEY\",\"JWT_SECRET\":\"$JWT_SECRET\",\"DEFAULT_LANGUAGE\":\"he\",\"USE_DYNAMODB\":\"true\",\"DYNAMODB_REGION\":\"eu-central-1\""
           
+          # Add HuggingFace API key if available
           if [ -n "${{ secrets.HUGGINGFACE_API_KEY }}" ]; then
-            # Add HuggingFace API key and LLM provider if available
-            CONTAINER_JSON="$CONTAINER_JSON,\"HUGGINGFACE_API_KEY\":\"${{ secrets.HUGGINGFACE_API_KEY }}\",\"LLM_PROVIDER\":\"huggingface\""
+            ENV_JSON="$ENV_JSON,\"HUGGINGFACE_API_KEY\":\"${{ secrets.HUGGINGFACE_API_KEY }}\",\"LLM_PROVIDER\":\"huggingface\""
           fi
           
-          # Close the JSON structure
-          CONTAINER_JSON="$CONTAINER_JSON}}}"
+          # Close the environment JSON
+          ENV_JSON="$ENV_JSON}"
+          
+          # Create the full container JSON
+          CONTAINER_JSON="{\"app\":{\"image\":\"$IMAGE_TAG\",\"ports\":{\"10000\":\"HTTP\"},\"environment\":$ENV_JSON}}"
+          
+          echo "Container JSON: $CONTAINER_JSON"
           
           # Create JSON for public endpoint
           ENDPOINT_JSON="{\"containerName\":\"app\",\"containerPort\":10000,\"healthCheck\":{\"path\":\"/health\",\"intervalSeconds\":10,\"timeoutSeconds\":5,\"successCodes\":\"200\",\"unhealthyThreshold\":2,\"healthyThreshold\":2}}"
