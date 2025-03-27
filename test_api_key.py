@@ -25,20 +25,21 @@ def main():
     
     # Try to import necessary packages
     try:
-        # Try the new import first (recommended)
-        try:
-            from langchain_huggingface import HuggingFaceEmbeddings
-            print("✅ Successfully imported langchain_huggingface")
-        except ImportError:
-            # Fall back to deprecated import for compatibility
-            print("⚠️ langchain_huggingface not found, falling back to deprecated import")
-            from langchain.embeddings import HuggingFaceEmbeddings
+        # Use the standard import path
+        from langchain_huggingface import HuggingFaceEmbeddings
+        print("✅ Successfully imported langchain_huggingface")
         
-        # Initialize embeddings with the API key
+        # Set the token environment variable for the library to pick up
+        # (Ideally, this should be set globally before running the script, e.g., via .env)
+        if api_key:
+             os.environ["HUGGINGFACE_HUB_TOKEN"] = api_key
+             print("Temporarily set HUGGINGFACE_HUB_TOKEN environment variable.")
+        
+        # Initialize embeddings (should pick up token from environment)
         print("Initializing embeddings with model: sentence-transformers/all-MiniLM-L6-v2")
         embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            huggingfacehub_api_token=api_key
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+            # Removed explicit token passing
         )
         
         # Test the embeddings with a simple text

@@ -34,36 +34,38 @@ def test_huggingface_connection():
     
     try:
         # Try importing the necessary components
-        try:
-            # Try the new import first (recommended)
-            from langchain_huggingface import HuggingFaceEmbeddings
-            logger.info("✅ Successfully imported langchain_huggingface")
-        except ImportError:
-            # Fall back to deprecated import for compatibility
-            logger.warning("⚠️ langchain_huggingface not found, falling back to deprecated import")
-            from langchain.embeddings import HuggingFaceEmbeddings
-        
-        # Initialize embeddings with the API key
-        logger.info("Initializing embeddings with model: sentence-transformers/all-MiniLM-L6-v2")
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            huggingfacehub_api_token=api_key
-        )
-        
+        # Removed redundant inner try block
+        # Use the standard import path
+        from langchain_huggingface import HuggingFaceEmbeddings # Corrected indentation
+        logger.info("✅ Successfully imported langchain_huggingface") # Corrected indentation
+
+        # Set the token environment variable for the library to pick up
+        # (Ideally, this should be set globally before running the script, e.g., via .env)
+        if api_key: # Corrected indentation
+             os.environ["HUGGINGFACE_HUB_TOKEN"] = api_key # Corrected indentation
+             logger.info("Temporarily set HUGGINGFACE_HUB_TOKEN environment variable.") # Corrected indentation
+
+        # Initialize embeddings (should pick up token from environment)
+        logger.info("Initializing embeddings with model: sentence-transformers/all-MiniLM-L6-v2") # Corrected indentation
+        embeddings = HuggingFaceEmbeddings( # Corrected indentation
+            model_name="sentence-transformers/all-MiniLM-L6-v2" # Corrected indentation
+            # Removed explicit token passing
+        ) # Corrected indentation
+
         # Test the embeddings with a simple text
-        test_text = "This is a test to verify Hugging Face API connection"
-        logger.info(f"Generating embeddings for text: '{test_text}'")
+        test_text = "This is a test to verify Hugging Face API connection" # Corrected indentation
+        logger.info(f"Generating embeddings for text: '{test_text}'") # Corrected indentation
         
-        embedding_vector = embeddings.embed_query(test_text)
+        embedding_vector = embeddings.embed_query(test_text) # Corrected indentation
         
         # If we get here without errors, the connection is working
-        logger.info(f"✅ Successfully generated embeddings with {len(embedding_vector)} dimensions")
-        logger.info("✅ Hugging Face API connection is working correctly!")
+        logger.info(f"✅ Successfully generated embeddings with {len(embedding_vector)} dimensions") # Corrected indentation
+        logger.info("✅ Hugging Face API connection is working correctly!") # Corrected indentation
         
         # Show a sample of the embedding vector
-        logger.info(f"Sample of embedding vector: {embedding_vector[:5]}...")
+        logger.info(f"Sample of embedding vector: {embedding_vector[:5]}...") # Corrected indentation
         
-        return True
+        return True # Corrected indentation
         
     except Exception as e:
         logger.error(f"❌ Error connecting to Hugging Face API: {str(e)}")
