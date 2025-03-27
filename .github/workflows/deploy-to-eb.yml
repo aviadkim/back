@@ -30,24 +30,27 @@ jobs:
           aws elasticbeanstalk create-application \
             --application-name financial-docs \
             --description "Financial Documents Analysis Application" || true
-          
-          # Verify the application exists
-          if ! aws elasticbeanstalk describe-applications --application-names financial-docs; then
-            echo "Failed to create or verify application 'financial-docs'"
-            exit 1
-          fi
       
-      - name: Check for existing environment
+      - name: Check environment status
         id: check-env
         run: |
-          if aws elasticbeanstalk describe-environments \
-             --application-name financial-docs \
-             --environment-names financial-docs-env | grep -q "financial-docs-env"; then
-            echo "Environment exists"
-            echo "env_exists=true" >> $GITHUB_OUTPUT
-          else
+          # Check if environment exists and get its status
+          ENV_INFO=$(aws elasticbeanstalk describe-environments \
+            --application-name financial-docs \
+            --environment-names financial-docs-env 2>/dev/null || echo "NOT_FOUND")
+          
+          if echo "$ENV_INFO" | grep -q "NOT_FOUND" || ! echo "$ENV_INFO" | grep -q "EnvironmentName"; then
             echo "Environment does not exist"
             echo "env_exists=false" >> $GITHUB_OUTPUT
+            echo "env_status=NOT_FOUND" >> $GITHUB_OUTPUT
+          else
+            echo "Environment exists"
+            echo "env_exists=true" >> $GITHUB_OUTPUT
+            
+            # Extract status
+            STATUS=$(echo "$ENV_INFO" | grep -o '"Status": "[^"]*"' | cut -d'"' -f4)
+            echo "Environment status: $STATUS"
+            echo "env_status=$STATUS" >> $GITHUB_OUTPUT
           fi
       
       - name: Generate deployment package
@@ -72,6 +75,38 @@ jobs:
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "JWT_SECRET", "Value": "210"},
               {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "SERVICE_NAME", "Value": "${{ secrets.SERVICE_NAME }}"}
             ]'
+      
+      - name: Wait for environment to be ready
+        if: steps.check-env.outputs.env_exists == 'true' && steps.check-env.outputs.env_status != 'Ready'
+        run: |
+          echo "Waiting for environment to be ready..."
+          MAX_ATTEMPTS=30
+          ATTEMPT=0
+          
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT+1))
+            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --application-name financial-docs \
+              --environment-names financial-docs-env \
+              --query "Environments[0].Status" --output text)
+            
+            echo "Current status: $STATUS"
+            
+            if [ "$STATUS" = "Ready" ]; then
+              echo "Environment is ready!"
+              break
+            elif [ "$STATUS" = "Launching" ] || [ "$STATUS" = "Updating" ]; then
+              echo "Environment is still $STATUS, waiting 30 seconds..."
+              sleep 30
+            else
+              echo "Environment is in an unexpected state: $STATUS"
+              # If environment is in a bad state like "Terminating", we'll try a deploy anyway
+              # as the einaregilsson/beanstalk-deploy action will provide a better error message
+              break
+            fi
+          done
       
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
