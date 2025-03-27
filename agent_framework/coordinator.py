@@ -3,11 +3,16 @@ import logging
 import json
 import re
 from typing import List, Dict, Any, Optional
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.schema import Document as LangchainDocument
-from langchain.chains import LLMChain
-from langchain.callbacks import get_openai_callback
+
+# Langchain v0.1.x+ imports
+from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
+from langchain_community.llms import HuggingFaceHub
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_core.documents import Document as LangchainDocument
+from langchain.chains import LLMChain # LLMChain still exists but consider LCEL later
+from langchain_community.callbacks import get_openai_callback
+
 from .memory_agent import MemoryAgent
 
 # Set up logging
@@ -41,9 +46,9 @@ class AgentCoordinator:
         if self.llm_provider == "huggingface" and self.huggingface_api_key:
             # Prioritize HuggingFace if specifically configured
             try:
-                from langchain.llms import HuggingFaceHub
+                # from langchain.llms import HuggingFaceHub # Old import
                 self.llm = HuggingFaceHub(
-                    repo_id="google/flan-t5-large",
+                    repo_id="google/flan-t5-large", # Note: This is an older model, consider updating
                     temperature=0,
                     huggingfacehub_api_token=self.huggingface_api_key
                 )
@@ -54,9 +59,9 @@ class AgentCoordinator:
         elif self.llm_provider == "mistral" and self.mistral_api_key:
             # Use Mistral AI if specifically configured
             try:
-                from langchain.chat_models import ChatMistralAI
+                # from langchain.chat_models import ChatMistralAI # Old import
                 self.llm = ChatMistralAI(
-                    model="mistral-large-latest", 
+                    model="mistral-large-latest",
                     temperature=0,
                     api_key=self.mistral_api_key
                 )
@@ -78,9 +83,9 @@ class AgentCoordinator:
             if self.huggingface_api_key:
                 # Default to HuggingFace
                 try:
-                    from langchain.llms import HuggingFaceHub
+                    # from langchain.llms import HuggingFaceHub # Old import
                     self.llm = HuggingFaceHub(
-                        repo_id="google/flan-t5-large",
+                        repo_id="google/flan-t5-large", # Note: This is an older model, consider updating
                         temperature=0,
                         huggingfacehub_api_token=self.huggingface_api_key
                     )
@@ -93,9 +98,9 @@ class AgentCoordinator:
             elif self.mistral_api_key:
                 # Try Mistral next
                 try:
-                    from langchain.chat_models import ChatMistralAI
+                    # from langchain.chat_models import ChatMistralAI # Old import
                     self.llm = ChatMistralAI(
-                        model="mistral-large-latest", 
+                        model="mistral-large-latest",
                         temperature=0,
                         api_key=self.mistral_api_key
                     )

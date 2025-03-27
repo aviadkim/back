@@ -1,7 +1,7 @@
 from langchain_mistralai import ChatMistralAI
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains import create_extraction_chain
+from langchain_community.document_loaders import PyPDFLoader # Updated import
+from langchain_text_splitters import RecursiveCharacterTextSplitter # Updated import
+from langchain.chains import create_extraction_chain # Keep for now, consider LCEL later
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List, Optional
 import os
