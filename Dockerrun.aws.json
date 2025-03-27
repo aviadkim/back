@@ -1,0 +1,24 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Ports": [
+    {
+      "ContainerPort": 10000,
+      "HostPort": 10000
+    }
+  ],
+  "Volumes": [
+    {
+      "HostDirectory": "/var/app/current/uploads",
+      "ContainerDirectory": "/app/uploads"
+    },
+    {
+      "HostDirectory": "/var/app/current/data",
+      "ContainerDirectory": "/app/data"
+    },
+    {
+      "HostDirectory": "/var/app/current/logs",
+      "ContainerDirectory": "/app/logs"
+    }
+  ],
+  "Logging": "/var/log/eb-docker"
+}
