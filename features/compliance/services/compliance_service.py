@@ -130,15 +130,28 @@ class ComplianceChecker:
             print(f"Error during LLM requirement identification for doc {document_id}: {e}")
             extraction = "Error generating LLM requirement extraction."
 
-        # Basic parsing attempt (can be improved with more robust NLP)
-        extracted_list = [line.strip('-* ').strip() for line in extraction.strip().split('\n') if line.strip().startswith(('-', '*')) or (len(line.strip()) > 0 and not line.strip().lower().startswith('no specific'))]
+        # Enhanced parsing logic for better requirement extraction
+        requirements = []
+        extraction_lines = extraction.strip().split('\n')
+        for line in extraction_lines:
+            line = line.strip()
+            # Skip empty lines and headers
+            if not line or line.startswith('#') or line.lower().startswith('no specific'):
+                continue
+            
+            # Clean bullet points and numbering
+            if line.startswith(('-', '*', '•')) or (len(line) > 2 and line[0].isdigit() and line[1] in ['.', ')']):
+                line = line[2:].strip()
+            
+            if line:  # Only add non-empty lines
+                requirements.append(line)
 
         return {
             "document_id": document_id,
             "document_type": document_type,
             "extracted_requirements_text": extraction.strip(),  # Raw LLM output
-            "extracted_requirements_list": extracted_list,  # Parsed list
-            "requirement_count": len(extracted_list) if extracted_list else self._count_requirements_fallback(extraction)
+            "extracted_requirements_list": requirements,  # Enhanced parsed list
+            "requirement_count": len(requirements) if requirements else self._count_requirements_fallback(extraction)
         }
 
     def _calculate_compliance_score(self, analysis):
