@@ -4,7 +4,39 @@ import os
 import jinja2
 from dotenv import load_dotenv
 import logging
+
+# Feature Blueprints (Imported early as per convention)
 from features.chatbot import chatbot_bp
+from features.pdf_scanning import pdf_scanning_bp
+from features.document_intake.api.intake_routes import intake_routes
+from features.summarization.api.summarization_routes import summarization_routes
+from features.copilot_router.api.router_routes import router_routes
+from features.data_extraction.api.extraction_routes import extraction_routes
+from features.financial_insights.api.insights_routes import insights_routes
+from features.compliance.api.compliance_routes import compliance_routes
+
+# Legacy Routes (Imported early, registration handled later)
+try:
+    from routes.document_routes import document_routes
+    from routes.langchain_routes import langchain_routes
+    has_legacy_routes = True
+except ImportError:
+    has_legacy_routes = False
+
+# Diagnostic Module (Imported early, registration handled later)
+try:
+    from diagnostic import diagnostic_bp
+    has_diagnostic = True
+except ImportError:
+    has_diagnostic = False
+
+# AWS Helpers (Imported early, usage conditional)
+try:
+    from utils.aws_helpers import init_aws_secrets
+    has_aws_helpers = True
+except ImportError:
+    has_aws_helpers = False
+
 
 # Check if running in AWS environment
 is_aws = os.environ.get('AWS_EXECUTION_ENV') is not None or os.environ.get('AWS_REGION') is not None
@@ -23,23 +55,27 @@ required_dirs = ['uploads', 'data', 'data/embeddings', 'logs', 'templates']
 for directory in required_dirs:
     os.makedirs(directory, exist_ok=True)
 
-# Load environment variables from .env file (local development)
+# Load environment variables
 if not is_aws:
     logger.info("Loading environment variables from .env file")
     load_dotenv()
 else:
     # Load environment variables from AWS Secrets Manager in production
-    try:
-        logger.info("Loading environment variables from AWS Secrets Manager")
-        from utils.aws_helpers import init_aws_secrets
-        init_aws_secrets()
-    except Exception as e:
-        logger.error(f"Failed to load AWS secrets: {e}")
-        # Still try to load from .env as fallback
+    if has_aws_helpers:
+        try:
+            logger.info("Loading environment variables from AWS Secrets Manager")
+            init_aws_secrets()
+        except Exception as e:
+            logger.error(f"Failed to load AWS secrets: {e}")
+            # Still try to load from .env as fallback
+            load_dotenv()
+    else:
+        logger.warning("AWS environment detected but AWS helpers not found. Attempting .env load.")
         load_dotenv()
 
+
 # Create Flask application
-app = Flask(__name__, 
+app = Flask(__name__,
             static_folder='frontend/build/static')
 
 # Set custom template folders with fallback
@@ -51,6 +87,7 @@ app.jinja_loader = jinja2.ChoiceLoader([
 # Enable CORS to allow cross-origin requests
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
+
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -58,73 +95,89 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
-# Import feature blueprints (Vertical Slice Architecture)
-from features.pdf_scanning import pdf_scanning_bp
 
-# Register API routes
+# Register Feature API routes (Vertical Slice Architecture)
 app.register_blueprint(pdf_scanning_bp)
 app.register_blueprint(chatbot_bp)
+app.register_blueprint(intake_routes)
+app.register_blueprint(summarization_routes)
+app.register_blueprint(router_routes)
+app.register_blueprint(extraction_routes)
+app.register_blueprint(insights_routes)
+app.register_blueprint(compliance_routes)
 
-# We'll continue to support legacy route structures during migration
-try:
-    from routes.document_routes import document_routes
-    from routes.langchain_routes import langchain_routes
+# Register Legacy routes if found
+if has_legacy_routes:
     app.register_blueprint(document_routes)
     app.register_blueprint(langchain_routes)
     logger.info("Legacy routes registered")
-except ImportError:
-    logger.info("Legacy routes not found")
-
-# Import diagnostic module if available
-try:
-    from diagnostic import diagnostic_bp
-    has_diagnostic = True
-except ImportError:
-    has_diagnostic = False
-    logger.warning("Diagnostic module not found. Diagnostic routes will not be available.")
+else:
+    logger.info("Legacy routes not found or failed to import")
 
 # Register diagnostic routes if available
 if has_diagnostic:
     app.register_blueprint(diagnostic_bp, url_prefix='/diagnostic')
-    
+    logger.info("Diagnostic routes registered")
+
     @app.route('/system-diagnostic', methods=['GET'])
     def diagnostic_page():
         return render_template('diagnostic.html')
+else:
+    logger.warning("Diagnostic module not found. Diagnostic routes will not be available.")
+
 
 # Default route to serve frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     try:
-        if path and os.path.exists(os.path.join('frontend/build', path)):
-            return send_from_directory('frontend/build', path)
+        build_path = 'frontend/build'
+        if path and os.path.exists(os.path.join(build_path, path)):
+            return send_from_directory(build_path, path)
         else:
-            return render_template('index.html')
+            # Serve index.html for SPA routing
+            index_path = os.path.join(build_path, 'index.html')
+            if os.path.exists(index_path):
+                return send_from_directory(build_path, 'index.html')
+            else:
+                logger.error("frontend/build/index.html not found.")
+                return "Frontend not built or index.html missing.", 404
     except Exception as e:
         logger.error(f"Error serving path {path}: {e}")
-        return render_template('index.html')
+        # Fallback to index.html if possible, otherwise error
+        try:
+            index_path = os.path.join('frontend/build', 'index.html')
+            if os.path.exists(index_path):
+                return send_from_directory('frontend/build', 'index.html')
+        except Exception as fallback_e:
+            logger.error(f"Fallback serving error: {fallback_e}")
+        return "An error occurred.", 500
+
 
 # Health check endpoint
 @app.route('/health')
 def health_check():
     return jsonify({
-        "status": "ok", 
+        "status": "ok",
         "message": "System is operational",
         "architecture": "Vertical Slice",
         "environment": "AWS" if is_aws else "Development"
     })
 
-# Static file serving
+
+# Static file serving (Redundant if frontend build handles it, but safe fallback)
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
+
 
 # Manifest and favicon
 @app.route('/manifest.json')
 def serve_manifest():
     try:
         return send_from_directory('frontend/build', 'manifest.json')
-    except:
+    except Exception as e:
+        logger.warning(f"Could not serve manifest.json: {e}. Serving default.")
         # If manifest.json doesn't exist, create a basic one
         manifest = {
             "short_name": "Doc Analysis",
@@ -137,13 +190,16 @@ def serve_manifest():
         }
         return jsonify(manifest)
 
+
 @app.route('/favicon.ico')
 def serve_favicon():
     try:
         return send_from_directory('frontend/build', 'favicon.ico')
-    except:
+    except Exception as e:
+        logger.warning(f"Could not serve favicon.ico: {e}. Returning 204.")
         # Return a 204 No Content if favicon is missing
         return '', 204
+
 
 # Simple test page for debugging
 @app.route('/test')
@@ -156,7 +212,7 @@ def test_page():
             <p>לחץ על הכפתור לביצוע אבחון של בעיות בעיבוד קבצי PDF</p>
         </div>
         """
-    
+
     html = f"""
     <!DOCTYPE html>
     <html lang="he" dir="rtl">
@@ -175,9 +231,9 @@ def test_page():
     </head>
     <body>
         <h1>דף בדיקה פשוט</h1>
-        
+
         {diagnostic_link}
-        
+
         <div class="container">
             <h2>העלאת קובץ</h2>
             <form id="upload-form">
@@ -190,7 +246,7 @@ def test_page():
             </form>
             <div id="upload-status"></div>
         </div>
-        
+
         <div class="container">
             <h2>צ'אט פשוט</h2>
             <div class="chatbox" id="chat-messages"></div>
@@ -203,31 +259,31 @@ def test_page():
         <script>
             document.addEventListener('DOMContentLoaded', function() {{
                 console.log('Test page loaded');
-                
+
                 // Upload form
                 const uploadForm = document.getElementById('upload-form');
                 const fileInput = document.getElementById('file-input');
                 const languageSelect = document.getElementById('language-select');
                 const uploadStatus = document.getElementById('upload-status');
-                
+
                 uploadForm.addEventListener('submit', function(e) {{
                     e.preventDefault();
                     if (!fileInput.files.length) {{
                         uploadStatus.textContent = 'נא לבחור קובץ';
                         return;
                     }}
-                    
+
                     const formData = new FormData();
                     formData.append('file', fileInput.files[0]);
                     formData.append('language', languageSelect.value);
-                    
+
                     uploadStatus.textContent = 'שולח קובץ...';
-                    
+
                     // Use the new PDF scanning endpoint for PDFs
                     const endpoint = fileInput.files[0].name.toLowerCase().endsWith('.pdf')
                         ? '/api/pdf/upload'
-                        : '/api/upload';
-                    
+                        : '/api/upload'; // Assuming a generic upload endpoint exists
+
                     fetch(endpoint, {{
                         method: 'POST',
                         body: formData
@@ -242,16 +298,16 @@ def test_page():
                         console.error('Upload error:', error);
                     }});
                 }});
-                
+
                 // Chat
                 const chatMessages = document.getElementById('chat-messages');
                 const messageInput = document.getElementById('message-input');
                 const sendButton = document.getElementById('send-button');
-                
+
                 sendButton.addEventListener('click', function() {{
                     const message = messageInput.value.trim();
                     if (!message) return;
-                    
+
                     // Add message to chat
                     const userMsg = document.createElement('div');
                     userMsg.textContent = 'שאלה: ' + message;
@@ -261,26 +317,29 @@ def test_page():
                     userMsg.style.padding = '5px';
                     userMsg.style.borderRadius = '5px';
                     chatMessages.appendChild(userMsg);
-                    
+
                     messageInput.value = '';
-                    
-                    // Send to API
-                    fetch('/api/chat', {{
+
+                    // Send to API - Using the new router endpoint
+                    fetch('/api/copilot/route', {{ // Changed endpoint
                         method: 'POST',
                         headers: {{
                             'Content-Type': 'application/json'
                         }},
                         body: JSON.stringify({{
-                            question: message,
-                            language: languageSelect.value
+                            message: message, // Changed key to 'message'
+                            context: {{ // Added basic context
+                                language: languageSelect.value
+                            }}
                         }})
                     }})
                     .then(response => response.json())
                     .then(data => {{
                         console.log('Chat response:', data);
-                        
+
                         const botMsg = document.createElement('div');
-                        botMsg.textContent = 'תשובה: ' + (data.answer || data.error || 'אין תשובה');
+                        // Assuming response format might change based on router
+                        botMsg.textContent = 'תשובה: ' + (data.response || data.error || 'אין תשובה');
                         botMsg.style.textAlign = 'left';
                         botMsg.style.margin = '5px';
                         botMsg.style.backgroundColor = '#f1f1f1';
@@ -290,7 +349,7 @@ def test_page():
                     }})
                     .catch(error => {{
                         console.error('Chat error:', error);
-                        
+
                         const errorMsg = document.createElement('div');
                         errorMsg.textContent = 'שגיאה: ' + error.message;
                         errorMsg.style.color = 'red';
@@ -298,7 +357,7 @@ def test_page():
                         chatMessages.appendChild(errorMsg);
                     }});
                 }});
-                
+
                 // Test initial API health
                 fetch('/health')
                     .then(response => response.json())
@@ -315,12 +374,13 @@ def test_page():
     """
     return html
 
+
 if __name__ == '__main__':
     # Set server port
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV', 'development') == 'development'
-    
+
     logger.info(f"Starting server on port {port}, debug mode: {debug}")
-    logger.info(f"Using Vertical Slice Architecture")
+    logger.info("Using Vertical Slice Architecture")  # Corrected: Removed f-string
     logger.info(f"Environment: {'AWS' if is_aws else 'Development'}")
     app.run(host='0.0.0.0', port=port, debug=debug)

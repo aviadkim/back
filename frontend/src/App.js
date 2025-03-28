@@ -37,6 +37,8 @@ import { rtlCache } from './rtlConfig';
 import PdfViewer from './components/PdfViewer';
 import DocumentTable from './components/DocumentTable';
 import api from './services/api';
+import { CopilotProvider } from '@copilotkit/react-core';
+import FinancialDocumentAssistantHub from './components/FinancialDocumentAssistantHub';
 
 // יצירת ערכת נושא מותאמת עם תמיכה ב-RTL
 const theme = createTheme({
@@ -506,6 +508,51 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+    <CopilotProvider
+      apiUrl="/api/copilot/route" // Point to the backend router
+      chatApiConfig={{
+        sendMessages: async ({ messages }) => {
+          const lastMessage = messages[messages.length - 1];
+          // Placeholder for richer context later (e.g., selectedFile.name)
+          const appStateContext = {}; 
+
+          try {
+            const response = await fetch('/api/copilot/route', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                message: lastMessage.content,
+                context: appStateContext 
+              })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(`API Error: ${response.status} ${response.statusText}. ${errorData.error || ''}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+              throw new Error(`Backend Error: ${data.error}`);
+            }
+
+            return {
+              id: Date.now().toString(), // Simple ID generation
+              role: 'assistant',
+              content: data.response || "No response content received.",
+            };
+          } catch (error) {
+            console.error("Error in sendMessages:", error);
+            return {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: `Error: ${error.message}`,
+            };
+          }
+        }
+      }}
+    >
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         {/* סרגל כלים */}
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -604,6 +651,9 @@ function App() {
           }}
         >
           {/* תצוגת הקובץ והניתוח */}
+          {/* Render the Copilot Hub */}
+          <FinancialDocumentAssistantHub />
+          <Divider sx={{ my: 3 }} /> {/* Add a divider */}
           {activeView === 'viewer' && (
             <Box mt={2}>
               {selectedFile ? (
@@ -668,6 +718,7 @@ function App() {
         </Alert>
       </Snackbar>
     </ThemeProvider>
+    </CopilotProvider>
   );
 }
 
