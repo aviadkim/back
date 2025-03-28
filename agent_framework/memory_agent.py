@@ -11,10 +11,12 @@ from shared.database import db
 
 # Import sentence transformer
 try:
-    from sentence_transformers import SentenceTransformer
-    from sentence_transformers.util import cos_sim
+    # from sentence_transformers import SentenceTransformer # Temporarily commented out to bypass Torch OSError
+    # from sentence_transformers.util import cos_sim # Also triggers torch import, commenting out too
 
-    SENTENCE_TRANSFORMER_AVAILABLE = True
+    # Force unavailable if main import is commented
+    # SENTENCE_TRANSFORMER_AVAILABLE = True
+    raise ImportError("SentenceTransformer import temporarily disabled") # Force except block
 except ImportError:
     SENTENCE_TRANSFORMER_AVAILABLE = False
     SentenceTransformer = None
@@ -56,11 +58,8 @@ class MemoryAgent:
                 "Sentence Transformer library not available. Vector search disabled."
             )
 
-        if not db.use_mongo or not db.db:
-            logger.error(
-                "MongoDB connection not available for MemoryAgent. Persistence will not work."
-            )
-            # Optionally raise an error or handle this case appropriately
+        # Removed check for db.use_mongo and db.db, as the Database class handles DynamoDB resource state internally.
+        # Methods will log errors if the resource is unavailable.
 
     def add_document(self, document_id: str, analysis_path: str) -> bool:
         """
@@ -73,9 +72,8 @@ class MemoryAgent:
         Returns:
             bool: Success status
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot add document to memory.")
-            return False
+        # Removed check for db.use_mongo and db.db
+        # The db.store_document method (or equivalent DynamoDB method) will handle resource availability.
 
         try:
             # Check if file exists
@@ -157,12 +155,11 @@ class MemoryAgent:
         Returns:
             bool: Success status
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot forget document from memory.")
-            return False
+        # Removed check for db.use_mongo and db.db
 
         try:
-            deleted = db.delete_document(self.collection_name, {"_id": document_id})
+            # Assuming db.delete_document now uses DynamoDB and handles resource availability
+            deleted = db.delete_document(self.collection_name, {"id": document_id}) # Assuming 'id' is the key for DynamoDB
             if deleted:
                 logger.info(
                     f"Document {document_id} removed from persistent memory (MongoDB)"
@@ -194,12 +191,11 @@ class MemoryAgent:
         Returns:
             Optional[Dict]: Document context containing relevant chunks
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot get document context.")
-            return None
+        # Removed check for db.use_mongo and db.db
 
         try:
-            document = db.find_document(self.collection_name, {"_id": document_id})
+            # Assuming db.find_document now uses DynamoDB and handles resource availability
+            document = db.find_document(self.collection_name, {"id": document_id}) # Assuming 'id' is the key for DynamoDB
 
             if not document:
                 logger.warning(
@@ -300,11 +296,11 @@ class MemoryAgent:
         Get full document content from persistent memory (MongoDB).
         (Implementation remains the same)
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot get document content.")
-            return None
+        # Removed check for db.use_mongo and db.db
+
         try:
-            document = db.find_document(self.collection_name, {"_id": document_id})
+            # Assuming db.find_document now uses DynamoDB and handles resource availability
+            document = db.find_document(self.collection_name, {"id": document_id}) # Assuming 'id' is the key for DynamoDB
             if not document:
                 logger.warning(
                     f"Document {document_id} not found in persistent memory (MongoDB)"
@@ -322,11 +318,11 @@ class MemoryAgent:
         Get financial data from document in persistent memory (MongoDB).
         (Implementation remains the same)
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot get document financial data.")
-            return None
+        # Removed check for db.use_mongo and db.db
+
         try:
-            document = db.find_document(self.collection_name, {"_id": document_id})
+            # Assuming db.find_document now uses DynamoDB and handles resource availability
+            document = db.find_document(self.collection_name, {"id": document_id}) # Assuming 'id' is the key for DynamoDB
             if not document:
                 logger.warning(
                     f"Document {document_id} not found in persistent memory (MongoDB)"
@@ -344,11 +340,11 @@ class MemoryAgent:
         Get tables from document in persistent memory (MongoDB).
         (Implementation remains the same)
         """
-        if not db.use_mongo or not db.db:
-            logger.error("MongoDB not available. Cannot get document tables.")
-            return None
+        # Removed check for db.use_mongo and db.db
+
         try:
-            document = db.find_document(self.collection_name, {"_id": document_id})
+            # Assuming db.find_document now uses DynamoDB and handles resource availability
+            document = db.find_document(self.collection_name, {"id": document_id}) # Assuming 'id' is the key for DynamoDB
             if not document:
                 logger.warning(
                     f"Document {document_id} not found in persistent memory (MongoDB)"

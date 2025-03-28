@@ -55,7 +55,7 @@ class AgentCoordinator:
                 # from langchain.llms import HuggingFaceHub # Old import
                 self.llm = HuggingFaceHub(
                     repo_id="google/flan-t5-large",  # Note: This is an older model, consider updating
-                    temperature=0,
+                    # temperature=0, # Removed - Not a valid parameter for HuggingFaceHub
                     huggingfacehub_api_token=self.huggingface_api_key,
                 )
                 logger.info(
@@ -100,7 +100,7 @@ class AgentCoordinator:
                     # from langchain.llms import HuggingFaceHub # Old import
                     self.llm = HuggingFaceHub(
                         repo_id="google/flan-t5-large",  # Note: This is an older model, consider updating
-                        temperature=0,
+                        # temperature=0, # Removed - Not a valid parameter for HuggingFaceHub
                         huggingfacehub_api_token=self.huggingface_api_key,
                     )
                     self.llm_provider = "huggingface"

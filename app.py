@@ -4,6 +4,13 @@ import os
 import jinja2
 from dotenv import load_dotenv
 import logging
+from dotenv import load_dotenv # Moved import higher
+
+# Load environment variables FIRST to ensure AWS_REGION is available if set in .env
+load_dotenv()
+logger = logging.getLogger(__name__) # Initialize logger early for potential messages during setup
+logger.info("Attempting to load environment variables from .env file")
+
 
 # Feature Blueprints (Imported early as per convention)
 from features.chatbot import chatbot_bp
@@ -38,40 +45,39 @@ except ImportError:
     has_aws_helpers = False
 
 
-# Check if running in AWS environment
-is_aws = os.environ.get('AWS_EXECUTION_ENV') is not None or os.environ.get('AWS_REGION') is not None
+# Check if running in a specific AWS execution environment (e.g., Lambda, ECS)
+# Relying solely on AWS_REGION might be true even for local dev if configured
+is_aws_execution_env = os.environ.get('AWS_EXECUTION_ENV') is not None
 
-# Set up logging first
+# Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     filename='logs/app.log',
     filemode='a'
 )
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__) # Logger already initialized earlier
 
 # Create required directories
 required_dirs = ['uploads', 'data', 'data/embeddings', 'logs', 'templates']
 for directory in required_dirs:
     os.makedirs(directory, exist_ok=True)
 
-# Load environment variables
-if not is_aws:
-    logger.info("Loading environment variables from .env file")
-    load_dotenv()
-else:
-    # Load environment variables from AWS Secrets Manager in production
+# Load environment variables (already done unconditionally earlier)
+# Now handle AWS Secrets Manager specifically if in an AWS execution environment
+if is_aws_execution_env:
     if has_aws_helpers:
         try:
-            logger.info("Loading environment variables from AWS Secrets Manager")
+            logger.info("Attempting to load environment variables from AWS Secrets Manager")
             init_aws_secrets()
+            logger.info("Successfully loaded secrets from AWS Secrets Manager.")
         except Exception as e:
-            logger.error(f"Failed to load AWS secrets: {e}")
-            # Still try to load from .env as fallback
-            load_dotenv()
+            logger.error(f"Failed to load AWS secrets: {e}. Ensure AWS credentials and permissions are correct.")
+            # Depending on policy, you might want to exit or continue without secrets
     else:
-        logger.warning("AWS environment detected but AWS helpers not found. Attempting .env load.")
-        load_dotenv()
+        logger.warning("AWS execution environment detected but AWS helpers (utils.aws_helpers) not found. Cannot load secrets from Secrets Manager.")
+# else: # Not in AWS execution env, .env was already loaded
+#    logger.info("Not in AWS execution environment, using variables from .env")
 
 
 # Create Flask application
@@ -382,5 +388,5 @@ if __name__ == '__main__':
 
     logger.info(f"Starting server on port {port}, debug mode: {debug}")
     logger.info("Using Vertical Slice Architecture")  # Corrected: Removed f-string
-    logger.info(f"Environment: {'AWS' if is_aws else 'Development'}")
+    logger.info(f"Environment: {'AWS Execution Environment' if is_aws_execution_env else 'Development/Local'}") # Use the correct variable name
     app.run(host='0.0.0.0', port=port, debug=debug)

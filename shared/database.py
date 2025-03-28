@@ -1,302 +1,265 @@
 import os
 import logging
-from datetime import datetime # Added for timestamping
-from typing import Dict, Any, Optional
-from typing import Dict, Any, Optional, List # Added List
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker, scoped_session
+from datetime import datetime, timezone # Added timezone
+from typing import Dict, Any, Optional, List
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError, PartialCredentialsError
 
 # Setup logger
 logger = logging.getLogger(__name__)
 
-# SQLAlchemy Base class for models
-Base = declarative_base()
+# --- DynamoDB Client Initialization ---
 
-# MongoDB connection
-def get_mongo_client() -> Optional[MongoClient]:
+def get_dynamodb_resource():
     """
-    Create a connection to MongoDB.
-    
-    Returns:
-        MongoClient: MongoDB client, or None if there was an error.
+    Initializes and returns a boto3 DynamoDB resource.
+    Reads AWS credentials and region from environment variables or AWS config.
     """
-    # Corrected environment variable name to MONGODB_URI
-    mongo_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/financial_documents')
-    
     try:
-        client = MongoClient(mongo_uri)
-        # Check the connection
-        client.admin.command('ping')
-        logger.info("MongoDB connection successful")
-        return client
-    except ConnectionFailure as e:
-        logger.error(f"MongoDB connection failed: {e}")
+        # Boto3 will automatically look for credentials in environment variables,
+        # shared credential file (~/.aws/credentials), or AWS config file (~/.aws/config).
+        # Explicitly getting region from env var, falling back to a default if needed.
+        region_name = os.environ.get('AWS_REGION', 'us-east-1') # Default to us-east-1 if not set
+        dynamodb = boto3.resource('dynamodb', region_name=region_name)
+        # Perform a simple operation to test credentials and connection
+        dynamodb.meta.client.list_tables(Limit=1)
+        logger.info(f"DynamoDB resource initialized successfully for region {region_name}.")
+        return dynamodb
+    except (NoCredentialsError, PartialCredentialsError):
+        logger.error("AWS credentials not found. Configure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.")
+        return None
+    except ClientError as e:
+        # More specific error handling for potential AWS issues
+        error_code = e.response.get('Error', {}).get('Code')
+        if error_code == 'UnrecognizedClientException':
+             logger.error(f"AWS Security Token Service Error: {e}. Check your AWS credentials and permissions.")
+        elif error_code == 'InvalidSignatureException':
+             logger.error(f"AWS Signature Error: {e}. Check your AWS Secret Access Key.")
+        elif 'Region' in str(e):
+             logger.error(f"AWS Region Error: {e}. Check the configured AWS_REGION ('{region_name}').")
+        else:
+             logger.error(f"Failed to initialize DynamoDB resource: {e}")
         return None
     except Exception as e:
-        logger.error(f"Error connecting to MongoDB: {e}")
+        logger.error(f"An unexpected error occurred during DynamoDB initialization: {e}")
         return None
 
-def get_mongo_db(db_name: Optional[str] = None):
-    """
-    Get the DB object from MongoDB.
-    
-    Args:
-        db_name (Optional[str]): The name of the database (optional).
-        
-    Returns:
-        Database: MongoDB database object or None.
-    """
-    client = get_mongo_client()
-    if not client:
-        return None
-    
-    # If no database name is provided, use the default from the URI or a fallback
-    if not db_name:
-        # Extract the database name from the URI
-        # Corrected environment variable name to MONGODB_URI
-        mongo_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/financial_documents')
-        db_name = mongo_uri.split('/')[-1]
-        # Handle cases where the name might have query parameters or be empty
-        if not db_name or '?' in db_name:
-            db_name = 'financial_documents' # Default database name
-    
-    return client[db_name]
+# --- Database Access Class ---
 
-# SQLAlchemy engine and session
-def init_sqlalchemy_db(app=None):
-    """
-    Initialize SQLAlchemy, optionally with a Flask app.
-    
-    Args:
-        app: Flask application instance (optional).
-        
-    Returns:
-        tuple: (engine, Session) - SQLAlchemy engine and scoped session factory.
-    """
-    # Determine the database URI
-    db_uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///financial_documents.db')
-    
-    # Create SQLAlchemy engine
-    engine = create_engine(db_uri, echo=False)
-    
-    # Create a scoped session factory
-    session_factory = sessionmaker(bind=engine)
-    Session = scoped_session(session_factory)
-    
-    # If a Flask app is provided, configure session removal on teardown
-    if app:
-        @app.teardown_appcontext
-        def shutdown_session(exception=None):
-            Session.remove()
-    
-    # Create all tables defined by Base's subclasses
-    Base.metadata.create_all(engine)
-    
-    return engine, Session
-
-# Database access class
 class Database:
     """
-    Class for accessing the database (MongoDB or SQLAlchemy).
+    Class for accessing AWS DynamoDB.
     Provides a unified interface for database operations.
     """
-    def __init__(self, use_mongo: bool = True):
+    def __init__(self):
         """
-        Initialize database access.
-        
-        Args:
-            use_mongo (bool): Whether to use MongoDB (True) or SQLAlchemy (False). Defaults to True.
+        Initialize DynamoDB access.
         """
-        self.use_mongo = use_mongo
-        
-        if use_mongo:
-            self.client = get_mongo_client()
-            if self.client:
-                self.db = get_mongo_db() # Get the database object
-            else:
-                self.db = None # MongoDB connection failed
-                logger.error("Database __init__: MongoDB client could not be initialized.")
-        else:
-            # Initialize SQLAlchemy if not using Mongo
-            self.engine, self.Session = init_sqlalchemy_db()
-            logger.info("Database __init__: SQLAlchemy initialized.")
-    
-    def get_collection(self, collection_name: str):
-        """
-        Get a MongoDB collection object.
-        
-        Args:
-            collection_name (str): The name of the collection.
-            
-        Returns:
-            Collection or None: The MongoDB collection object, or None if not using MongoDB or connection failed.
-        """
-        if not self.use_mongo or not self.db:
-            logger.warning(f"Attempted to get MongoDB collection '{collection_name}' but not using Mongo or DB connection failed.")
+        self.dynamodb = get_dynamodb_resource()
+        if not self.dynamodb:
+            logger.error("Database __init__: DynamoDB resource could not be initialized.")
+            # Consider raising an exception or handling this state appropriately
+
+    def _get_table(self, table_name: str):
+        """Helper to get a DynamoDB table object."""
+        if not self.dynamodb:
+            logger.error(f"DynamoDB resource not available. Cannot access table '{table_name}'.")
             return None
-        
-        return self.db[collection_name]
-    
-    def get_session(self):
-        """
-        Get a SQLAlchemy session.
-        
-        Returns:
-            Session or None: A new SQLAlchemy session, or None if using MongoDB.
-        """
-        if self.use_mongo:
-            logger.warning("Attempted to get SQLAlchemy session while configured for MongoDB.")
+        try:
+            return self.dynamodb.Table(table_name)
+        except Exception as e:
+            logger.error(f"Error getting DynamoDB table '{table_name}': {e}")
             return None
-        
-        # Return a new session from the scoped session factory
-        return self.Session()
-    
-    def store_document(self, collection_name: str, document: Dict[str, Any]) -> Optional[str]:
+
+    # --- Generic Document Methods (Adapt based on actual table structures) ---
+
+    def store_document(self, table_name: str, document: Dict[str, Any], primary_key_name: str = 'id') -> Optional[str]:
         """
-        Store a document in the specified MongoDB collection.
-        
+        Store an item (document) in the specified DynamoDB table.
+        Assumes 'id' is the primary key if not specified.
+
         Args:
-            collection_name (str): The name of the collection.
-            document (Dict[str, Any]): The document to store.
-            
+            table_name (str): The name of the DynamoDB table.
+            document (Dict[str, Any]): The item to store. Must include the primary key.
+            primary_key_name (str): The name of the primary key attribute. Defaults to 'id'.
+
         Returns:
-            Optional[str]: The string representation of the inserted document's ID, or None if failed.
+            Optional[str]: The value of the primary key if successful, or None if failed.
         """
-        coll = self.get_collection(collection_name)
-        if coll is not None:
+        table = self._get_table(table_name)
+        if table is not None and primary_key_name in document:
             try:
-                result = coll.insert_one(document)
-                logger.info(f"Document inserted into '{collection_name}' with ID: {result.inserted_id}")
-                return str(result.inserted_id)
-            except Exception as e:
-                logger.error(f"Error storing document in '{collection_name}': {e}")
+                # Add a timestamp if not present
+                if 'createdAt' not in document:
+                    document['createdAt'] = datetime.now(timezone.utc).isoformat()
+                document['updatedAt'] = datetime.now(timezone.utc).isoformat()
+
+                response = table.put_item(Item=document)
+                logger.info(f"Item inserted/updated in '{table_name}' with primary key: {document[primary_key_name]}. Response: {response.get('ResponseMetadata', {}).get('HTTPStatusCode')}")
+                return document[primary_key_name]
+            except ClientError as e:
+                logger.error(f"Error storing item in '{table_name}': {e.response['Error']['Message']}")
                 return None
-        else:
-            logger.error(f"Cannot store document, collection '{collection_name}' not accessible.")
-            return None
-    
-    def find_document(self, collection_name: str, query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Find a single document in the specified MongoDB collection.
-        
-        Args:
-            collection_name (str): The name of the collection.
-            query (Dict[str, Any]): The query criteria.
-            
-        Returns:
-            Optional[Dict[str, Any]]: The found document, or None if not found or error occurred.
-        """
-        coll = self.get_collection(collection_name)
-        if coll is not None:
-            try:
-                document = coll.find_one(query)
-                if document:
-                    logger.debug(f"Document found in '{collection_name}' matching query: {query}")
-                else:
-                    logger.debug(f"No document found in '{collection_name}' matching query: {query}")
-                return document
             except Exception as e:
-                logger.error(f"Error finding document in '{collection_name}': {e}")
+                 logger.error(f"Unexpected error storing item in '{table_name}': {e}")
+                 return None
+        else:
+            if not table:
+                 logger.error(f"Cannot store item, table '{table_name}' not accessible.")
+            elif primary_key_name not in document:
+                 logger.error(f"Cannot store item, primary key '{primary_key_name}' missing in document.")
+            return None
+
+    def find_document(self, table_name: str, key: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        Find a single item (document) in the specified DynamoDB table by its key.
+
+        Args:
+            table_name (str): The name of the DynamoDB table.
+            key (Dict[str, Any]): The primary key of the item to find (e.g., {'id': 'some_value'}).
+
+        Returns:
+            Optional[Dict[str, Any]]: The found item, or None if not found or error occurred.
+        """
+        table = self._get_table(table_name)
+        if table is not None:
+            try:
+                response = table.get_item(Key=key)
+                item = response.get('Item')
+                if item:
+                    logger.debug(f"Item found in '{table_name}' with key: {key}")
+                else:
+                    logger.debug(f"No item found in '{table_name}' with key: {key}")
+                return item
+            except ClientError as e:
+                logger.error(f"Error finding item in '{table_name}' with key {key}: {e.response['Error']['Message']}")
                 return None
+            except Exception as e:
+                 logger.error(f"Unexpected error finding item in '{table_name}': {e}")
+                 return None
         else:
-            logger.error(f"Cannot find document, collection '{collection_name}' not accessible.")
+            logger.error(f"Cannot find item, table '{table_name}' not accessible.")
             return None
-    
-    def update_document(self, collection_name: str, query: Dict[str, Any], update_data: Dict[str, Any]) -> bool:
+
+    def update_document(self, table_name: str, key: Dict[str, Any], update_data: Dict[str, Any]) -> bool:
         """
-        Update a single document in the specified MongoDB collection.
-        Uses $set operator for the update.
-        
+        Update an item in the specified DynamoDB table.
+
         Args:
-            collection_name (str): The name of the collection.
-            query (Dict[str, Any]): The query criteria to find the document.
-            update_data (Dict[str, Any]): The fields and values to update.
-            
+            table_name (str): The name of the table.
+            key (Dict[str, Any]): The primary key of the item to update.
+            update_data (Dict[str, Any]): Dictionary of attributes to update.
+
         Returns:
-            bool: True if a document was modified, False otherwise.
+            bool: True if the update was successful, False otherwise.
         """
-        coll = self.get_collection(collection_name)
-        if coll is not None:
+        table = self._get_table(table_name)
+        if table is not None:
+            # Add updatedAt timestamp
+            update_data['updatedAt'] = datetime.now(timezone.utc).isoformat()
+
+            # Construct UpdateExpression, ExpressionAttributeNames, and ExpressionAttributeValues
+            update_expression_parts = []
+            expression_attribute_names = {}
+            expression_attribute_values = {}
+            for i, (attr_name, attr_value) in enumerate(update_data.items()):
+                # Use placeholders for attribute names and values to avoid reserved words issues
+                name_placeholder = f"#attr{i}"
+                value_placeholder = f":val{i}"
+                update_expression_parts.append(f"{name_placeholder} = {value_placeholder}")
+                expression_attribute_names[name_placeholder] = attr_name
+                expression_attribute_values[value_placeholder] = attr_value
+
+            update_expression = "SET " + ", ".join(update_expression_parts)
+
             try:
-                result = coll.update_one(query, {"$set": update_data})
-                if result.modified_count > 0:
-                    logger.info(f"Document updated in '{collection_name}' matching query: {query}")
-                    return True
-                else:
-                    # Log if no document matched or if the data was already the same
-                    logger.info(f"No document updated in '{collection_name}' matching query: {query} (may not exist or already up-to-date)")
-                    return False # Return False if no document was modified
-            except Exception as e:
-                logger.error(f"Error updating document in '{collection_name}': {e}")
+                response = table.update_item(
+                    Key=key,
+                    UpdateExpression=update_expression,
+                    ExpressionAttributeNames=expression_attribute_names,
+                    ExpressionAttributeValues=expression_attribute_values,
+                    ReturnValues="UPDATED_NEW" # Or "NONE" if you don't need the result
+                )
+                logger.info(f"Item updated in '{table_name}' with key {key}. Response: {response.get('ResponseMetadata', {}).get('HTTPStatusCode')}")
+                return True
+            except ClientError as e:
+                logger.error(f"Error updating item in '{table_name}' with key {key}: {e.response['Error']['Message']}")
                 return False
-        else:
-            logger.error(f"Cannot update document, collection '{collection_name}' not accessible.")
-            return False
-    
-    def delete_document(self, collection_name: str, query: Dict[str, Any]) -> bool:
-        """
-        Delete a single document from the specified MongoDB collection.
-        
-        Args:
-            collection_name (str): The name of the collection.
-            query (Dict[str, Any]): The query criteria to find the document to delete.
-            
-        Returns:
-            bool: True if a document was deleted, False otherwise.
-        """
-        coll = self.get_collection(collection_name)
-        if coll is not None:
-            try:
-                result = coll.delete_one(query)
-                if result.deleted_count > 0:
-                    logger.info(f"Document deleted from '{collection_name}' matching query: {query}")
-                    return True
-                else:
-                    logger.info(f"No document deleted from '{collection_name}' matching query: {query} (document not found)")
-                    return False # Return False if no document was deleted
             except Exception as e:
-                logger.error(f"Error deleting document from '{collection_name}': {e}")
-                return False
+                 logger.error(f"Unexpected error updating item in '{table_name}': {e}")
+                 return False
         else:
-            logger.error(f"Cannot delete document, collection '{collection_name}' not accessible.")
+            logger.error(f"Cannot update item, table '{table_name}' not accessible.")
             return False
 
+    def delete_document(self, table_name: str, key: Dict[str, Any]) -> bool:
+        """
+        Delete a single item from the specified DynamoDB table.
 
-    # --- Chat History Methods ---
+        Args:
+            table_name (str): The name of the table.
+            key (Dict[str, Any]): The primary key of the item to delete.
+
+        Returns:
+            bool: True if the item was deleted successfully, False otherwise.
+        """
+        table = self._get_table(table_name)
+        if table is not None:
+            try:
+                response = table.delete_item(Key=key)
+                logger.info(f"Item deleted from '{table_name}' with key {key}. Response: {response.get('ResponseMetadata', {}).get('HTTPStatusCode')}")
+                # Note: delete_item succeeds even if the item doesn't exist.
+                # Check response metadata or use ConditionExpression if needed.
+                return True
+            except ClientError as e:
+                logger.error(f"Error deleting item from '{table_name}' with key {key}: {e.response['Error']['Message']}")
+                return False
+            except Exception as e:
+                 logger.error(f"Unexpected error deleting item in '{table_name}': {e}")
+                 return False
+        else:
+            logger.error(f"Cannot delete item, table '{table_name}' not accessible.")
+            return False
+
+    # --- Chat History Methods (Assuming a 'chat_history' table) ---
+    # Assumes 'chat_history' table has:
+    # - Primary Key: session_id (Partition Key), timestamp (Sort Key)
+    # - Attributes: role, content
 
     def save_chat_message(self, session_id: str, role: str, content: str) -> Optional[str]:
         """
-        Save a chat message to the chat history collection.
+        Save a chat message to the chat history table.
 
         Args:
-            session_id (str): The unique identifier for the chat session.
+            session_id (str): The unique identifier for the chat session (Partition Key).
             role (str): The role of the message sender ('user' or 'assistant').
             content (str): The text content of the message.
 
         Returns:
-            Optional[str]: The ID of the saved message, or None if saving failed.
+            Optional[str]: The timestamp (Sort Key) of the saved message, or None if saving failed.
         """
-        chat_collection_name = "chat_history"
-        coll = self.get_collection(chat_collection_name)
-        if coll is not None:
+        chat_table_name = "chat_history"
+        table = self._get_table(chat_table_name)
+        if table is not None:
             try:
+                timestamp = datetime.now(timezone.utc).isoformat()
                 message = {
                     "session_id": session_id,
+                    "timestamp": timestamp, # Use timestamp as sort key
                     "role": role,
                     "content": content,
-                    "timestamp": datetime.utcnow() # Store timestamp
                 }
-                result = coll.insert_one(message)
-                logger.info(f"Chat message saved for session {session_id} with ID: {result.inserted_id}")
-                return str(result.inserted_id)
-            except Exception as e:
-                logger.error(f"Error saving chat message for session {session_id}: {e}")
+                response = table.put_item(Item=message)
+                logger.info(f"Chat message saved for session {session_id} at {timestamp}. Response: {response.get('ResponseMetadata', {}).get('HTTPStatusCode')}")
+                return timestamp # Return sort key
+            except ClientError as e:
+                logger.error(f"Error saving chat message for session {session_id}: {e.response['Error']['Message']}")
                 return None
+            except Exception as e:
+                 logger.error(f"Unexpected error saving chat message in '{chat_table_name}': {e}")
+                 return None
         else:
-            logger.error(f"Cannot save chat message, collection '{chat_collection_name}' not accessible.")
+            logger.error(f"Cannot save chat message, table '{chat_table_name}' not accessible.")
             return None
 
     def get_chat_history(self, session_id: str, limit: int = 50) -> List[Dict[str, Any]]:
@@ -304,29 +267,34 @@ class Database:
         Retrieve chat history for a specific session, ordered by timestamp.
 
         Args:
-            session_id (str): The unique identifier for the chat session.
+            session_id (str): The unique identifier for the chat session (Partition Key).
             limit (int): The maximum number of messages to retrieve (most recent). Defaults to 50.
 
         Returns:
             List[Dict[str, Any]]: A list of chat messages, ordered by timestamp ascending.
         """
-        chat_collection_name = "chat_history"
-        coll = self.get_collection(chat_collection_name)
+        chat_table_name = "chat_history"
+        table = self._get_table(chat_table_name)
         messages = []
-        if coll is not None:
+        if table is not None:
             try:
-                # Find messages for the session, sort by timestamp descending, limit results
-                cursor = coll.find({"session_id": session_id}).sort("timestamp", -1).limit(limit)
-                # Convert cursor to list and reverse to get ascending order (oldest first)
-                messages = list(cursor)[::-1]
+                # Query for messages for the session, sort by timestamp descending (ScanIndexForward=False)
+                response = table.query(
+                    KeyConditionExpression=boto3.dynamodb.conditions.Key('session_id').eq(session_id),
+                    ScanIndexForward=False, # Get most recent first
+                    Limit=limit
+                )
+                # Items are returned newest first, reverse to get oldest first
+                messages = response.get('Items', [])[::-1]
                 logger.info(f"Retrieved {len(messages)} chat messages for session {session_id}.")
+            except ClientError as e:
+                logger.error(f"Error retrieving chat history for session {session_id}: {e.response['Error']['Message']}")
             except Exception as e:
-                logger.error(f"Error retrieving chat history for session {session_id}: {e}")
+                 logger.error(f"Unexpected error retrieving chat history from '{chat_table_name}': {e}")
         else:
-            logger.error(f"Cannot retrieve chat history, collection '{chat_collection_name}' not accessible.")
+            logger.error(f"Cannot retrieve chat history, table '{chat_table_name}' not accessible.")
         return messages
 
 # Create a default database instance (singleton pattern)
 # This instance will be used throughout the application by importing 'db' from this module.
-# It defaults to using MongoDB based on the Database class default.
 db = Database()
