@@ -1,0 +1,143 @@
+.hero-section {
+  /* Use a gradient or a solid color from the theme */
+  background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%); /* Primary to Secondary */
+  color: white;
+  padding: 4rem 0 5rem 0; /* Adjust padding */
+  overflow: hidden; /* Prevent overflow issues */
+  text-align: center; /* Center text by default */
+}
+
+/* Use the general container */
+.hero-section .container {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically on small screens */
+  align-items: center;
+  gap: 2rem; /* Space between text and visual */
+}
+
+@media (min-width: 992px) { /* Adjust breakpoint as needed */
+  .hero-section .container {
+    flex-direction: row; /* Side-by-side on larger screens */
+    text-align: right; /* Align text to the right (RTL) */
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+
+.hero-content {
+  max-width: 600px; /* Limit width of text content */
+  z-index: 1; /* Ensure text is above potential background elements */
+}
+
+.hero-text {
+    margin-bottom: 2rem; /* Space below text block */
+}
+
+.hero-title {
+  font-size: 2.5rem; /* Responsive font size */
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #fff; /* Ensure high contrast */
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
+  margin-bottom: 2rem;
+  max-width: 500px; /* Limit description width */
+  margin-right: auto; /* Center align description in RTL */
+  margin-left: auto;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column; /* Stack buttons on small screens */
+  gap: 1rem;
+  justify-content: center; /* Center buttons */
+}
+
+/* Use general button styles from App.css */
+.hero-actions .btn-primary,
+.hero-actions .btn-secondary {
+  /* Override specific styles if needed */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.hero-actions .btn-primary {
+    background-color: #fff; /* White primary button */
+    color: #1a365d; /* Dark text */
+    border: 1px solid #fff;
+}
+.hero-actions .btn-primary:hover {
+    background-color: #f0f4f8; /* Light hover */
+    color: #1a365d;
+}
+
+.hero-actions .btn-secondary {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+.hero-actions .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover */
+}
+
+
+.hero-actions i {
+  margin-left: 0.5rem; /* Space for icon (RTL) */
+  margin-right: 0;
+}
+
+
+.hero-visual {
+  flex-shrink: 0; /* Prevent visual from shrinking too much */
+  width: 100%;
+  max-width: 500px; /* Max width for the visual */
+  position: relative; /* For potential pseudo-elements */
+}
+
+.demo-animation img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  /* Optional: Add subtle animation or perspective */
+  /* transform: perspective(1000px) rotateY(-5deg); */
+  transition: transform 0.3s ease-out;
+}
+.demo-animation img:hover {
+    /* transform: perspective(1000px) rotateY(0deg); */
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
+  .hero-actions {
+    flex-direction: row; /* Buttons side-by-side */
+  }
+  .hero-title {
+      font-size: 2.8rem;
+  }
+  .hero-description {
+      font-size: 1.15rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-content {
+    margin-bottom: 0; /* Remove bottom margin when side-by-side */
+  }
+  .hero-actions {
+      justify-content: flex-start; /* Align buttons to start (right in RTL) */
+  }
+   .hero-description {
+      margin-right: 0; /* Align description to start */
+      margin-left: 0;
+   }
+   .hero-title {
+       font-size: 3.2rem;
+   }
+}

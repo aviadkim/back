@@ -1,0 +1,99 @@
+/* Placeholder for CustomTablesPage styles */
+.custom-tables-page .container {
+    /* Add specific container styles if needed */
+}
+
+.document-selector {
+    margin-bottom: 2rem;
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.document-selector h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.document-list-horizontal {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto; /* Allow horizontal scroll */
+    padding-bottom: 1rem; /* Space for scrollbar */
+}
+
+.document-card-small {
+    flex: 0 0 200px; /* Fixed width for horizontal cards */
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+.document-card-small:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.document-card-small.selected {
+    border-color: #3182ce;
+    background-color: #ebf8ff;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.3);
+}
+.document-card-small .document-icon {
+    font-size: 1.2rem;
+    color: #a0aec0;
+    margin-bottom: 0.5rem;
+}
+.document-card-small.selected .document-icon {
+    color: #3182ce;
+}
+.document-card-small .document-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+}
+.document-card-small .document-meta {
+    font-size: 0.75rem;
+    color: #718096;
+    display: flex;
+    justify-content: space-between;
+}
+
+.custom-table-generator-section {
+    margin-top: 2rem;
+}
+.custom-table-generator-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.generator-placeholder {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #a0aec0;
+    background-color: #f9fafb;
+    border: 1px dashed #e2e8f0;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+.generator-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.generator-placeholder h3 {
+    font-size: 1.1rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+
+/* Add other styles as needed */

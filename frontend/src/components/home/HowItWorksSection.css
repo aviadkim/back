@@ -1,0 +1,149 @@
+.how-it-works-section {
+  padding: 60px 0 80px 0; /* Adjusted padding */
+  background-color: #f0f4f8; /* Use light color from theme */
+  text-align: center; /* Center align section content */
+}
+
+/* Use general section header styles from App.css */
+/* .section-header { ... } */
+/* .section-header h2 { ... } */
+/* .section-subheading { ... } */
+
+.steps-container {
+  position: relative;
+  margin: 40px auto; /* Center container */
+  max-width: 1100px; /* Limit max width */
+  padding: 0 1rem; /* Add padding */
+}
+
+.timeline-line {
+  position: absolute;
+  top: 30px; /* Align with the top of the number circle */
+  left: 5%; /* Start after some padding */
+  right: 5%; /* End before padding */
+  height: 4px;
+  background-color: #cbd5e0; /* Lighter border color */
+  z-index: 1;
+  transform: translateY(-50%);
+  display: none; /* Hidden by default, shown on larger screens */
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: center; /* Center items when wrapped */
+  gap: 20px; /* Gap between items */
+  z-index: 2;
+  position: relative;
+}
+
+.step-item {
+  flex: 1; /* Allow items to grow */
+  min-width: 180px; /* Minimum width */
+  max-width: 220px; /* Maximum width */
+  text-align: center;
+  padding: 0 10px; /* Padding within item */
+  margin-bottom: 30px;
+  position: relative;
+  background-color: #fff; /* Give items a background */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px 15px; /* Inner padding */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.step-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background-color: #3182ce; /* Accent color */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -40px auto 20px auto; /* Pull number up slightly, center */
+  position: relative;
+  z-index: 3;
+  font-size: 24px;
+  font-weight: 600;
+  border: 4px solid #f0f4f8; /* Border matching background */
+  box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+}
+
+.step-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748; /* Dark text */
+  margin-bottom: 8px;
+}
+
+.step-description {
+  font-size: 14px;
+  color: #718096; /* Light text */
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.step-icon {
+  font-size: 24px;
+  color: #3182ce; /* Accent color */
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto; /* Push icon to bottom if needed */
+}
+
+.cta-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Use button styles from App.css */
+/* .cta-button { ... } */
+
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+  .steps {
+    flex-direction: column; /* Stack vertically */
+    align-items: center; /* Center items */
+  }
+
+  .step-item {
+    max-width: 300px; /* Allow slightly wider cards */
+    width: 90%; /* Take most of width */
+    margin-bottom: 40px;
+  }
+  .step-number {
+      margin-top: -30px; /* Adjust overlap */
+  }
+}
+
+/* Show timeline and align horizontally on medium screens and up */
+@media (min-width: 768px) {
+  .timeline-line {
+    display: block;
+  }
+
+  .steps {
+    flex-wrap: nowrap; /* Prevent wrapping */
+    justify-content: space-between; /* Distribute items */
+    gap: 15px; /* Adjust gap */
+  }
+  .step-item {
+      margin-bottom: 0; /* Remove bottom margin */
+  }
+}
+
+@media (min-width: 992px) {
+    .steps {
+        gap: 25px; /* Increase gap on larger screens */
+    }
+}

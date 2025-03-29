@@ -1,16 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import { RTL } from './rtlConfig';
+import App from './App'; // Assuming App.jsx is the main component
+import './index.css'; // Assuming a base index.css exists or will be created
+import './App.css'; // Import the main App CSS
 
-// שורש האפליקציה
+// Optional: Import Font Awesome if needed globally
+// import '@fortawesome/fontawesome-free/css/all.min.css';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
-// עטיפת האפליקציה בקומפוננט RTL לתמיכה מלאה בעברית
 root.render(
   <React.StrictMode>
-    <RTL>
-      <App />
-    </RTL>
+    <App />
   </React.StrictMode>
-); 
+);

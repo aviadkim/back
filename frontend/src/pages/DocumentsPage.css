@@ -1,0 +1,18 @@
+/* Placeholder for DocumentsPage styles */
+.documents-page .container {
+    /* Add specific container styles if needed */
+}
+.upload-section {
+    margin-bottom: 2.5rem;
+}
+.upload-section .section-title {
+    text-align: right; /* Align title right (RTL) */
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+.documents-section .section-title {
+    text-align: right; /* Align title right (RTL) */
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+/* Add other styles as needed */

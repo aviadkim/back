@@ -1,0 +1,172 @@
+.document-header {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.document-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.back-button {
+  background-color: transparent;
+  border: none;
+  color: #3182ce; /* Use accent color */
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #ebf8ff; /* Light accent background */
+}
+
+.back-button i {
+  /* Adjust icon margin for RTL */
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+.document-status {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 10px; /* Add padding */
+  border-radius: 12px; /* Pill shape */
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 8px; /* Space between dot and text */
+}
+
+/* Success */
+.status-success {
+  color: #2f855a; /* Darker Green */
+  background-color: #f0fff4; /* Lighter Green */
+}
+.status-success .status-dot {
+  background-color: #38a169; /* Success color */
+}
+
+/* Warning / Processing */
+.status-warning {
+  color: #b7791f; /* Darker Yellow/Orange */
+  background-color: #fffaf0; /* Lighter Yellow/Orange */
+}
+.status-warning .status-dot {
+  background-color: #dd6b20; /* Warning color */
+}
+
+/* Error */
+.status-error {
+  color: #c53030; /* Darker Red */
+  background-color: #fff5f5; /* Lighter Red */
+}
+.status-error .status-dot {
+  background-color: #e53e3e; /* Error color */
+}
+
+/* Unknown / Default */
+.status-unknown {
+  color: #718096; /* Medium Gray */
+  background-color: #edf2f7; /* Light Gray */
+}
+.status-unknown .status-dot {
+  background-color: #a0aec0; /* Gray */
+}
+
+
+.document-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2d3748; /* Dark Gray text */
+  margin-bottom: 16px;
+  overflow-wrap: break-word; /* Prevent long filenames from breaking layout */
+}
+
+.document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px; /* Row and column gap */
+  color: #718096; /* Medium Gray text */
+  font-size: 14px; /* Slightly smaller meta text */
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-item i {
+  margin-left: 6px; /* Space between icon and text (RTL) */
+  margin-right: 0;
+  color: #a0aec0; /* Lighter icon color */
+}
+
+.meta-item a {
+  color: #3182ce; /* Accent color for link */
+  text-decoration: none;
+}
+
+.meta-item a:hover {
+  text-decoration: underline;
+}
+
+/* Skeleton Loader */
+.document-header-skeleton {
+  height: 150px; /* Adjust height as needed */
+  background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%); /* Use theme colors */
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  border-radius: 8px;
+  padding: 20px; /* Match padding */
+  margin-bottom: 24px; /* Match margin */
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .document-header {
+    padding: 16px;
+  }
+  .document-title {
+    font-size: 20px;
+  }
+  .document-meta {
+    flex-direction: column;
+    align-items: flex-start; /* Align items to start */
+    gap: 8px; /* Reduce gap */
+  }
+
+  .document-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .document-status {
+     /* Take full width on small screens if needed, or align self */
+     align-self: flex-end; /* Align status to the right */
+  }
+}
