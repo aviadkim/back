@@ -22,6 +22,10 @@ from features.data_extraction.api.extraction_routes import extraction_routes
 from features.financial_insights.api.insights_routes import insights_routes
 from features.compliance.api.compliance_routes import compliance_routes
 
+# AWS API Routes (New)
+from routes.aws_api.aws_routes import aws_api
+from config.aws_config import USE_AWS_STORAGE
+
 # Legacy Routes (Imported early, registration handled later)
 try:
     from routes.document_routes import document_routes
@@ -120,6 +124,11 @@ if has_legacy_routes:
 else:
     logger.info("Legacy routes not found or failed to import")
 
+# Register AWS API routes
+app.register_blueprint(aws_api, url_prefix='/api/aws')
+logger.info("AWS API routes registered")
+
+
 # Register diagnostic routes if available
 if has_diagnostic:
     app.register_blueprint(diagnostic_bp, url_prefix='/diagnostic')
@@ -169,6 +178,16 @@ def health_check():
         "architecture": "Vertical Slice",
         "environment": "AWS" if is_aws else "Development"
     })
+
+# AWS Health check endpoint
+@app.route('/api/aws/health')
+def aws_health():
+    return jsonify({
+        'status': 'ok',
+        'aws_integration': 'active',
+        'using_aws_storage': USE_AWS_STORAGE
+    })
+
 
 
 # Static file serving (Redundant if frontend build handles it, but safe fallback)
