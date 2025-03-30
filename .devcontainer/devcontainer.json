@@ -1,41 +1,50 @@
 {
-	"name": "Financial Docs Backend",
-	// Use the Dockerfile in the parent directory to build the container
-	"build": {
-		"dockerfile": "../Dockerfile",
-		// Add context if Dockerfile needs files outside .devcontainer
-		"context": ".."
-	},
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [10000],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "python3 -m venv .venv && .venv/bin/pip install --upgrade pip && .venv/bin/pip install -r requirements.txt",
-
-	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"settings": {
-				// Set the default Python interpreter path
-				"python.defaultInterpreterPath": ".venv/bin/python",
-				// Optional: Configure linting/formatting tools if needed
-				"python.linting.flake8Enabled": true,
-				"python.linting.flake8Path": ".venv/bin/flake8",
-				"python.formatting.provider": "black",
-				"python.formatting.blackPath": ".venv/bin/black"
-			},
-			"extensions": [
-				"ms-python.python", // Microsoft Python Extension
-				"ms-python.flake8", // Flake8 linting support
-				"ms-python.black-formatter" // Black formatting support
-			]
-		}
-	}
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+    "name": "Python Financial Document Analysis",
+    "image": "mcr.microsoft.com/devcontainers/python:3.9",
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+                "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+                "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+                "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+                "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+                "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+                "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+                "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+                "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+            }
+        }
+    },
+    
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/python:1": {
+            "installTools": true,
+            "version": "3.9"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest",
+            "ppa": false
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "moby": true
+        }
+    },
+    
+    "forwardPorts": [5000]
 }
