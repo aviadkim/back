@@ -33,10 +33,13 @@ COPY requirements.txt .
 
 # Install Python dependencies
 # Using --no-cache-dir to reduce image size
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copy the rest of the application code into the container
 COPY . .
+
+# Create required directories
+RUN mkdir -p uploads data/embeddings logs
 
 # Expose the port the app runs on
 EXPOSE 10000
