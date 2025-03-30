@@ -8,6 +8,7 @@ import sys
 import time
 import webbrowser
 import threading
+import socket
 from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 
@@ -32,21 +33,48 @@ if 'AWS_SECRET_ACCESS_KEY' not in os.environ:
 if 'AWS_REGION' not in os.environ:
     os.environ['AWS_REGION'] = 'us-east-1'
 
+# Find an available port
+def find_available_port(start_port=5000, max_port=9000):
+    for port in range(start_port, max_port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(('localhost', port)) != 0:
+                return port
+    return 8080  # Default fallback
+
 # Function to open the browser
-def open_browser():
+def open_browser(port):
     time.sleep(2)
-    webbrowser.open('http://localhost:5000')
-    print('\nOpened browser - you should see the frontend now')
+    webbrowser.open(f'http://localhost:{port}')
+    print(f'\nOpened browser - you should see the frontend now at http://localhost:{port}')
 
 # Start browser thread
 def start_app_with_browser():
-    threading.Thread(target=open_browser).start()
+    # Find an available port
+    port = find_available_port()
+    print(f"Using port {port}")
+    
+    # Start the browser in a separate thread
+    threading.Thread(target=open_browser, args=(port,)).start()
+    
+    # Kill any existing processes on port 5000
+    try:
+        import psutil
+        for proc in psutil.process_iter(['pid', 'name', 'connections']):
+            try:
+                for conn in proc.connections():
+                    if conn.laddr.port == 5000 and conn.status == 'LISTEN':
+                        print(f"Killing process {proc.pid} ({proc.name()}) that's using port 5000")
+                        psutil.Process(proc.pid).terminate()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+    except ImportError:
+        print("psutil not installed, can't kill existing processes on port 5000")
     
     try:
         # Import and run the main app
         from app import app
         print("Starting the application with the frontend...")
-        app.run(debug=True, port=5000)
+        app.run(debug=True, port=port)
     except ImportError:
         # If app.py can't be imported, create a minimal app to serve the frontend
         print("Could not import the main app. Using a minimal app to serve the frontend.")
@@ -127,7 +155,7 @@ def start_app_with_browser():
                 
             return jsonify(response)
             
-        app.run(debug=True, port=5000)
+        app.run(debug=True, port=port)
 
 if __name__ == "__main__":
     start_app_with_browser()
