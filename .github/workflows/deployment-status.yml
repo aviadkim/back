@@ -1,0 +1,35 @@
+name: Check Deployment Status
+
+on:
+  workflow_run:
+    workflows: ["Deploy to AWS Elastic Beanstalk"]
+    types:
+      - completed
+
+jobs:
+  check-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Check deployment status
+        run: |
+          # Install AWS CLI
+          pip install awscli
+          
+          # Check environment health
+          HEALTH=$(aws elasticbeanstalk describe-environment-health --environment-name financial-docs-prod --attribute-names HealthStatus --query "HealthStatus" --output text)
+          echo "Deployment health status: $HEALTH"
+          
+          # Check application URL
+          URL=$(aws elasticbeanstalk describe-environments --environment-names financial-docs-prod --query "Environments[0].CNAME" --output text)
+          echo "Application URL: http://$URL"
+          
+          # Log deployment details
+          echo "::set-output name=deployment_status::$HEALTH"
+          echo "::set-output name=deployment_url::http://$URL"
