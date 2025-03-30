@@ -1,20 +1,10 @@
-# utils/__init__.py
-# ייבוא פונקציות שימושיות
+"""
+Utilities package
+"""
 
-from .pdf_processor import PDFProcessor
-
-# יצירת פונקציית מעטפת לתאימות לאחור
-def extract_text_from_pdf(pdf_path, ocr_enabled=True, lang="heb+eng"):
-    """
-    פונקציית עזר לחילוץ טקסט מקובץ PDF - לצורך תאימות לאחור
-    
-    Args:
-        pdf_path: נתיב לקובץ PDF
-        ocr_enabled: האם להפעיל OCR
-        lang: שפת OCR
-        
-    Returns:
-        str: הטקסט המחולץ
-    """
-    processor = PDFProcessor(ocr_enabled=ocr_enabled, lang=lang)
-    return processor.extract_text(pdf_path)
+# Import common utilities
+try:
+    from .pdf_processor import PDFProcessor
+except ImportError as e:
+    import logging
+    logging.warning(f"Could not import PDFProcessor: {e}")
