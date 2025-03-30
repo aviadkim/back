@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-# הגדרת לוגר
+# Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -15,20 +15,20 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# יצירת אפליקציית Flask
+# Create Flask app
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
-CORS(app)  # אפשר CORS לכל הדומיינים
+CORS(app)  # Enable CORS for all domains
 
-# טעינת הגדרות מקובץ .env
+# Load environment variables
 from dotenv import load_dotenv
 load_dotenv()
 
-# הגדרת תיקיית העלאות
+# Set up upload folder
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# רישום ה-blueprints של הפיצ'רים השונים
+# Register feature blueprints
 from features.pdf_scanning import pdf_scanning_bp
 from features.document_chat import document_chat_bp
 from features.table_extraction import table_extraction_bp
@@ -37,21 +37,21 @@ app.register_blueprint(pdf_scanning_bp)
 app.register_blueprint(document_chat_bp)
 app.register_blueprint(table_extraction_bp)
 
-# נתיבי API גלובליים
+# Global API routes
 
 @app.route('/health')
 def health():
-    """בדיקת בריאות המערכת"""
+    """Health check endpoint"""
     logger.info("Health check requested")
     return jsonify({
         "status": "ok",
         "message": "System is operational",
-        "version": "4.1"
+        "version": "5.0.0"
     })
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
-    """העלאת קובץ"""
+    """File upload endpoint"""
     logger.info("File upload requested")
     
     if 'file' not in request.files:
@@ -71,17 +71,24 @@ def upload_file():
         
         logger.info(f"File uploaded: {filename}")
         
-        # בדיקה אם זה PDF ואם כן, שליחה לסריקה אוטומטית
+        # If PDF, send to PDF processing
         if filename.lower().endswith('.pdf'):
-            from features.pdf_scanning.service import process_pdf
-            result = process_pdf(file_path)
-            return jsonify({
-                "status": "success",
-                "message": "File uploaded and processed successfully",
-                "document_id": result["document_id"],
-                "filename": filename,
-                "details": result
-            })
+            try:
+                from features.pdf_scanning.service import process_pdf_document
+                result = process_pdf_document(file_path)
+                return jsonify({
+                    "status": "success",
+                    "message": "File uploaded and processed successfully",
+                    "document_id": result["document_id"],
+                    "filename": filename,
+                    "details": result
+                })
+            except Exception as e:
+                logger.error(f"Error processing PDF: {e}")
+                return jsonify({
+                    "status": "error",
+                    "message": f"Error processing PDF: {str(e)}"
+                }), 500
         
         return jsonify({
             "status": "success",
@@ -92,12 +99,12 @@ def upload_file():
 
 @app.route('/api/documents', methods=['GET'])
 def get_documents():
-    """קבלת רשימת מסמכים"""
+    """Get all documents"""
     logger.info("Documents list requested")
     
     documents = []
     
-    # אם יש קבצים בתיקיית ההעלאות, הוסף אותם לרשימה
+    # If upload folder exists, add files to the list
     if os.path.exists(UPLOAD_FOLDER):
         for filename in os.listdir(UPLOAD_FOLDER):
             if os.path.isfile(os.path.join(UPLOAD_FOLDER, filename)):
@@ -119,7 +126,7 @@ def get_documents():
                     "type": doc_type
                 })
     
-    # אם אין מסמכים, הוסף מסמך לדוגמה
+    # If no documents, add a sample document
     if not documents:
         documents.append({
             "id": "demo_document_1",
@@ -136,16 +143,16 @@ def get_documents():
 
 @app.route('/api/documents/<document_id>', methods=['GET'])
 def get_document(document_id):
-    """קבלת פרטי מסמך לפי מזהה"""
+    """Get document details by ID"""
     logger.info(f"Document details requested: {document_id}")
     
-    # המרת מזהה בחזרה לשם קובץ אם צריך
+    # Convert ID back to filename if needed
     if '_' in document_id:
         filename = document_id.replace('_', '.', 1)
     else:
         filename = document_id
     
-    # ייצור נתוני דוגמה עבור המסמך
+    # Sample document data for demo
     document = {
         "metadata": {
             "id": document_id,
@@ -220,19 +227,19 @@ def get_document(document_id):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    """משרת את אפליקציית הפרונטאנד"""
+    """Serve frontend"""
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
-# יצירת תיקיות מוקאפים לסוכנים חכמים
+# Mock agent endpoint
 @app.route('/api/agent', methods=['POST'])
 def agent_endpoint():
-    """נקודת קצה למודל הסוכנים החכמים"""
+    """Agent API endpoint"""
     data = request.json
     
-    # סימולציה של מודלים שונים
+    # Simulate different models
     model_name = data.get('model', 'gemini').lower()
     prompt = data.get('prompt', '')
     
