@@ -17,71 +17,32 @@ class PDFProcessor:
     This class handles PDF text extraction with OCR if needed.
     """
     
-    def __init__(self):
-        """Initialize the PDF processor"""
+    def __init__(self, file_path=None):
+        """Initialize the PDF processor with an optional file path"""
         # Configure pytesseract path if needed
         if os.name == 'nt':  # Windows
-            pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+            pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        
+        self.file_path = file_path
     
-    def process_pdf(self, file_path, language='he'):
+    def extract_text(self, language='he'):
         """
-        Process a PDF file and extract text content
+        Extract text from PDF file
         
         Args:
-            file_path (str): Path to the PDF file
             language (str): Language code for OCR (default: 'he')
             
         Returns:
-            tuple: (extracted_text, metadata, page_count)
+            str: Extracted text
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"PDF file not found: {file_path}")
+        if not self.file_path or not os.path.exists(self.file_path):
+            raise FileNotFoundError(f"PDF file not found: {self.file_path}")
             
         try:
-            # Extract text using PyPDF2
-            extracted_text, metadata, page_count = self._extract_text_with_pypdf(file_path)
-            
-            # Check if significant text was extracted
-            if not self._has_significant_text(extracted_text, page_count):
-                logger.info(f"PDF has insufficient text, using OCR for: {file_path}")
-                # Use OCR if PDF has insufficient text
-                extracted_text = self._extract_text_with_ocr(file_path, language)
-                
-            # Extract additional metadata
-            metadata = self._extract_metadata(file_path, extracted_text, metadata)
-                
-            return extracted_text, metadata, page_count
-            
-        except Exception as e:
-            logger.exception(f"Error processing PDF: {str(e)}")
-            raise
-    
-    def _extract_text_with_pypdf(self, file_path):
-        """
-        Extract text from PDF using pypdf
-        
-        Args:
-            file_path (str): Path to the PDF file
-            
-        Returns:
-            tuple: (extracted_text, metadata, page_count)
-        """
-        try:
-            pdf_reader = PdfReader(file_path)
+            logger.info(f"Extracting text from {self.file_path}")
+            # Extract text using PyPDF
+            pdf_reader = PdfReader(self.file_path)
             page_count = len(pdf_reader.pages)
-            
-            # Extract metadata
-            metadata = {}
-            if pdf_reader.metadata:
-                # Use attribute access for metadata (PyPDF2 >= 3.0.0)
-                metadata = {
-                    'title': pdf_reader.metadata.title if pdf_reader.metadata.title else '',
-                    'author': pdf_reader.metadata.author if pdf_reader.metadata.author else '',
-                    'creator': pdf_reader.metadata.creator if pdf_reader.metadata.creator else '',
-                    'producer': pdf_reader.metadata.producer if pdf_reader.metadata.producer else '',
-                    # CreationDate might still need dictionary access or specific handling
-                    'created_date': pdf_reader.metadata.creation_date.isoformat() if pdf_reader.metadata.creation_date else '',
-                }
             
             # Extract text from each page
             full_text = ""
@@ -89,18 +50,86 @@ class PDFProcessor:
                 page_text = page.extract_text() or ""
                 full_text += f"\n--- Page {i+1} ---\n{page_text}\n"
                 
-            return full_text, metadata, page_count
+            # Check if significant text was extracted
+            if not self._has_significant_text(full_text, page_count):
+                logger.info(f"PDF has insufficient text, using OCR for: {self.file_path}")
+                # Use OCR if PDF has insufficient text
+                full_text = self._extract_text_with_ocr(language)
+                
+            return full_text
             
         except Exception as e:
-            logger.exception(f"Error extracting text with pypdf: {str(e)}")
+            logger.exception(f"Error extracting text: {str(e)}")
             raise
     
-    def _extract_text_with_ocr(self, file_path, language='he'):
+    def extract_metadata(self):
+        """
+        Extract metadata from PDF file
+        
+        Returns:
+            dict: Metadata dictionary
+        """
+        if not self.file_path or not os.path.exists(self.file_path):
+            raise FileNotFoundError(f"PDF file not found: {self.file_path}")
+            
+        try:
+            logger.info(f"Extracting metadata from {self.file_path}")
+            # Use PyPDF to extract metadata
+            pdf_reader = PdfReader(self.file_path)
+            page_count = len(pdf_reader.pages)
+            
+            # Extract basic metadata
+            metadata = {
+                'pages_count': page_count,
+                'filename': os.path.basename(self.file_path),
+                'filesize': os.path.getsize(self.file_path),
+            }
+            
+            # Extract document metadata if available
+            if pdf_reader.metadata:
+                # Use attribute access for metadata (PyPDF >= 3.0.0)
+                if hasattr(pdf_reader.metadata, 'title') and pdf_reader.metadata.title:
+                    metadata['title'] = pdf_reader.metadata.title
+                if hasattr(pdf_reader.metadata, 'author') and pdf_reader.metadata.author:
+                    metadata['author'] = pdf_reader.metadata.author
+                if hasattr(pdf_reader.metadata, 'creator') and pdf_reader.metadata.creator:
+                    metadata['creator'] = pdf_reader.metadata.creator
+                if hasattr(pdf_reader.metadata, 'producer') and pdf_reader.metadata.producer:
+                    metadata['producer'] = pdf_reader.metadata.producer
+                # Handle dates carefully
+                if hasattr(pdf_reader.metadata, 'creation_date') and pdf_reader.metadata.creation_date:
+                    try:
+                        metadata['creation_date'] = pdf_reader.metadata.creation_date.isoformat()
+                    except:
+                        # Fallback if date parsing fails
+                        metadata['creation_date'] = str(pdf_reader.metadata.creation_date)
+                
+                if hasattr(pdf_reader.metadata, 'modification_date') and pdf_reader.metadata.modification_date:
+                    try:
+                        metadata['modification_date'] = pdf_reader.metadata.modification_date.isoformat()
+                    except:
+                        # Fallback if date parsing fails
+                        metadata['modification_date'] = str(pdf_reader.metadata.modification_date)
+            
+            # Try to detect document type based on content
+            extracted_text = self.extract_text()
+            document_type = self._detect_document_type(extracted_text)
+            metadata['document_type'] = document_type
+            
+            # Extract additional metadata
+            metadata.update(self._extract_additional_metadata(extracted_text))
+            
+            return metadata
+            
+        except Exception as e:
+            logger.exception(f"Error extracting metadata: {str(e)}")
+            raise
+    
+    def _extract_text_with_ocr(self, language='he'):
         """
         Extract text from PDF using OCR
         
         Args:
-            file_path (str): Path to the PDF file
             language (str): Language code for OCR
             
         Returns:
@@ -111,7 +140,7 @@ class PDFProcessor:
             ocr_language = 'heb' if language == 'he' else 'eng'
             
             # Convert PDF to images
-            images = convert_from_path(file_path)
+            images = convert_from_path(self.file_path)
             
             full_text = ""
             for i, image in enumerate(images):
@@ -144,37 +173,6 @@ class PDFProcessor:
         expected_min_chars = page_count * min_chars_per_page
         
         return len(clean_text) >= expected_min_chars
-    
-    def _extract_metadata(self, file_path, text, existing_metadata):
-        """
-        Extract additional metadata from the text content
-        
-        Args:
-            file_path (str): Path to the PDF file
-            text (str): Extracted text
-            existing_metadata (dict): Existing metadata
-            
-        Returns:
-            dict: Enhanced metadata
-        """
-        metadata = existing_metadata.copy()
-        
-        # Try to detect document type from content
-        metadata['detected_document_type'] = self._detect_document_type(text)
-        
-        # Extract dates
-        dates = self._extract_dates(text)
-        if dates:
-            metadata['extracted_dates'] = dates
-            # Use the first date as the document date
-            metadata['document_date'] = dates[0]
-        
-        # Extract financial entities
-        financial_entities = self._extract_financial_entities(text)
-        if financial_entities:
-            metadata['financial_entities'] = financial_entities
-        
-        return metadata
     
     def _detect_document_type(self, text):
         """
@@ -241,6 +239,30 @@ class PDFProcessor:
                 
         # Default to other if no known type is detected
         return 'other'
+    
+    def _extract_additional_metadata(self, text):
+        """
+        Extract additional metadata from text content
+        
+        Args:
+            text (str): Document text
+            
+        Returns:
+            dict: Additional metadata
+        """
+        metadata = {}
+        
+        # Extract dates
+        dates = self._extract_dates(text)
+        if dates:
+            metadata['extracted_dates'] = dates
+        
+        # Extract financial entities
+        financial_entities = self._extract_financial_entities(text)
+        if financial_entities:
+            metadata['financial_entities'] = financial_entities
+        
+        return metadata
     
     def _extract_dates(self, text):
         """
@@ -347,5 +369,12 @@ class PDFProcessor:
                     
             if ids:
                 entities['id_numbers'] = ids
+                
+        # Extract ISIN numbers (International Securities Identification Number)
+        isin_pattern = r'([A-Z]{2}[A-Z0-9]{9}\d)'
+        isin_matches = re.findall(isin_pattern, text)
+        
+        if isin_matches:
+            entities['isin_numbers'] = list(set(isin_matches))  # Unique ISINs
         
         return entities
