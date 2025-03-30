@@ -1,0 +1,42 @@
+# This is the name of the workflow
+name: Deploy to AWS Elastic Beanstalk
+
+# This defines when the workflow will run
+on:
+  push:
+    branches:
+      - main # Replace main with the name of your main branch if different
+
+jobs:
+  # A workflow run is made up of one or more jobs
+  deploy:
+    # This job is named deploy
+    runs-on: ubuntu-latest # The job will run on an Ubuntu virtual machine
+    steps:
+      # Steps represent a sequence of tasks that will be executed
+
+      # This is the first step
+      - name: Checkout code
+        uses: actions/checkout@v3 # This action checks out your repository
+
+      # This is the second step
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2 # This action configures AWS credentials
+        with:
+          aws-access-key-id: ${{ secrets.ACCESSKEYAWS }} # This gets the value of the ACCESSKEYAWS secret you defined
+          aws-secret-access-key: ${{ secrets.SECRETKEYAWS }} # This gets the value of the SECRETKEYAWS secret you defined
+          aws-region: eu-central-1 # Replace with your AWS region EG us-east-1
+
+      # This step creates the deployment package
+      - name: Create deployment package
+        run: zip -r deployment.zip . -x ".git*" -x ".github*" # This command zips all files and folders except the .git and .github folders
+
+      # This is the final step deploying to Beanstalk
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v20 # This is a GitHub action for deploying to Beanstalk
+        with:
+          application_name: backend-prod # Replace with your Elastic Beanstalk application name
+          environment_name: backend-prod-env # Replace with your Elastic Beanstalk environment name
+          version_label: ${{ github.sha }} # The deployment version label is set to the commit sha
+          region: eu-central-1 # The AWS region
+          deployment_package: deployment.zip # The zip file created in the previous step
