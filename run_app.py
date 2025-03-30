@@ -23,6 +23,11 @@ if 'AWS_REGION' not in os.environ:
 # Set development environment variables
 os.environ['FLASK_ENV'] = 'development'
 os.environ['USE_DYNAMODB'] = 'false'  # Disable DynamoDB in development
+os.environ['LLM_PROVIDER'] = 'openai'  # Default to OpenAI if not set
+
+# Disable any services that might cause issues
+os.environ['SKIP_VECTOR_SEARCH'] = 'true'  # Skip vector search initialization
+os.environ['DISABLE_AWS_SERVICES'] = 'true'  # Disable AWS service initialization
 
 # Open browser function
 def open_browser():
@@ -30,18 +35,34 @@ def open_browser():
     print("\nOpening browser...")
     webbrowser.open('http://localhost:5000')
 
-# Start browser thread
-threading.Thread(target=open_browser).start()
-
 # Print startup message
 print("Starting application in development mode...")
 print("Environment variables configured for local development")
 print("Browser will open automatically")
 
+# Start browser thread
+threading.Thread(target=open_browser).start()
+
 # Import and run application
 try:
+    # Try to patch any problematic modules before importing the app
+    # This helps avoid import errors for missing optional dependencies
+    import sys
+    import importlib.util
+    
+    # Check if app module exists
+    if not importlib.util.find_spec("app"):
+        print("Error: app.py not found in current directory")
+        sys.exit(1)
+    
+    # Import app and run
     from app import app
     app.run(debug=True, host='0.0.0.0', port=5000)
+except ModuleNotFoundError as e:
+    missing_module = str(e).split("'")[1]
+    print(f"Error: Missing module '{missing_module}'")
+    print(f"Try installing it with: pip install {missing_module}")
+    sys.exit(1)
 except Exception as e:
     print(f"Error starting application: {e}")
     sys.exit(1)
