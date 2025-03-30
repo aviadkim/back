@@ -93,19 +93,15 @@ class CopilotRouterService:
             
             except Exception as e:
                 logger.error(f"Error processing query with agent coordinator: {e}")
-                error_msg = language == 'he' \
-                    ? f"אירעה שגיאה בעיבוד השאלה: {str(e)}" \
-                    : f"An error occurred processing your query: {str(e)}"
-                return jsonify({'error': error_msg, 'response': error_msg})
+                error_msg = "אירעה שגיאה בעיבוד השאלה" if language == 'he' else f"An error occurred processing your query: {str(e)}"
+                return jsonify({'error': str(e), 'response': error_msg})
         
         # If no documents or no agent coordinator, route to general chat assistant
         try:
             return self._route_to_general_chat(message, language)
         except Exception as e:
             logger.error(f"Error routing to general chat: {e}")
-            error_msg = language == 'he' \
-                ? "אירעה שגיאה בעיבוד השאלה. אנא נסה שנית." \
-                : "An error occurred processing your request. Please try again."
+            error_msg = "אירעה שגיאה בעיבוד השאלה. אנא נסה שנית." if language == 'he' else "An error occurred processing your request. Please try again."
             return jsonify({'error': str(e), 'response': error_msg})
     
     def _route_to_general_chat(self, message, language):
