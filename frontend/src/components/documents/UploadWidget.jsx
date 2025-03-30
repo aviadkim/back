@@ -1,4 +1,22 @@
-import React, { useState, useCallback, useRef } from 'react';
+/**
+ * Terminal Navigation Tips:
+ * - Basic horizontal list: ls
+ * - Show in columns: ls -C
+ * - Show one per line: ls -1
+ * - Show with details: ls -l
+ * - Show hidden files: ls -a
+ * - Sort by time: ls -t
+ * - Human readable sizes: ls -lh
+ * - Most useful combo: ls -lha
+ * 
+ * For main directories only:
+ * ls -d
+ * 
+ * For colorized output:
+ * ls --color=auto
+ */
+
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import documentService from '../../services/documentService'; // Assuming service exists
 import './UploadWidget.css';
@@ -9,6 +27,18 @@ import './UploadWidget.css';
  * @param {Function} props.onUploadSuccess - פונקציה שתופעל לאחר העלאה מוצלחת (מקבלת את תגובת השרת)
  * @param {Function} props.onUploadError - פונקציה שתופעל במקרה של שגיאה בהעלאה (מקבלת הודעת שגיאה)
  */
+
+/**
+ * Terminal Navigation Tips:
+ * - Install tree: sudo apt-get install tree
+ * - Basic usage: tree
+ * - Limit depth: tree -L 2
+ * - Show only directories: tree -d
+ * - Include hidden files: tree -a
+ * - Colorize output: tree -C
+ * Example: tree -L 2 -d -C
+ */
+
 const UploadWidget = ({ onUploadSuccess, onUploadError }) => {
   const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
   const [uploadProgress, setUploadProgress] = useState(0);
