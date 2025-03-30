@@ -1,7 +1,11 @@
+"""
+PDF Scanning Feature Module
+"""
+
 from flask import Blueprint
 
-# Create Blueprint for PDF scanning feature
-pdf_scanning_bp = Blueprint('pdf_scanning', __name__, url_prefix='/api/pdf')
+# Create a Blueprint for this feature
+pdf_scanning_bp = Blueprint('pdf_scanning', __name__)
 
-# Import routes after creating Blueprint to avoid circular imports
+# Import routes to register them with the blueprint
 from . import routes
