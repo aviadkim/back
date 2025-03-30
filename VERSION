@@ -1,0 +1,14 @@
+5.0.0
+
+Financial Document Analysis System - Vertical Slice Architecture
+
+Release Date: March 31, 2025
+Developed by: Aviad Kim
+
+Major Changes:
+- Complete implementation of Vertical Slice Architecture
+- Reorganized code around business features
+- Enhanced document processing capabilities
+- Improved frontend components with React
+- Added comprehensive testing framework
+- Migration path from previous architecture
