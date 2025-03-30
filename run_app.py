@@ -1,68 +1,47 @@
+#!/usr/bin/env python
 import os
 import sys
-import logging
-import argparse
-import uvicorn
-import socket
-from api.routes import app  # Import the FastAPI app from routes
+import time
+import webbrowser
+import threading
 
-# Add the current directory to the path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Create required directories
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("data/embeddings", exist_ok=True)
+os.makedirs("logs", exist_ok=True)
 
-def is_port_in_use(port: int) -> bool:
-    """Check if a port is already in use."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('localhost', port)) == 0
-
-def find_available_port(start_port: int = 8000, max_port: int = 9000) -> int:
-    """Find an available port starting from start_port."""
-    port = start_port
-    while port < max_port:
-        if not is_port_in_use(port):
-            return port
-        port += 1
-    raise RuntimeError(f"No available ports found in range {start_port}-{max_port}")
-
-def main():
-    """Run the financial document analyzer application."""
-    parser = argparse.ArgumentParser(description="Financial Document Analyzer")
-    parser.add_argument("--host", default="0.0.0.0", help="Host to bind the server to")
-    parser.add_argument("--port", type=int, default=8000, help="Port to bind the server to")
-    parser.add_argument("--reload", action="store_true", help="Enable auto-reload")
-    parser.add_argument("--log-level", default="info", choices=["debug", "info", "warning", "error", "critical"],
-                       help="Log level")
+# Set default AWS environment variables to avoid errors
+if 'AWS_ACCESS_KEY_ID' not in os.environ:
+    os.environ['AWS_ACCESS_KEY_ID'] = 'codespace_dummy_key'
     
-    args = parser.parse_args()
+if 'AWS_SECRET_ACCESS_KEY' not in os.environ:
+    os.environ['AWS_SECRET_ACCESS_KEY'] = 'codespace_dummy_secret'
     
-    # Configure logging
-    log_level = getattr(logging, args.log_level.upper())
-    logging.basicConfig(
-        level=log_level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler("app.log"),
-            logging.StreamHandler()
-        ]
-    )
-    
-    try:
-        logging.info("Initializing application...")
-        
-        # Find an available port
-        port = find_available_port(args.port, 9000)
-        logging.info(f"Found available port: {port}")
-        
-        # Run the API server
-        uvicorn.run(
-            app,
-            host=args.host,
-            port=port,
-            reload=args.reload,
-            log_level=args.log_level
-        )
-    except Exception as e:
-        logging.error(f"Error starting server: {str(e)}")
-        sys.exit(1)
+if 'AWS_REGION' not in os.environ:
+    os.environ['AWS_REGION'] = 'us-east-1'
 
-if __name__ == "__main__":
-    main()
+# Set development environment variables
+os.environ['FLASK_ENV'] = 'development'
+os.environ['USE_DYNAMODB'] = 'false'  # Disable DynamoDB in development
+
+# Open browser function
+def open_browser():
+    time.sleep(2)  # Wait for app to start
+    print("\nOpening browser...")
+    webbrowser.open('http://localhost:5000')
+
+# Start browser thread
+threading.Thread(target=open_browser).start()
+
+# Print startup message
+print("Starting application in development mode...")
+print("Environment variables configured for local development")
+print("Browser will open automatically")
+
+# Import and run application
+try:
+    from app import app
+    app.run(debug=True, host='0.0.0.0', port=5000)
+except Exception as e:
+    print(f"Error starting application: {e}")
+    sys.exit(1)
