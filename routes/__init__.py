@@ -1,4 +1,4 @@
-from .document_routes import document_routes
-from .langchain_routes import langchain_routes
+from .document_routes import document_bp # Import the Blueprint object
+from .langchain_routes import langchain_bp # Import the Blueprint object
 
-__all__ = ['document_routes', 'langchain_routes']
+__all__ = ['document_bp', 'langchain_bp'] # Update __all__

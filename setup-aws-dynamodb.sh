@@ -10,9 +10,9 @@ if [ -z "$REGION" ]; then
   REGION="eu-central-1"  # Default to EU Central (Frankfurt) if not configured
 fi
 
-# Generate random secrets
-FLASK_SECRET_KEY=$(openssl rand -hex 24)
-JWT_SECRET=$(openssl rand -hex 24)
+# Generate random secrets using Python's secrets module
+FLASK_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
+JWT_SECRET=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
 
 echo "Setting up AWS DynamoDB and Secrets for Financial Document Analysis System"
 echo "----------------------------------------------------------------------"

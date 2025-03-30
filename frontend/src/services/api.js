@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 // הגדרת API בסיסי
-// Use environment variable for flexibility, fallback to localhost
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Use environment variable for flexibility, fallback to the specific Codespaces URL
+const API_URL = process.env.REACT_APP_API_URL || 'https://sturdy-computing-machine-v6qq5px44w6phpjg5-5000.app.github.dev/api';
 
 // יצירת מופע axios
 const api = axios.create({

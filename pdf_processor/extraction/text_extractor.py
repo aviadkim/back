@@ -4,7 +4,7 @@ import pytesseract
 import re
 import logging
 import os
-import cv2
+import cv2 # Temporarily commented out
 import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
 
@@ -456,30 +456,29 @@ class PDFTextExtractor:
                 open_cv_image = np.array(img)
                 open_cv_image = open_cv_image[:, :, ::-1].copy()  # RGB to BGR
                 
-                # Apply image preprocessing
-                gray = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2GRAY)
+                # Apply image preprocessing # Temporarily commented out
+                # gray = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2GRAY)
+                # _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+                # denoised = cv2.fastNlMeansDenoising(binary, None, 10, 7, 21)
                 
-                # Apply threshold to get black and white image
-                _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
-                
-                # Apply noise reduction
-                denoised = cv2.fastNlMeansDenoising(binary, None, 10, 7, 21)
+                # Use original image directly for OCR since CV2 is disabled
+                image_for_ocr = img
                 
                 # Apply OCR with multiple language settings
                 text_eng = pytesseract.image_to_string(
-                    denoised, 
+                    image_for_ocr, # Use original image
                     lang="eng",
                     config='--psm 6 --oem 3'
                 )
                 
                 text_heb = pytesseract.image_to_string(
-                    denoised, 
+                    image_for_ocr, # Use original image
                     lang="heb",
                     config='--psm 6 --oem 3 -c preserve_interword_spaces=1'
                 )
                 
                 text_mixed = pytesseract.image_to_string(
-                    denoised, 
+                    image_for_ocr, # Use original image
                     lang=self.language,
                     config='--psm 6 --oem 3'
                 )
