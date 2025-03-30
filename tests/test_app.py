@@ -1,48 +1,91 @@
-import pytest
-import io
 import os
-import json
-from app import app
+import sys
+import pytest
+from flask import Flask, json
+
+# Add the parent directory to the path to import modules from the app
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Import app and various modules for testing
+from vertical_slice_app import app as flask_app
 
 @pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
+def app():
+    """
+    Create a Flask app fixture for testing
+    """
+    flask_app.config.update({
+        "TESTING": True,
+    })
+    
+    # Create test upload folder if it doesn't exist
+    test_upload_folder = 'test_uploads'
+    os.makedirs(test_upload_folder, exist_ok=True)
+    flask_app.config['UPLOAD_FOLDER'] = test_upload_folder
+    
+    yield flask_app
+
+@pytest.fixture
+def client(app):
+    """
+    Create a test client for the Flask app
+    """
+    return app.test_client()
 
 def test_health_check(client):
-    """Test the health check endpoint."""
+    """
+    Test the health check endpoint
+    """
     response = client.get('/health')
     assert response.status_code == 200
     data = json.loads(response.data)
-    assert data['status'] == 'ok'
+    assert data["status"] == "ok"
+    assert "version" in data
 
-def test_file_upload_no_file(client):
-    """Test file upload with no file."""
-    response = client.post('/api/pdf/upload', data={})
-    assert response.status_code == 400
-    data = json.loads(response.data)
-    assert 'error' in data
-
-def test_file_upload_with_file(client):
-    """Test file upload with a file."""
-    # Create a test PDF file
-    test_pdf = io.BytesIO(b'%PDF-1.4\n%File content')
-    response = client.post(
-        '/api/pdf/upload',
-        data={
-            'file': (test_pdf, 'test.pdf'),
-            'language': 'he'
-        },
-        content_type='multipart/form-data'
-    )
-    
-    # Check only status code since actual processing might fail in test environment
-    assert response.status_code in [200, 500]  # Allow 500 since processing might fail in tests
-
-def test_document_routes(client):
-    """Test the document routes."""
-    response = client.get('/api/pdf/documents')
+def test_get_documents_empty(client):
+    """
+    Test getting documents when there are none
+    """
+    response = client.get('/api/documents')
     assert response.status_code == 200
     data = json.loads(response.data)
-    assert 'documents' in data
+    # Should return at least the demo document
+    assert len(data) >= 1
+
+def test_file_upload_no_file(client):
+    """
+    Test file upload without providing a file
+    """
+    response = client.post('/api/upload')
+    assert response.status_code == 400
+    data = json.loads(response.data)
+    assert "error" in data
+
+def test_pdf_scanning_feature(client):
+    """
+    Test the PDF scanning feature
+    """
+    # Test the API endpoint for the PDF scanning feature
+    response = client.get('/api/tables/document/test_document')
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert "tables" in data
+
+def test_document_chat_feature_suggestions(client):
+    """
+    Test the document chat feature - suggested questions
+    """
+    # Test the API endpoint for getting suggested questions
+    response = client.get('/api/chat/documents/test_document/suggestions')
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert "suggestions" in data
+
+def test_frontend_serving(client):
+    """
+    Test that the frontend is being served correctly
+    """
+    response = client.get('/')
+    assert response.status_code == 200
+    # Check if response contains HTML
+    assert b"<!DOCTYPE html>" in response.data or b"<html" in response.data
