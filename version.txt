@@ -1,8 +1,9 @@
-Current Version: 4.0
+Current Version: 4.1
 Last Updated: March 30, 2025
 
 Version History:
-- 4.0: Simplified Hebrew-rich frontend with static HTML (current)
+- 4.1: Enhanced Hebrew-rich frontend with fixed upload functionality (current)
+- 4.0: Simplified Hebrew-rich frontend with static HTML
 - 3.0: Full React component structure (in code but not built)
 - 2.0: Basic Flask application with simple UI
 - 1.0: Initial project setup
