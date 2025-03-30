@@ -1,35 +1,49 @@
 # Changelog
 
-## [v2.0.0] - 2024-03-23
-### Added
-- Test suite with comprehensive coverage
-- PDF processing utilities with error handling
-- Integration tests for MongoDB and API endpoints
-- LangChain integration tests with mocking
+## Version 5.0.0 (March 31, 2025)
 
-### Fixed
-- Document upload endpoint and error handling
-- Static file serving configuration
-- MongoDB connection in test environment
-- PDF text extraction with proper error handling
+### Major Changes
+- Complete implementation of Vertical Slice Architecture
+- Restructured project to organize code around business features
+- Added comprehensive documentation
+- Improved frontend components with React
+- Enhanced document processing capabilities
+- Added testing framework
 
-### Changed
-- Updated to latest versions of dependencies
-- Improved logging system
-- Better test environment configuration
-- Modular test structure with fixtures
+### New Features
+- PDF scanning feature with complete vertical slice implementation
+- Document chat feature with AI-powered responses
+- Table extraction and visualization feature
+- Agent framework for coordinating AI functionality
 
-## [v1.9.8] - 2024-03-23
-### Added
-- MongoDB integration with Docker support
-- SQLAlchemy dependencies
-- Docker Compose configuration for database
+### Technical Improvements
+- Migrated from layered architecture to vertical slice architecture
+- Added feature-specific routing and services
+- Implemented React components for each feature slice
+- Added comprehensive testing suite
+- Added detailed documentation for migration and development
 
-### Changed
-- Updated MongoDB connection URI for containerized environment
-- Improved error handling in app.py
-- Added Flask-PyMongo integration
+### Bug Fixes
+- Resolved MongoDB connection issues
+- Fixed file upload size limitations
+- Improved error handling throughout the application
+- Fixed CSS styling issues on mobile devices
 
-### Fixed
-- Static file serving configuration
-- Port configuration for Codespaces compatibility
+## Version 4.1.0 (February 15, 2025)
+
+### Major Changes
+- Initial backend API implementation
+- Basic document processing functionality
+- Simple UI for document upload
+
+### Features
+- Document upload API
+- PDF text extraction
+- Basic document viewing
+- Simple MongoDB integration
+
+### Technical Implementations
+- Flask backend setup
+- Initial project structure
+- Basic MongoDB integration
+- File upload handling
