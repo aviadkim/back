@@ -62,7 +62,30 @@ This project implements a **Vertical Slice Architecture**, which organizes code 
 - Node.js 14+ (for frontend development)
 - Docker (recommended for MongoDB)
 
-### Installation
+### Quick Installation (Recommended)
+
+If you just want to test the application quickly, use our simplified installation script:
+
+```bash
+# Clone the repository (if you haven't already)
+git clone https://github.com/aviadkim/back.git
+cd back
+
+# Make the script executable
+chmod +x install_basic_deps.sh
+
+# Run the simplified installation script
+./install_basic_deps.sh
+
+# Run the application
+python vertical_slice_app.py
+```
+
+This installs only the core dependencies needed to run the application.
+
+### Full Installation
+
+For a complete development environment:
 
 1. Clone the repository:
    ```bash
@@ -120,6 +143,27 @@ If you prefer to set up manually:
    ```bash
    python vertical_slice_app.py
    ```
+
+## AWS Deployment
+
+The project includes automatic deployment to AWS Elastic Beanstalk:
+
+1. Push changes to the master branch on GitHub
+2. The GitHub Actions workflow will automatically deploy to AWS
+3. Check the deployment status in the Actions tab of your GitHub repository
+
+If you need to manually deploy:
+
+```bash
+# Install the EB CLI
+pip install awsebcli
+
+# Initialize EB (if not already done)
+eb init -p docker financial-docs-analyzer
+
+# Deploy
+eb deploy
+```
 
 ## Development Guide
 
@@ -207,52 +251,14 @@ Add new tests for your features in the `tests/` directory.
 - **GET /api/tables/:tableId**
   - Get a specific table by ID
 
-## Migrating from Previous Versions
-
-Version 5.0 introduces a complete Vertical Slice Architecture. If you're upgrading from a previous version:
-
-1. The old layered architecture files remain in place for backward compatibility
-2. New features should follow the vertical slice pattern in the `features/` directory
-3. Gradually migrate existing functionality to the new architecture
-
-### Migration Steps
-
-1. Identify a feature to migrate
-2. Create a new feature slice in `features/`
-3. Move the relevant code from routes, services, and models
-4. Update the UI components
-5. Test thoroughly before replacing the old implementation
-
-## Technology Stack
-
-- **Backend**:
-  - Flask (Python)
-  - MongoDB
-  - HuggingFace/Mistral/OpenAI APIs
-
-- **Frontend**:
-  - React
-  - Tailwind CSS
-
-- **Infrastructure**:
-  - Docker
-  - Python virtual environment
-
-## Maintenance and Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-- **MongoDB Connection Error**:
-  - Check if MongoDB is running: `docker ps`
-  - Verify connection string in .env: `MONGO_URI`
-  
-- **API Key Issues**:
-  - Ensure all required API keys are set in .env
-  - For development, dummy keys can be used in some cases
-
-- **File Upload Problems**:
-  - Check permissions on `uploads/` directory
-  - Verify file size limits in the code
+- **"No module named 'flask'"**: Run `pip install flask` or use the `install_basic_deps.sh` script
+- **MongoDB Connection Error**: Check if MongoDB is running with `docker ps`
+- **Permission Denied for .sh Files**: Run `chmod +x script_name.sh` to make scripts executable
+- **Environment Variable Issues**: Make sure your .env file exists and has the correct values
 
 ### Logs
 
