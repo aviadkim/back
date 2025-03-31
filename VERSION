@@ -1,9 +1,14 @@
-6.2.0
+6.3.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
 Release Date: March 31, 2025 # Update release date if needed
 Developed by: Aviad Kim
+
+Major Changes (v6.3.0):
+- Added placeholder frontend component for Custom Table Builder.
+- Added PaddleOCR processor class for enhanced OCR.
+- Added paddleocr dependency to requirements.txt.
 
 Major Changes (v6.2.0):
 - Refined backend error handling in text/table extractors and document processor.
