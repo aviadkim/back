@@ -1,36 +1,28 @@
 version: '3.8'
+
 services:
   app:
     build: .
     ports:
-      - "10000:10000"
+      - "${PORT:-8080}:8080"
+    env_file:
+      - .env
     volumes:
       - ./uploads:/app/uploads
-      - ./data:/app/data
       - ./logs:/app/logs
-    environment:
-      - FLASK_ENV=production
-      - PORT=10000
-      - USE_DYNAMODB=true
-      - DYNAMODB_REGION=${AWS_REGION}
-      - DEFAULT_LANGUAGE=he
-      - SECRET_KEY=28
-      - JWT_SECRET=210
-      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
-      - SERVICE_NAME=${SERVICE_NAME}
-      - LLM_PROVIDER=huggingface
     depends_on:
       - mongodb
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/financial_documents
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: always
 
 volumes:
   mongodb_data:

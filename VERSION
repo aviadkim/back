@@ -1,14 +1,20 @@
-5.0.0
+6.0.0
 
-Financial Document Analysis System - Vertical Slice Architecture
+Financial Document Analysis System - Refactored & Enhanced
 
-Release Date: March 31, 2025
+Release Date: March 31, 2025 # Update release date if needed
 Developed by: Aviad Kim
 
-Major Changes:
-- Complete implementation of Vertical Slice Architecture
-- Reorganized code around business features
-- Enhanced document processing capabilities
-- Improved frontend components with React
-- Added comprehensive testing framework
-- Migration path from previous architecture
+Major Changes (v6.0.0):
+- Standardized configuration management (`config/configuration.py`, `.env` files).
+- Unified document processing entry point (`pdf_processor/document_processor.py`).
+- Added enhanced OCR capabilities module (`pdf_processor/extraction/enhanced_ocr.py`).
+- Added enhanced table detection module (`pdf_processor/tables/enhanced_table_detection.py`).
+- Added Hebrew language handling module (`pdf_processor/language/hebrew_handler.py`).
+- Standardized API routes (`routes/document.py`, `routes/api.py`).
+- Updated main application (`app.py`) to use new config and routes.
+- Created standardized frontend API client (`frontend/src/api/api.js`).
+- Created frontend document upload component (`frontend/src/components/DocumentUpload.js`).
+- Added Docker configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.production.yml`).
+- Created unified deployment script (`deploy.sh`).
+- Updated test configurations (`tests/conftest.py`, test files).

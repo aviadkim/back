@@ -1,49 +1,35 @@
-# Use a Debian-based Python 3.12 slim image for better glibc compatibility (e.g., with PyTorch)
-FROM python:3.12-slim-bookworm
+FROM python:3.9-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    APP_HOME=/app \
-    PATH="/root/.cargo/bin:${PATH}"
+WORKDIR /app
 
-# Set the working directory
-WORKDIR $APP_HOME
+# Install system dependencies including Tesseract with Hebrew support
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-heb \
+    tesseract-ocr-eng \
+    poppler-utils \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install system dependencies required for the application and building packages
-# Includes build tools, python dev headers, Pillow dependencies, Tesseract, Poppler, and curl
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       build-essential \
-       python3-dev \
-       poppler-utils \
-       tesseract-ocr \
-       tesseract-ocr-heb \
-       libjpeg-dev \
-       zlib1g-dev \
-       curl \
-    # Clean up APT cache to reduce image size
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Rust using rustup
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-# Copy the requirements file into the container
+# Copy requirements
 COPY requirements.txt .
 
 # Install Python dependencies
-# Using --no-cache-dir to reduce image size
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
+# Copy application code
 COPY . .
 
-# Create required directories
-RUN mkdir -p uploads data/embeddings logs
+# Create necessary directories
+RUN mkdir -p uploads logs temp
 
-# Expose the port the app runs on
-EXPOSE 10000
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
-# Define the command to run the application using Gunicorn
-# Use the PORT environment variable provided by Elastic Beanstalk (defaulting to 10000 if not set)
-CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-10000}", "--workers", "2", "--threads", "4", "app:app"]
+# Expose port
+EXPOSE 8080
+
+# Run with gunicorn
+CMD gunicorn --bind 0.0.0.0:$PORT --workers $WORKERS --timeout $PROCESSING_TIMEOUT app:create_app()

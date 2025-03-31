@@ -48,7 +48,7 @@ flake8==7.0.0
 # Document image processing
 poppler-utils==0.1.0
 Wand==0.6.13
-
+opencv-python-headless # Added for CV operations
 # Security
 cryptography==42.0.8
 PyJWT==2.8.0
