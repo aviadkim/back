@@ -1,9 +1,19 @@
-6.1.0
+6.2.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
 Release Date: March 31, 2025 # Update release date if needed
 Developed by: Aviad Kim
+
+Major Changes (v6.2.0):
+- Refined backend error handling in text/table extractors and document processor.
+- Updated configuration loading and usage in `app.py`.
+- Implemented database interactions in `routes/document.py`.
+- Added frontend pages: `HomePage`, `NotFoundPage`, `UploadPage`, `DocumentsPage`, `DocumentViewPage`.
+- Refined frontend components: `Layout`, `DocumentUpload`, `DocumentsList`, `Dashboard`.
+- Updated `docker-compose.yml` to include frontend service.
+- Updated `Dockerfile` for consistency.
+- Fixed linter errors in frontend components.
 
 Major Changes (v6.1.0):
 - Upgraded PyPDF2 to pypdf dependency.

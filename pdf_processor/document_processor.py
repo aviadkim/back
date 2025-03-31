@@ -22,9 +22,14 @@ class DocumentProcessor:
         from pdf_processor.tables.table_extractor import TableExtractor
         from pdf_processor.analysis.financial_analyzer import FinancialAnalyzer
 
-        self.text_extractor = PDFTextExtractor(
-            language=self.config.get('language', 'auto')
-        )
+        language = self.config.get('language', 'auto')
+        if language == 'auto':
+            # Default to English if auto-detection
+            language = 'eng'
+        elif language == 'he':
+            language = 'heb'  # Tesseract uses 'heb' for Hebrew
+
+        self.text_extractor = PDFTextExtractor(language=language)
         self.table_extractor = TableExtractor()
         self.financial_analyzer = FinancialAnalyzer()
 
@@ -39,18 +44,28 @@ class DocumentProcessor:
         """
         try:
             self.logger.info(f"Processing document: {file_path}")
+            file_path_str = str(file_path)
 
             # Extract text content
-            document_text = self.text_extractor.extract_document(str(file_path))
+            document_text = self.text_extractor.extract_document(file_path_str)
+
+            # Check if there was an error in text extraction
+            if "error" in document_text:
+                return document_text
 
             # Extract tables
-            tables_data = self.table_extractor.extract_tables(str(file_path))
+            tables_data = self.table_extractor.extract_tables(file_path_str)
 
             # Convert tables to dataframes for analysis
             dataframes = {}
             for page_num, tables in tables_data.items():
                 dataframes[page_num] = []
                 for table in tables:
+                    # Check if table extraction returned an error for this page
+                    if isinstance(table, dict) and "error" in table:
+                         self.logger.warning(f"Skipping analysis for table on page {page_num} due to extraction error: {table['error']}")
+                         continue # Skip this table/page
+
                     df = self.table_extractor.convert_to_dataframe(table)
                     if not df.empty:
                         dataframes[page_num].append({
@@ -68,7 +83,7 @@ class DocumentProcessor:
                 'financial_data': financial_data,
                 'metadata': {
                     'filename': Path(file_path).name,
-                    'page_count': len(document_text) if document_text else 0,
+                    'page_count': len(document_text) if isinstance(document_text, dict) else 0,
                     'language': self._detect_language(document_text),
                     'processing_status': 'completed'
                 }
@@ -95,8 +110,15 @@ class DocumentProcessor:
             'tables_analysis': {}
         }
 
+        # Check if document_text contains error
+        if not isinstance(document_text, dict) or "error" in document_text:
+            return result
+
         # Analyze text for financial entities and metrics
         for page_num, page_data in document_text.items():
+            if not isinstance(page_data, dict) or "error" in page_data: # Check for page-level errors
+                continue
+
             page_text = page_data.get('text', '')
             if page_text:
                 # Extract metrics from text
@@ -132,6 +154,11 @@ class DocumentProcessor:
         """Detect the primary language of the document."""
         # Simple language detection based on page content
         # Could be enhanced with proper language detection library
+
+        # Check if document_text contains error
+        if not isinstance(document_text, dict) or "error" in document_text:
+            return "unknown"
+
         hebrew_chars = set('אבגדהוזחטיכלמנסעפצקרשת')
         english_chars = set('abcdefghijklmnopqrstuvwxyz')
 
@@ -139,6 +166,9 @@ class DocumentProcessor:
         english_count = 0
 
         for page_num, page_data in document_text.items():
+            if not isinstance(page_data, dict) or "error" in page_data: # Check for page-level errors
+                continue
+
             text = page_data.get('text', '').lower()
 
             for char in text:

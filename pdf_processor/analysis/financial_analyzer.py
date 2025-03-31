@@ -296,7 +296,7 @@ class FinancialAnalyzer:
         # Basic numerical analysis
         try:
             # Convert to numeric where possible
-            numeric_df = df.applymap(self._try_numeric_conversion)
+            numeric_df = df.map(self._try_numeric_conversion) # Use map instead of deprecated applymap
             
             # Calculate basic statistics for numeric columns
             numeric_cols = numeric_df.select_dtypes(include=['number']).columns

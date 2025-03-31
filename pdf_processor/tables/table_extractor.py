@@ -1,4 +1,5 @@
-import PyPDF2
+# import PyPDF2 # Replaced by pypdf
+from pypdf import PdfReader # Import from pypdf
 import pdf2image
 import pytesseract
 import pandas as pd
@@ -42,37 +43,56 @@ class TableExtractor:
         try:
             # Open the PDF file
             with open(pdf_path, 'rb') as file:
-                reader = PyPDF2.PdfReader(file)
+                # Use pypdf instead of PyPDF2
+                from pypdf import PdfReader
+                reader = PdfReader(file)
                 total_pages = len(reader.pages)
                 
                 # Determine which pages to process
                 pages_to_process = page_numbers if page_numbers is not None else range(total_pages)
                 
                 for page_num in pages_to_process:
-                    if page_num >= total_pages:
-                        continue
-                        
-                    self.logger.debug(f"Extracting tables from page {page_num+1}")
-                    
-                    # Extract tables from the page
-                    page = reader.pages[page_num]
-                    
-                    # Try different extraction methods
-                    tables_text = self._extract_tables_from_text(page)
-                    tables_cv = self._extract_tables_with_cv(pdf_path, page_num)
-                    
-                    # Merge and deduplicate tables
-                    tables = self._merge_table_results(tables_text, tables_cv)
-                    
-                    if tables:
-                        result[page_num] = tables
+                    try: # Add try block for individual page processing
+                        if page_num >= total_pages:
+                            self.logger.warning(f"Requested page number {page_num} exceeds total pages {total_pages}. Skipping.")
+                            continue
+
+                        self.logger.debug(f"Extracting tables from page {page_num+1}")
+
+                        # Extract tables from the page
+                        page = reader.pages[page_num] # This might raise IndexError
+
+                        # Try different extraction methods
+                        tables_text = self._extract_tables_from_text(page)
+                        tables_cv = self._extract_tables_with_cv(pdf_path, page_num)
+
+                        # Merge and deduplicate tables
+                        tables = self._merge_table_results(tables_text, tables_cv)
+
+                        if tables:
+                            result[page_num] = tables
+                    except IndexError:
+                        self.logger.error(f"Failed to access page {page_num} in {pdf_path}. Skipping page.")
+                        # Optionally add an empty list or error marker for this page in results
+                        result[page_num] = [{"error": "Failed to access page"}]
+                    except Exception as page_e:
+                        self.logger.error(f"Failed to process page {page_num} in {pdf_path}: {str(page_e)}")
+                        # Optionally add an empty list or error marker for this page in results
+                        result[page_num] = [{"error": f"Failed to process page: {str(page_e)}"}]
                     
             return result
+        except FileNotFoundError:
+             self.logger.error(f"File not found: {pdf_path}")
+             raise # Re-raise FileNotFoundError
         except Exception as e:
             self.logger.error(f"Failed to extract tables from {pdf_path}: {str(e)}")
-            raise
+            # Return empty dict or raise custom exception
+            return {"error": f"Failed to process PDF for tables: {str(e)}"}
     
-    def _extract_tables_from_text(self, page: PyPDF2.PageObject) -> List[Dict[str, Any]]:
+    # Update type hint if pypdf's PageObject is different or just use generic 'Any'
+    # from pypdf.page import PageObject # Check actual import if needed
+    from typing import Any # Use Any for now
+    def _extract_tables_from_text(self, page: Any) -> List[Dict[str, Any]]:
         """Extract tables using text-based approaches.
         
         Args:
