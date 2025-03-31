@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,32 +34,48 @@ MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/financial_document
 MONGO_USERNAME = os.getenv("MONGO_USERNAME", "")
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD", "")
 
-# Storage settings
-STORAGE_TYPE = os.getenv("STORAGE_TYPE", "local")
-LOCAL_STORAGE_PATH = os.getenv("LOCAL_STORAGE_PATH", "uploads")
-MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", 50))  # in MB
-
 # OCR settings
-OCR_ENGINE = os.getenv("OCR_ENGINE", "local")
+OCR_ENGINE = os.getenv("OCR_ENGINE", "tesseract")
 DEFAULT_LANGUAGE = os.getenv("DEFAULT_LANGUAGE", "eng")
 ADDITIONAL_LANGUAGES = os.getenv("ADDITIONAL_LANGUAGES", "heb").split(",")
 
-# Logging settings
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-LOG_FILE = os.getenv("LOG_FILE", "logs/application.log")
-LOG_ROTATION = os.getenv("LOG_ROTATION", "true").lower() == "true"
-LOG_MAX_SIZE = int(os.getenv("LOG_MAX_SIZE", 10))  # in MB
-LOG_BACKUP_COUNT = int(os.getenv("LOG_BACKUP_COUNT", 5))
-
 # Setup logging
-logging.basicConfig(
-    level=getattr(logging, LOG_LEVEL),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE),
-        logging.StreamHandler()
-    ]
-)
+def setup_logging(app_name="financial_documents", log_level=None):
+    if log_level is None:
+        log_level = os.getenv("LOG_LEVEL", "INFO")
+    
+    numeric_level = getattr(logging, log_level.upper(), logging.INFO)
+    
+    logger = logging.getLogger(app_name)
+    logger.setLevel(numeric_level)
+    
+    # Check if handlers already exist to avoid duplicates
+    if not logger.handlers:
+        # File handler with rotation
+        file_handler = RotatingFileHandler(
+            os.path.join(LOGS_DIR, f"{app_name}.log"),
+            maxBytes=10*1024*1024,  # 10MB
+            backupCount=5
+        )
+        
+        # Console handler
+        console_handler = logging.StreamHandler()
+        
+        # Formatter
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+    
+    return logger
+
+# Initialize logger
+logger = setup_logging()
 
 # Document processor configuration
 document_processor_config = {

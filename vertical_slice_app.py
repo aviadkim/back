@@ -2,9 +2,12 @@ import os
 import logging
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
+from bson import ObjectId # Needed for converting string IDs if stored as ObjectId
+from pymongo.errors import ConnectionFailure # To handle DB connection errors
 from config.configuration import (
     SECRET_KEY, JWT_SECRET, LOCAL_STORAGE_PATH, MAX_FILE_SIZE, PORT, DEBUG, UPLOAD_FOLDER
 ) # Import specific constants
+from services.database_service import get_collection, get_document_by_id # Import DB helpers
 
 # Logging is configured in config/configuration.py
 logger = logging.getLogger(__name__)
@@ -96,132 +99,83 @@ def upload_file():
 
 @app.route('/api/documents', methods=['GET'])
 def get_documents():
-    """Get all documents"""
+    """Get all documents from the database"""
     logger.info("Documents list requested")
     
-    documents = []
-    
-    # If upload folder exists, add files to the list
-    # Use the configured upload folder from app.config
-    upload_folder_path = app.config.get('UPLOAD_FOLDER', 'uploads')
-    if os.path.exists(upload_folder_path):
-        for filename in os.listdir(upload_folder_path):
-            if os.path.isfile(os.path.join(upload_folder_path, filename)):
-                doc_type = "unknown"
-                if filename.lower().endswith('.pdf'):
-                    doc_type = "PDF"
-                elif filename.lower().endswith(('.xls', '.xlsx')):
-                    doc_type = "Excel"
-                elif filename.lower().endswith('.csv'):
-                    doc_type = "CSV"
-                    
-                documents.append({
-                    "id": filename.replace('.', '_'),
-                    "filename": filename,
-                    "upload_date": "2025-03-30T00:00:00",
-                    "status": "completed",
-                    "page_count": 1 if doc_type != "PDF" else 10,
-                    "language": "he",
-                    "type": doc_type
-                })
-    
-    # If no documents, add a sample document
-    if not documents:
-        documents.append({
-            "id": "demo_document_1",
-            "filename": "financial_report_2025.pdf",
-            "upload_date": "2025-03-15T10:30:00",
-            "status": "completed",
-            "page_count": 12,
-            "language": "he",
-            "type": "PDF"
+    try:
+        collection = get_collection('documents')
+        if not collection:
+            logger.error("Database connection not available for getting documents.")
+            return jsonify({"error": "Database connection error"}), 500
+
+        # Fetch documents, projecting only necessary fields for the list view
+        # Assuming documents have 'filename', 'upload_date', 'status', etc.
+        # Convert ObjectId to string for JSON serialization
+        documents_cursor = collection.find({}, {
+            '_id': 1, 
+            'filename': 1, 
+            'upload_date': 1, 
+            'status': 1, 
+            'page_count': 1, 
+            'language': 1, 
+            'type': 1 
         })
-    
-    logger.info(f"Returning {len(documents)} documents")
-    return jsonify(documents)
+        
+        documents_list = []
+        for doc in documents_cursor:
+            doc['id'] = str(doc['_id']) # Convert ObjectId to string and use 'id'
+            del doc['_id'] # Remove the original '_id' field
+            # Add default values if fields are missing (optional, based on data model)
+            doc.setdefault('upload_date', 'N/A')
+            doc.setdefault('status', 'N/A')
+            doc.setdefault('page_count', 0)
+            doc.setdefault('language', 'N/A')
+            doc.setdefault('type', 'N/A')
+            documents_list.append(doc)
+
+        logger.info(f"Returning {len(documents_list)} documents from database")
+        return jsonify(documents_list)
+
+    except ConnectionFailure as e:
+        logger.error(f"Database connection failed: {e}")
+        return jsonify({"error": "Database connection failed"}), 500
+    except Exception as e:
+        logger.error(f"Error fetching documents: {e}")
+        return jsonify({"error": "An error occurred while fetching documents"}), 500
 
 @app.route('/api/documents/<document_id>', methods=['GET'])
 def get_document(document_id):
-    """Get document details by ID"""
+    """Get document details by ID from the database"""
     logger.info(f"Document details requested: {document_id}")
     
-    # Convert ID back to filename if needed
-    if '_' in document_id:
-        filename = document_id.replace('_', '.', 1)
-    else:
-        filename = document_id
-    
-    # Sample document data for demo
-    document = {
-        "metadata": {
-            "id": document_id,
-            "filename": filename,
-            "upload_date": "2025-03-30T00:00:00",
-            "status": "completed",
-            "page_count": 10,
-            "language": "he",
-            "type": "PDF",
-            "size_bytes": 1024000
-        },
-        "processed_data": {
-            "isin_data": [
-                {"isin": "US0378331005", "company": "Apple Inc.", "market": "NASDAQ", "type": "מניה"},
-                {"isin": "US88160R1014", "company": "Tesla Inc.", "market": "NASDAQ", "type": "מניה"},
-                {"isin": "DE000BAY0017", "company": "Bayer AG", "market": "XETRA", "type": "מניה"}
-            ],
-            "financial_data": {
-                "is_financial": True,
-                "document_type": "דו\"ח שנתי",
-                "metrics": {
-                    "assets": [
-                        {"name": "סך נכסים", "value": 1200000, "unit": "₪"},
-                        {"name": "נכסים נזילים", "value": 550000, "unit": "₪"}
-                    ],
-                    "returns": [
-                        {"name": "תשואה שנתית", "value": 8.7, "unit": "%"},
-                        {"name": "תשואה ממוצעת 5 שנים", "value": 7.2, "unit": "%"}
-                    ],
-                    "ratios": [
-                        {"name": "יחס שארפ", "value": 1.3},
-                        {"name": "יחס P/E ממוצע", "value": 22.4}
-                    ]
-                }
-            },
-            "tables": {
-                "1": [
-                    {
-                        "id": f"{document_id}_table_1",
-                        "name": "חלוקת נכסים",
-                        "page": 1,
-                        "header": ["סוג נכס", "אחוז מהתיק", "שווי (₪)"],
-                        "rows": [
-                            ["מניות", "45%", "450,000"],
-                            ["אג\"ח ממשלתי", "30%", "300,000"],
-                            ["אג\"ח קונצרני", "15%", "150,000"],
-                            ["מזומן", "10%", "100,000"]
-                        ]
-                    }
-                ],
-                "2": [
-                    {
-                        "id": f"{document_id}_table_2",
-                        "name": "התפלגות מטבעית",
-                        "page": 2,
-                        "header": ["מטבע", "אחוז מהתיק", "שווי (₪)"],
-                        "rows": [
-                            ["שקל (₪)", "60%", "600,000"],
-                            ["דולר ($)", "25%", "250,000"],
-                            ["אירו (€)", "10%", "100,000"],
-                            ["אחר", "5%", "50,000"]
-                        ]
-                    }
-                ]
-            }
-        }
-    }
-    
-    logger.info(f"Returning document details for: {document_id}")
-    return jsonify(document)
+    try:
+        # Attempt to convert string ID to ObjectId if your IDs are stored as such
+        # If your IDs are stored as strings, you can skip the ObjectId conversion
+        try:
+            obj_id = ObjectId(document_id)
+        except Exception:
+            # Handle cases where the ID might not be a valid ObjectId format
+            # Or if you store IDs as simple strings (e.g., filenames)
+            obj_id = document_id # Use the ID as is if not ObjectId
+
+        document = get_document_by_id(obj_id)
+
+        if document:
+            # Convert ObjectId back to string for JSON response
+            document['id'] = str(document['_id'])
+            del document['_id']
+            logger.info(f"Returning document details for: {document_id}")
+            return jsonify(document)
+        else:
+            logger.warning(f"Document not found: {document_id}")
+            return jsonify({"error": "Document not found"}), 404
+
+    except ConnectionFailure as e:
+        logger.error(f"Database connection failed while fetching document {document_id}: {e}")
+        return jsonify({"error": "Database connection failed"}), 500
+    except Exception as e:
+        logger.error(f"Error fetching document {document_id}: {e}")
+        return jsonify({"error": "An error occurred while fetching the document"}), 500
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
