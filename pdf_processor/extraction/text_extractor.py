@@ -1,4 +1,4 @@
-import PyPDF2 # Keep PyPDF2 for now as per the provided code
+import pypdf # Keep PyPDF2 for now as per the provided code
 import pdf2image
 import pytesseract
 import re

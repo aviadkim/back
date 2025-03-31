@@ -77,7 +77,21 @@ def upload_document():
         filename = secure_filename(file.filename)
         file_ext = os.path.splitext(filename)[1].lower()
 
-        # Validate file extension
+        # Debugging: Log the detected extension
+        print(f"Initial detected extension: {file_ext} for file {filename}")
+
+        # If extension is missing, try to determine from MIME type
+        if not file_ext:
+            print(f"No extension found, checking MIME type: {file.content_type}")
+            if file.content_type == 'application/pdf':
+                file_ext = '.pdf'
+            elif file.content_type in ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']:
+                file_ext = '.xlsx'
+            elif file.content_type == 'text/csv':
+                file_ext = '.csv'
+            print(f"Extension determined from MIME type: {file_ext}")
+
+        # Validate file extension (after potentially getting it from MIME type)
         allowed_extensions = {'.pdf', '.xlsx', '.xls', '.csv'}
         if file_ext not in allowed_extensions:
             return error_response(

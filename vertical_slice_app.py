@@ -2,7 +2,9 @@ import os
 import logging
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
-from config.configuration import config # Import the new config
+from config.configuration import (
+    SECRET_KEY, JWT_SECRET, LOCAL_STORAGE_PATH, MAX_FILE_SIZE, PORT, DEBUG, UPLOAD_FOLDER
+) # Import specific constants
 
 # Logging is configured in config/configuration.py
 logger = logging.getLogger(__name__)
@@ -11,18 +13,17 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 
 # Apply configurations from config/configuration.py
-app.config['SECRET_KEY'] = config.get('secret_key', 'default-secret')
-app.config['JWT_SECRET_KEY'] = config.get('jwt_secret', 'default-jwt-secret') # Flask-JWT uses JWT_SECRET_KEY
-app.config['UPLOAD_FOLDER'] = config.get('local_storage_path', 'uploads')
-app.config['MAX_CONTENT_LENGTH'] = config.get('max_file_size', 16) * 1024 * 1024 # Convert MB to bytes
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['JWT_SECRET_KEY'] = JWT_SECRET # Flask-JWT uses JWT_SECRET_KEY
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # Use the constant directly
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE * 1024 * 1024 # Convert MB to bytes
 
 # Ensure upload folder exists (using the configured path)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Setup CORS based on config
-if config.get('enable_cors', False):
-    from flask_cors import CORS
-    CORS(app, origins=config.get('cors_origins', '*'))
+# CORS setup removed as enable_cors/cors_origins are not in configuration.py
+# If needed, add flask_cors import and CORS(app) call here.
 
 # Register feature blueprints
 from features.pdf_scanning import pdf_scanning_bp
@@ -260,8 +261,6 @@ def agent_endpoint():
 
 if __name__ == '__main__':
     # Use settings from the imported config
-    port = config.get('port', 5000)
-    debug = config.get('debug', False)
-    logger.info(f"Starting application on port {port} with debug={debug}")
+    logger.info(f"Starting application on port {PORT} with debug={DEBUG}")
     # Note: app.run is for development. Use Gunicorn/WSGI server in production.
-    app.run(debug=debug, host='0.0.0.0', port=port)
+    app.run(debug=DEBUG, host='0.0.0.0', port=PORT)

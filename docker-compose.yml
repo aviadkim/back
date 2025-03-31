@@ -1,79 +1,45 @@
 version: '3.8'
 
 services:
-  # Backend API (renamed from 'app' to 'api' for clarity)
+  # Backend API with auto-reload
   api:
     build:
       context: .
-      dockerfile: Dockerfile # Assumes Dockerfile is in the root
+      dockerfile: Dockerfile.dev
     ports:
-      - "5000:5000" # Map host 5000 to container 5000 (as defined in Dockerfile CMD/ENV)
+      - "5000:5000"
     environment:
-      # These will be overridden by .env file if present when running docker-compose up
       - FLASK_ENV=development
-      - MONGO_URI=mongodb://mongodb:27017/financial_documents # Use service name 'mongodb'
-      - PORT=5000 # Port the app runs on *inside* the container
-      - DEBUG=true
-      # Add any other backend env vars needed
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=1
+      - MONGO_URI=mongodb://mongodb:27017/financial_documents
     volumes:
-      - ./:/app # Mount current directory to /app in container for hot-reloading
-      - /app/node_modules # Exclude backend node_modules if they exist in root
-      - /app/frontend/node_modules # Exclude frontend node_modules from volume mount
+      - ./:/app  # Mount the entire project for auto-reload
     depends_on:
-      - mongodb # Wait for mongodb service to start
-    networks:
-      - app-network
-    # Use python app.py directly for development hot-reloading
-    # For production, Dockerfile CMD uses gunicorn
-    command: python app.py
-
-  # MongoDB Service
+      - mongodb
+    command: flask run --host=0.0.0.0 --port=5000
+  
+  # MongoDB
   mongodb:
-    image: mongo:4.4 # Use specific MongoDB version
+    image: mongo:4.4
     ports:
-      - "27017:27017" # Map host 27017 to container 27017
+      - "27017:27017"
     volumes:
-      - mongodb_data:/data/db # Persist database data
-    networks:
-      - app-network
-    restart: unless-stopped # Restart policy
-
-  # Frontend Development Server
+      - mongodb_data:/data/db
+  
+  # Frontend development server with hot reload
   frontend:
-    # Build from the frontend directory if it has its own Dockerfile,
-    # otherwise use a standard node image.
-    # build:
-    #   context: ./frontend
-    #   dockerfile: Dockerfile.dev # Example if using a specific frontend Dockerfile
-    image: node:16 # Or your preferred Node version
+    image: node:16
     working_dir: /app/frontend
-    # Run install first, then start dev server
-    command: bash -c "npm install && npm start"
+    command: npm start
     ports:
-      - "3000:3000" # Map host 3000 to container 3000 (React default)
+      - "3000:3000"
     volumes:
-      # Mount frontend source code for hot-reloading
-      - ./frontend:/app/frontend
-      # Use a named volume or exclude node_modules to avoid overwriting container's node_modules
-      - /app/frontend/node_modules
+      - ./:/app 
     environment:
-      # Point API requests to the 'api' service within the Docker network
-      # Note: From the browser's perspective (localhost:3000), it still needs to hit localhost:5000
-      # So REACT_APP_API_URL should usually be the host machine's URL for the API
       - REACT_APP_API_URL=http://localhost:5000/api
-      - CHOKIDAR_USEPOLLING=true # Often helps with file watching in Docker
-      - WDS_SOCKET_PORT=0 # Fixes potential WebSocket issues with React Dev Server in Docker
-    networks:
-      - app-network
-    depends_on:
-      - api # Optional: wait for api service (doesn't guarantee API is ready)
+      - CHOKIDAR_USEPOLLING=true  # Better file watching in Docker
+      - WDS_SOCKET_PORT=0
 
-# Define the network
-networks:
-  app-network:
-    driver: bridge
-
-# Define named volumes for data persistence
 volumes:
   mongodb_data:
-    driver: local

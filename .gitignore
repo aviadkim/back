@@ -115,3 +115,7 @@ Thumbs.db
 # Virtual environment
 .venv/
 venv/
+
+
+# Frontend build output
+frontend/build/
