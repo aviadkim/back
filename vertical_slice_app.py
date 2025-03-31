@@ -101,9 +101,11 @@ def get_documents():
     documents = []
     
     # If upload folder exists, add files to the list
-    if os.path.exists(UPLOAD_FOLDER):
-        for filename in os.listdir(UPLOAD_FOLDER):
-            if os.path.isfile(os.path.join(UPLOAD_FOLDER, filename)):
+    # Use the configured upload folder from app.config
+    upload_folder_path = app.config.get('UPLOAD_FOLDER', 'uploads')
+    if os.path.exists(upload_folder_path):
+        for filename in os.listdir(upload_folder_path):
+            if os.path.isfile(os.path.join(upload_folder_path, filename)):
                 doc_type = "unknown"
                 if filename.lower().endswith('.pdf'):
                     doc_type = "PDF"

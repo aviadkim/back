@@ -4,15 +4,11 @@ services:
   app:
     build: .
     ports:
-      - "${PORT:-8080}:8080"
-    env_file:
-      - .env
+      - "5000:5000"
     volumes:
-      - ./uploads:/app/uploads
-      - ./logs:/app/logs
+      - ./:/app
     depends_on:
       - mongodb
-    restart: always
     environment:
       - MONGO_URI=mongodb://mongodb:27017/financial_documents
 
@@ -22,7 +18,6 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    restart: always
 
 volumes:
   mongodb_data:

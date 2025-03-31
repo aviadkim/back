@@ -191,7 +191,13 @@ case $ENVIRONMENT in
     # Copy the appropriate .env file
     cp $ENV_FILE .env
 
-    # For development, just start the Flask app and React dev server
+    # Start MongoDB container using docker-compose
+    echo "Starting MongoDB container..."
+    docker-compose -f docker-compose.yml up -d mongodb
+    echo "Waiting a few seconds for MongoDB to initialize..."
+    sleep 5 # Give MongoDB a moment to start
+
+    # Start the Flask app
     echo "Starting backend server..."
     python app.py &
     BACKEND_PID=$!

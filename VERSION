@@ -1,9 +1,15 @@
-6.0.0
+6.1.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
 Release Date: March 31, 2025 # Update release date if needed
 Developed by: Aviad Kim
+
+Major Changes (v6.1.0):
+- Upgraded PyPDF2 to pypdf dependency.
+- Added opencv-python-headless dependency.
+- Fixed test setup issues (conftest.py, test imports, API endpoints).
+- Created placeholder service files to resolve import errors during testing.
 
 Major Changes (v6.0.0):
 - Standardized configuration management (`config/configuration.py`, `.env` files).
