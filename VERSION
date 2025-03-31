@@ -1,9 +1,17 @@
-6.3.0
+6.4.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
 Release Date: March 31, 2025 # Update release date if needed
 Developed by: Aviad Kim
+
+Major Changes (v6.4.0):
+- Implemented ISIN detection (`pdf_processor/analysis/isin_detector.py`).
+- Implemented enhanced table extraction (`pdf_processor/tables/enhanced_table_extractor.py`).
+- Implemented main PDF processor (`pdf_processor/processor.py`).
+- Implemented Hebrew table detection (`pdf_processor/tables/hebrew_table_detector.py`).
+- Added frontend components: `CustomDashboardBuilder`, `NaturalLanguageQueryInterface`, `DocumentViewer`, `Dashboard`.
+- Added corresponding CSS files for frontend components.
 
 Major Changes (v6.3.0):
 - Added placeholder frontend component for Custom Table Builder.
