@@ -6,7 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 // Import pages
 import HomePage from './pages/HomePage'; // Assuming this will be created
-import DashboardPage from './pages/Dashboard'; // Renamed import
+// import DashboardPage from './pages/Dashboard'; // Remove old page import
+import Dashboard from './components/Dashboard'; // Import the new Dashboard component
 import UploadPage from './pages/UploadPage'; // Assuming this exists or will be created
 import DocumentsPage from './pages/DocumentsPage'; // Assuming this exists or will be created
 import DocumentViewPage from './pages/DocumentViewPage'; // Assuming this exists or will be created
@@ -79,7 +80,7 @@ function App() {
         <Routes>
           {/* Define application routes */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<Dashboard />} /> {/* Use the new Dashboard component */}
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/document/:documentId" element={<DocumentViewPage />} />

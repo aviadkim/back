@@ -1,188 +1,260 @@
 import React, { useState } from 'react';
+import { Form, Button, ProgressBar, Alert, Card, Spinner } from 'react-bootstrap'; // Add Spinner import
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUpload, faFilePdf, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons'; // Use faFilePdf
 import axios from 'axios';
+import './DocumentUploader.css';
 
-/**
- * Document Uploader Component
- * 
- * Allows users to upload financial documents for analysis
- */
-const DocumentUploader = ({ onUploadSuccess }) => {
-  const [file, setFile] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+const DocumentUploader = ({ onSuccess }) => {
+  const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [language, setLanguage] = useState('he');
-  const [error, setError] = useState('');
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [language, setLanguage] = useState('auto'); // Default language
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    setError('');
+  const handleFileSelect = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    
+    // Filter for PDF files only
+    const pdfFiles = selectedFiles.filter(file => 
+      file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    );
+    
+    // Reset success message
+    setUploadSuccess(false);
+
+    if (pdfFiles.length !== selectedFiles.length) {
+      setUploadError('Only PDF files are supported. Non-PDF files were excluded.');
+    } else {
+      setUploadError(null); // Clear error if only PDFs were selected
+    }
+    
+    // Add only new, unique PDF files (prevent duplicates)
+    setFiles(prevFiles => {
+         const newFiles = pdfFiles.filter(newFile => !prevFiles.some(existingFile => existingFile.name === newFile.name && existingFile.size === newFile.size));
+         return [...prevFiles, ...newFiles];
+    });
+
+    // Clear the input value to allow selecting the same file again after removal
+    e.target.value = null; 
   };
 
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
+  const handleRemoveFile = (indexToRemove) => {
+    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    if (!file) {
-      setError('נא לבחור קובץ להעלאה');
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      setUploadError('Please select at least one PDF file to upload.');
       return;
     }
-    
-    // Check file type
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    const allowedExtensions = ['pdf', 'docx', 'xlsx', 'csv'];
-    
-    if (!allowedExtensions.includes(fileExtension)) {
-      setError(`סוג הקובץ אינו נתמך. סוגי קבצים מורשים: ${allowedExtensions.join(', ')}`);
-      return;
-    }
-    
-    // Check file size
-    const maxSize = 20 * 1024 * 1024; // 20MB
-    if (file.size > maxSize) {
-      setError('הקובץ גדול מדי. יש להעלות קבצים עד 20MB');
-      return;
-    }
-    
-    setIsUploading(true);
+
+    setUploading(true);
     setUploadProgress(0);
-    
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('language', language);
-    
+    setUploadError(null);
+    setUploadSuccess(false);
+
+    const totalFiles = files.length;
+    let filesUploadedSuccessfully = 0;
+    let firstError = null;
+
     try {
-      const response = await axios.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setUploadProgress(progress);
+      // Upload files one by one to track progress accurately
+      for (let i = 0; i < totalFiles; i++) {
+        const currentFile = files[i];
+        const formData = new FormData();
+        formData.append('file', currentFile);
+        // Include language if needed by the backend endpoint
+        // formData.append('language', language); 
+
+        try {
+             // Use the correct endpoint from vertical_slice_app.py
+             await axios.post('/api/upload', formData, { 
+               headers: {
+                 'Content-Type': 'multipart/form-data'
+               },
+               onUploadProgress: (progressEvent) => {
+                 // Calculate individual file progress
+                 const individualProgress = progressEvent.total ? (progressEvent.loaded / progressEvent.total) * 100 : 0;
+                 
+                 // Calculate overall progress based on files completed and current file progress
+                 const overallProgress = (((i + (progressEvent.loaded / progressEvent.total)) / totalFiles) * 100);
+                 setUploadProgress(Math.round(overallProgress));
+               }
+             });
+             filesUploadedSuccessfully++;
+        } catch (fileError) {
+             console.error(`Error uploading ${currentFile.name}:`, fileError);
+             if (!firstError) { // Store the first error encountered
+                  firstError = fileError.response?.data?.message || fileError.message || `Failed to upload ${currentFile.name}.`;
+             }
+             // Optionally break the loop on first error or continue uploading others
+             // break; 
         }
-      });
-      
-      // Reset the form
-      setFile(null);
-      setIsUploading(false);
-      setUploadProgress(0);
-      
-      // Call the success callback
-      if (onUploadSuccess) {
-        onUploadSuccess(response.data);
       }
+
+      if (filesUploadedSuccessfully === totalFiles) {
+           // All files uploaded successfully
+           setUploadSuccess(true);
+           setFiles([]); // Clear file list on full success
+           setUploadProgress(100);
+           if (onSuccess) {
+             onSuccess(); // Notify parent component
+           }
+      } else {
+           // Handle partial success / errors
+           setUploadError(firstError || `Uploaded ${filesUploadedSuccessfully}/${totalFiles} files successfully. Some uploads failed.`);
+           // Optionally keep failed files in the list for retry? For now, clear list.
+           // setFiles([]); 
+      }
+
     } catch (error) {
-      setError(error.response?.data?.error || 'שגיאה בהעלאת הקובץ, אנא נסו שוב.');
-      setIsUploading(false);
+      // Catch unexpected errors during the loop setup (less likely)
+      console.error('General upload error:', error);
+      setUploadError('An unexpected error occurred during upload.');
+    } finally {
+      setUploading(false);
+      // Don't reset progress to 0 immediately, let user see 100% or error state
+      // setUploadProgress(0); 
     }
   };
-  
+
+  const renderFileList = () => {
+    if (files.length === 0) {
+      return <p className="text-center text-muted mt-3">No files selected.</p>;
+    }
+
+    return (
+      <Card className="mt-3 mb-3 file-list-card">
+        <Card.Header className="py-2 small">Selected Files ({files.length})</Card.Header>
+        <Card.Body className="p-2">
+          <ul className="list-unstyled file-list mb-0">
+            {files.map((file, index) => (
+              <li key={index} className="file-item d-flex justify-content-between align-items-center p-2 border-bottom">
+                <div className="file-info d-flex align-items-center overflow-hidden">
+                  <FontAwesomeIcon icon={faFilePdf} className="file-icon me-2 text-danger" />
+                  <span className="file-name text-truncate" title={file.name}>{file.name}</span>
+                  <span className="file-size text-muted ms-2 small flex-shrink-0">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                </div>
+                <Button 
+                  variant="outline-danger" 
+                  size="sm" 
+                  className="ms-2 flex-shrink-0"
+                  onClick={() => handleRemoveFile(index)}
+                  disabled={uploading}
+                  title="Remove file"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card.Body>
+      </Card>
+    );
+  };
+
   return (
-    <div className="upload-container bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-primary-600">העלאת מסמך פיננסי</h2>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+    <div className="document-uploader">
+      <div className="upload-area p-4 border rounded bg-light">
+        <div className="text-center mb-4">
+          <h4 className="mb-1">Upload Financial Documents</h4>
+          <p className="text-muted small mb-0">Upload your PDF documents for analysis</p>
         </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="file-input-container border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
-          <input
-            type="file"
-            id="document-file"
-            onChange={handleFileChange}
-            className="hidden"
-            disabled={isUploading}
-          />
-          
-          <label 
-            htmlFor="document-file" 
-            className="cursor-pointer block"
-          >
-            {file ? (
-              <div className="flex flex-col items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span className="font-medium text-primary-800">{file.name}</span>
-                <span className="text-sm text-gray-500">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <span className="text-primary-600 font-medium">לחץ לבחירת קובץ</span>
-                <span className="text-sm text-gray-500 mt-1">
-                  או גרור קובץ לכאן
-                </span>
-                <span className="text-xs text-gray-400 mt-2">
-                  תומך בקבצי PDF, DOCX, XLSX, CSV עד 20MB
-                </span>
-              </div>
-            )}
-          </label>
-        </div>
-        
-        <div className="language-selector">
-          <label htmlFor="language-select" className="block text-sm font-medium text-gray-700 mb-1">
-            שפת המסמך
-          </label>
-          <select
-            id="language-select"
-            value={language}
-            onChange={handleLanguageChange}
-            disabled={isUploading}
-            className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="he">עברית</option>
-            <option value="en">אנגלית</option>
-            <option value="auto">זיהוי אוטומטי</option>
-          </select>
-        </div>
-        
-        {isUploading && (
-          <div className="upload-progress">
-            <div className="relative pt-1">
-              <div className="flex mb-2 items-center justify-between">
-                <div>
-                  <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary-600 bg-primary-200">
-                    מעלה...
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-semibold inline-block text-primary-600">
-                    {uploadProgress}%
-                  </span>
-                </div>
-              </div>
-              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary-200">
-                <div 
-                  style={{ width: `${uploadProgress}%` }}
-                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500 transition-all duration-300"
-                ></div>
-              </div>
-            </div>
-          </div>
+
+        {/* Success/Error Alerts */}
+        {uploadSuccess && (
+          <Alert variant="success" onClose={() => setUploadSuccess(false)} dismissible className="d-flex align-items-center">
+            <FontAwesomeIcon icon={faCheck} className="me-2" /> Documents uploaded successfully!
+          </Alert>
         )}
-        
-        <div className="submit-container">
-          <button
-            type="submit"
-            disabled={!file || isUploading}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+        {uploadError && (
+          <Alert variant="danger" onClose={() => setUploadError(null)} dismissible>
+            {uploadError}
+          </Alert>
+        )}
+
+        <Form>
+          {/* Language Selection (Optional based on backend needs) */}
+          {/* 
+          <Form.Group className="mb-3">
+            <Form.Label className="small mb-1">Document Language</Form.Label>
+            <Form.Select 
+              size="sm"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              disabled={uploading}
+            >
+              <option value="auto">Auto-detect</option>
+              <option value="heb">Hebrew</option>
+              <option value="eng">English</option>
+              <option value="mixed">Mixed (Hebrew & English)</option>
+            </Form.Select>
+            <Form.Text className="text-muted small">
+              Helps improve text recognition accuracy.
+            </Form.Text>
+          </Form.Group> 
+          */}
+
+          {/* Drop Zone */}
+          <div 
+             className="upload-drop-zone border-dashed p-4 text-center mb-3" 
+             onClick={() => !uploading && document.getElementById('fileInput').click()} // Prevent click during upload
+             role="button" 
+             tabIndex="0"
+             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !uploading && document.getElementById('fileInput').click()} // Accessibility
           >
-            {isUploading ? 'מעלה...' : 'העלאה וניתוח'}
-          </button>
-        </div>
-      </form>
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              accept=".pdf,application/pdf" // More specific accept types
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+              disabled={uploading}
+            />
+            <div className="upload-icon mb-2">
+              <FontAwesomeIcon icon={faUpload} size="2x" className="text-secondary" />
+            </div>
+            <p className="mb-1">Drag & drop PDF files here or click to browse</p>
+            <p className="small text-muted mb-0">(Only PDF files are supported)</p>
+          </div>
+
+          {/* File List */}
+          {renderFileList()}
+
+          {/* Progress Bar */}
+          {uploading && (
+            <div className="mt-3 mb-3">
+              <ProgressBar 
+                now={uploadProgress} 
+                label={`${uploadProgress}%`} 
+                animated={uploadProgress < 100} 
+                variant="info" // Use a different variant for progress
+              />
+              <p className="text-center small mt-1 text-muted">Uploading {files.length} file(s)...</p>
+            </div>
+          )}
+
+          {/* Upload Button */}
+          <div className="d-grid gap-2 mt-3">
+            <Button 
+              variant="primary" 
+              size="lg" 
+              onClick={handleUpload}
+              disabled={uploading || files.length === 0}
+            >
+              {uploading ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                  Uploading...
+                </>
+              ) : `Upload ${files.length} Document${files.length !== 1 ? 's' : ''}`}
+            </Button>
+          </div>
+        </Form>
+      </div>
     </div>
   );
 };

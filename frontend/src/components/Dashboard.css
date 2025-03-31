@@ -1,0 +1,89 @@
+.dashboard-container {
+  padding: 20px;
+}
+
+.dashboard-stat-card {
+  text-align: center;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none; /* Remove default border if using shadows */
+  background-color: #fff; /* Ensure background color */
+  height: 100%; /* Make cards in a row equal height */
+}
+
+.dashboard-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-stat-card .card-title {
+  font-size: 0.9rem;
+  color: #6c757d; /* Bootstrap's secondary text color */
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 2.5rem; /* Larger value */
+  font-weight: bold;
+  color: #2c3e50; /* Darker color */
+  line-height: 1.2;
+}
+
+/* Status badge styles */
+.status-badge {
+  padding: 5px 10px; /* Adjusted padding */
+  border-radius: 20px; /* Pill shape */
+  font-size: 0.8rem; /* Slightly larger */
+  font-weight: bold;
+  text-transform: uppercase;
+  display: inline-block;
+  border: none; /* Remove border if using background colors */
+}
+
+.status-completed,
+.status-processed {
+  background-color: #d1e7dd; /* Bootstrap success background */
+  color: #0f5132; /* Bootstrap success text */
+}
+
+.status-processing,
+.status-pending {
+  background-color: #fff3cd; /* Bootstrap warning background */
+  color: #664d03; /* Bootstrap warning text */
+}
+
+.status-failed,
+.status-error {
+  background-color: #f8d7da; /* Bootstrap danger background */
+  color: #721c24; /* Bootstrap danger text */
+}
+
+.status-unknown {
+  background-color: #e2e3e5; /* Bootstrap secondary background */
+  color: #41464b; /* Bootstrap secondary text */
+}
+
+/* Action buttons in table */
+.action-buttons {
+  display: flex;
+  gap: 5px; /* Space between buttons */
+  white-space: nowrap; /* Prevent buttons from wrapping */
+}
+
+/* Ensure charts are responsive */
+.card-body canvas {
+  max-width: 100%;
+  height: auto !important; /* Override potential fixed height */
+}
+
+/* Adjust table cell padding for better spacing */
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* RTL support utility class */
+.rtl-content {
+  direction: rtl;
+  text-align: right;
+}

@@ -1,0 +1,115 @@
+.document-viewer {
+  padding: 20px;
+}
+
+.page-spinner {
+  display: block;
+  margin: 50px auto;
+}
+
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow-x: auto; /* Allow horizontal scroll if PDF is wide */
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* Style the react-pdf Page component */
+.react-pdf__Page__canvas {
+  margin: 0 auto; /* Center canvas */
+  max-width: 100%;
+  height: auto !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.page-info {
+  margin: 0 15px;
+  font-size: 14px;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.split-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Default to two columns */
+  gap: 20px;
+  height: calc(100vh - 250px); /* Adjust height based on surrounding elements */
+  overflow: hidden; /* Hide overflow at the grid level */
+  margin-top: 15px;
+}
+
+.original-panel, .extracted-panel {
+  overflow-y: auto; /* Allow vertical scrolling within panels */
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  height: 100%; /* Make panels fill the grid row height */
+  background-color: #fff; /* Ensure background for panels */
+}
+
+.text-viewer {
+  height: 100%; /* Fill the panel */
+  overflow-y: auto; /* Scroll within the card if needed */
+}
+
+.extracted-text {
+  white-space: pre-wrap; /* Preserve whitespace and wrap text */
+  word-wrap: break-word;
+  font-family: 'Roboto Mono', monospace; /* Use a suitable monospace font */
+  font-size: 14px; /* Adjust as needed */
+  direction: rtl; /* Default to RTL based on feedback */
+  text-align: right; /* Align text to the right */
+  line-height: 1.5;
+}
+
+.tables-container {
+  height: 100%; /* Fill the panel */
+  overflow-y: auto; /* Scroll within the panel */
+}
+
+.financial-data {
+  padding: 15px;
+}
+
+/* RTL support utility class (can be applied where needed) */
+.rtl-text {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Responsive design for split view */
+@media (max-width: 992px) {
+  .split-view {
+    grid-template-columns: 1fr; /* Stack columns vertically */
+    grid-template-rows: auto auto; /* Adjust rows automatically */
+    height: auto; /* Allow height to adjust */
+    overflow: visible; /* Remove grid overflow hiding */
+  }
+
+  .original-panel, .extracted-panel {
+     max-height: 60vh; /* Limit height on smaller screens */
+  }
+}
+
+/* Ensure Bootstrap table styles apply correctly */
+.table-sm th, .table-sm td {
+  padding: 0.4rem;
+  font-size: 0.85em;
+}
+
+.list-inline-item.badge {
+  font-size: 0.9em;
+  padding: 0.4em 0.6em;
+}
