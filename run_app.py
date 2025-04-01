@@ -1,68 +1,42 @@
 #!/usr/bin/env python
+"""
+Launcher for the Financial Document Analysis System
+"""
 import os
 import sys
-import time
-import webbrowser
-import threading
+from flask import Flask, send_from_directory
 
-# Create required directories
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("data/embeddings", exist_ok=True)
-os.makedirs("logs", exist_ok=True)
-
-# Set default AWS environment variables to avoid errors
-if 'AWS_ACCESS_KEY_ID' not in os.environ:
-    os.environ['AWS_ACCESS_KEY_ID'] = 'codespace_dummy_key'
-    
-if 'AWS_SECRET_ACCESS_KEY' not in os.environ:
-    os.environ['AWS_SECRET_ACCESS_KEY'] = 'codespace_dummy_secret'
-    
-if 'AWS_REGION' not in os.environ:
-    os.environ['AWS_REGION'] = 'us-east-1'
-
-# Set development environment variables
-os.environ['FLASK_ENV'] = 'development'
-os.environ['USE_DYNAMODB'] = 'false'  # Disable DynamoDB in development
-os.environ['LLM_PROVIDER'] = 'openai'  # Default to OpenAI if not set
-
-# Disable any services that might cause issues
-os.environ['SKIP_VECTOR_SEARCH'] = 'true'  # Skip vector search initialization
-os.environ['DISABLE_AWS_SERVICES'] = 'true'  # Disable AWS service initialization
-
-# Open browser function
-def open_browser():
-    time.sleep(2)  # Wait for app to start
-    print("\nOpening browser...")
-    webbrowser.open('http://localhost:5000')
-
-# Print startup message
-print("Starting application in development mode...")
-print("Environment variables configured for local development")
-print("Browser will open automatically")
-
-# Start browser thread
-threading.Thread(target=open_browser).start()
-
-# Import and run application
+# Try to import the app
 try:
-    # Try to patch any problematic modules before importing the app
-    # This helps avoid import errors for missing optional dependencies
-    import sys
-    import importlib.util
-    
-    # Check if app module exists
-    if not importlib.util.find_spec("app"):
-        print("Error: app.py not found in current directory")
-        sys.exit(1)
-    
-    # Import app and run
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from app import app
-    app.run(debug=True, host='0.0.0.0', port=5000)
-except ModuleNotFoundError as e:
-    missing_module = str(e).split("'")[1]
-    print(f"Error: Missing module '{missing_module}'")
-    print(f"Try installing it with: pip install {missing_module}")
-    sys.exit(1)
+    print("Successfully imported app from app.py")
 except Exception as e:
-    print(f"Error starting application: {e}")
-    sys.exit(1)
+    print(f"Error importing app: {e}")
+    print("Creating a new Flask app")
+    app = Flask(__name__, 
+               static_folder='frontend/build',
+               static_url_path='')
+    
+    # Try to import blueprints
+    try:
+        from routes.document import document_api
+        app.register_blueprint(document_api, url_prefix='/api')
+        print("Registered document_api blueprint")
+    except ImportError as e:
+        print(f"Could not import document_api: {e}")
+
+# Add route to serve frontend
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join('frontend/build', path)):
+        return send_from_directory('frontend/build', path)
+    else:
+        return send_from_directory('frontend/build', 'index.html')
+
+if __name__ == '__main__':
+    port = 5001
+    print(f"Starting server on port {port}")
+    print(f"The application will be available at http://localhost:{port}")
+    app.run(host='0.0.0.0', port=port, debug=True)

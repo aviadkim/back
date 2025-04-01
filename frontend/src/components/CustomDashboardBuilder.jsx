@@ -1,36 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Tabs, Tab, ListGroup, Badge } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Tabs, Tab } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Table } from 'react-bootstrap'; // Moved import to top
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 import axios from 'axios';
-import './CustomDashboardBuilder.css'; // Assuming this CSS file exists
-
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
+import './CustomDashboardBuilder.css';
 
 const chartTypes = [
   { id: 'bar', name: 'Bar Chart', icon: 'chart-bar' },
@@ -46,9 +19,6 @@ const widgetSizes = [
   { id: 'large', name: 'Large', cols: 12 }
 ];
 
-// Helper function to generate unique IDs
-const generateId = () => `widget-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
 const CustomDashboardBuilder = () => {
   const [documents, setDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -61,131 +31,73 @@ const CustomDashboardBuilder = () => {
     size: 'medium',
     dataSource: {
       documentIds: [],
-      filters: [], // Placeholder for future filter implementation
-      fields: [] // Used for table type
+      filters: [],
+      fields: []
     },
     config: {
       xAxis: '',
       yAxis: '',
-      groupBy: '' // Optional grouping field
+      groupBy: ''
     }
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [previewData, setPreviewData] = useState({}); // Store preview data per widget ID
+  const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dashboardName, setDashboardName] = useState('New Dashboard');
   const [activeTabKey, setActiveTabKey] = useState('design');
-  const [previewMode, setPreviewMode] = useState(false); // Controls if preview tab shows saved state or live preview
-  const [loadingDocuments, setLoadingDocuments] = useState(false);
-  const [loadingFields, setLoadingFields] = useState(false);
-  const [loadingPreview, setLoadingPreview] = useState(false);
-  const [loadingSave, setLoadingSave] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
 
+  useEffect(() => {
+    // Load documents when component mounts
+    fetchDocuments();
+  }, []);
 
-  // Fetch documents on mount
-  const fetchDocuments = useCallback(async () => {
-    setLoadingDocuments(true);
-    setError(null);
+  useEffect(() => {
+    // Update available fields when selected documents change
+    if (selectedDocuments.length > 0) {
+      fetchAvailableFields(selectedDocuments);
+    } else {
+      setAvailableFields([]);
+    }
+  }, [selectedDocuments]);
+
+  const fetchDocuments = async () => {
     try {
-      // TODO: Replace with actual API endpoint
-      // const response = await axios.get('/api/documents');
-      // Mock data for now
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-      const response = {
-          data: [
-              { _id: 'doc1', originalFileName: 'Report_Q1_2024.pdf', processingStatus: 'completed' },
-              { _id: 'doc2', originalFileName: 'Financial_Statement_2023.pdf', processingStatus: 'completed' },
-              { _id: 'doc3', originalFileName: 'Investment_Summary.pdf', processingStatus: 'pending' },
-              { _id: 'doc4', originalFileName: 'Analysis_Market_Trends.pdf', processingStatus: 'completed' },
-          ]
-      };
+      const response = await axios.get('/api/documents');
 
+      // Filter for processed documents only
       const processedDocs = response.data.filter(doc => doc.processingStatus === 'completed');
       setDocuments(processedDocs);
     } catch (error) {
       console.error('Error fetching documents:', error);
       setError('Failed to load documents. Please try again.');
-    } finally {
-      setLoadingDocuments(false);
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    fetchDocuments();
-  }, [fetchDocuments]);
-
-  // Fetch available fields when selected documents change
-  const fetchAvailableFields = useCallback(async (documentIds) => {
-    if (!documentIds || documentIds.length === 0) {
-      setAvailableFields([]);
-      return;
-    }
-    setLoadingFields(true);
-    setError(null);
+  const fetchAvailableFields = async (documentIds) => {
     try {
-      // TODO: Replace with actual API endpoint
-      // const response = await axios.post('/api/documents/fields', { documentIds });
-      // Mock data based on selected docs
-      await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network delay
-      let fields = [
-          { id: 'field_date', name: 'Date', type: 'date' },
-          { id: 'field_category', name: 'Category', type: 'text' },
-          { id: 'field_amount', name: 'Amount', type: 'numeric' },
-          { id: 'field_isin', name: 'ISIN', type: 'text' },
-      ];
-      if (documentIds.includes('doc2')) {
-          fields.push({ id: 'field_balance', name: 'Balance', type: 'numeric' });
-          fields.push({ id: 'field_currency', name: 'Currency', type: 'text' });
-      }
-       if (documentIds.includes('doc4')) {
-          fields.push({ id: 'field_trend', name: 'Trend Score', type: 'numeric' });
-          fields.push({ id: 'field_sector', name: 'Sector', type: 'text' });
-      }
-      // Remove duplicates just in case
-      const uniqueFields = Array.from(new Map(fields.map(item => [item.id, item])).values());
-      setAvailableFields(uniqueFields);
-
+      const response = await axios.post('/api/documents/fields', { documentIds });
+      setAvailableFields(response.data.fields);
     } catch (error) {
       console.error('Error fetching fields:', error);
       setError('Failed to load document fields. Please try again.');
-      setAvailableFields([]); // Clear fields on error
-    } finally {
-      setLoadingFields(false);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchAvailableFields(selectedDocuments);
-  }, [selectedDocuments, fetchAvailableFields]);
-
-  // Reset current widget form
-  const resetCurrentWidget = useCallback(() => {
-      setCurrentWidget({
-        id: '',
-        title: '',
-        type: 'bar',
-        size: 'medium',
-        dataSource: {
-          documentIds: selectedDocuments, // Keep selected docs
-          filters: [],
-          fields: []
-        },
-        config: {
-          xAxis: '',
-          yAxis: '',
-          groupBy: ''
-        }
-      });
-      setIsEditing(false);
-      // Don't clear preview data here, it's per widget
-  }, [selectedDocuments]);
+  };
 
   const handleDocumentSelection = (e) => {
-    const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+    const options = e.target.options;
+    const selectedValues = [];
+
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectedValues.push(options[i].value);
+      }
+    }
+
     setSelectedDocuments(selectedValues);
 
-    // Update current widget's document selection immediately
+    // Update current widget's document selection
     setCurrentWidget(prev => ({
       ...prev,
       dataSource: {
@@ -197,6 +109,7 @@ const CustomDashboardBuilder = () => {
 
   const handleFieldSelection = (fieldType, e) => {
     const fieldId = e.target.value;
+
     setCurrentWidget(prev => ({
       ...prev,
       config: {
@@ -206,31 +119,10 @@ const CustomDashboardBuilder = () => {
     }));
   };
 
-   const handleTableFieldSelection = (e) => {
-        const selectedFields = Array.from(e.target.selectedOptions, option => option.value);
-        setCurrentWidget(prev => ({
-          ...prev,
-          dataSource: {
-            ...prev.dataSource,
-            fields: selectedFields
-          }
-        }));
-      };
-
   const handleWidgetTypeChange = (e) => {
     setCurrentWidget(prev => ({
       ...prev,
-      type: e.target.value,
-      // Reset config fields that might not apply to the new type
-      config: {
-          xAxis: prev.type === 'table' ? '' : prev.config.xAxis, // Keep if switching from non-table
-          yAxis: prev.type === 'table' ? '' : prev.config.yAxis,
-          groupBy: prev.type === 'table' ? '' : prev.config.groupBy,
-      },
-      dataSource: {
-          ...prev.dataSource,
-          fields: prev.type !== 'table' ? [] : prev.dataSource.fields // Keep if switching from table
-      }
+      type: e.target.value
     }));
   };
 
@@ -248,153 +140,85 @@ const CustomDashboardBuilder = () => {
     }));
   };
 
-  // Function to generate preview for the *current* widget config
-  const generateCurrentWidgetPreview = async () => {
-      // Basic validation before preview
-      if (!currentWidget.title) { setError('Widget title is required for preview'); return; }
-      if (currentWidget.dataSource.documentIds.length === 0) { setError('Please select at least one document'); return; }
-      if (currentWidget.type !== 'table' && (!currentWidget.config.xAxis || !currentWidget.config.yAxis)) { setError('X-Axis and Y-Axis fields are required for chart preview'); return; }
-      if (currentWidget.type === 'table' && currentWidget.dataSource.fields.length === 0) { setError('Please select fields for table preview'); return; }
-
-      setLoadingPreview(true);
-      setError(null);
-      const tempWidgetId = currentWidget.id || 'preview-widget'; // Use existing ID or a temp one
-
-      try {
-          // TODO: Replace with actual API endpoint
-          // const response = await axios.post('/api/dashboard/preview-widget', { ...currentWidget, id: tempWidgetId });
-
-          // Mock preview data generation
-          await new Promise(resolve => setTimeout(resolve, 700)); // Simulate network delay
-          const mockPreview = generateMockWidgetData(currentWidget, tempWidgetId);
-
-          setPreviewData(prev => ({
-              ...prev,
-              [tempWidgetId]: mockPreview // Store preview data by widget ID
-          }));
-
-      } catch (error) {
-          console.error('Error generating widget preview:', error);
-          setError('Failed to generate widget preview. Please check configuration.');
-          setPreviewData(prev => ({ ...prev, [tempWidgetId]: null })); // Clear preview on error
-      } finally {
-          setLoadingPreview(false);
-      }
-  };
-
-  // Mock data generation function
-  const generateMockWidgetData = (widgetConfig, widgetId) => {
-      const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-      const data = labels.map(() => Math.floor(Math.random() * 100));
-      const data2 = labels.map(() => Math.floor(Math.random() * 80));
-
-      const commonOptions = {
-          responsive: true,
-          maintainAspectRatio: false, // Allow chart to fill container
-          plugins: {
-              legend: { position: 'top' },
-              title: { display: true, text: widgetConfig.title },
-          },
-      };
-
-      switch (widgetConfig.type) {
-          case 'bar':
-          case 'line':
-              return {
-                  widgetId: widgetId,
-                  data: {
-                      labels,
-                      datasets: [
-                          { label: widgetConfig.config.yAxis || 'Dataset 1', data, backgroundColor: 'rgba(75, 192, 192, 0.6)' },
-                          ...(widgetConfig.config.groupBy ? [{ label: widgetConfig.config.groupBy || 'Dataset 2', data: data2, backgroundColor: 'rgba(255, 99, 132, 0.6)' }] : [])
-                      ],
-                  },
-                  options: commonOptions
-              };
-          case 'pie':
-          case 'doughnut':
-              return {
-                  widgetId: widgetId,
-                  data: {
-                      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-                      datasets: [{ data: [12, 19, 3, 5, 2], backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'] }],
-                  },
-                  options: commonOptions
-              };
-          case 'table':
-              const headers = widgetConfig.dataSource.fields.map(fieldId => availableFields.find(f => f.id === fieldId)?.name || fieldId);
-              const rows = Array.from({ length: 5 }, (_, i) =>
-                  headers.map(header => `${header} Data ${i + 1}`)
-              );
-              return {
-                  widgetId: widgetId,
-                  data: { headers, rows },
-                  options: {} // No specific options for table rendering here
-              };
-          default:
-              return { widgetId: widgetId, data: null, options: {} };
-      }
-  };
-
-
-  const handleAddOrUpdateWidget = async () => {
-    // Validation (similar to preview validation)
-    if (!currentWidget.title) { setError('Widget title is required'); return; }
-    if (currentWidget.dataSource.documentIds.length === 0) { setError('Please select at least one document'); return; }
-    if (currentWidget.type !== 'table' && (!currentWidget.config.xAxis || !currentWidget.config.yAxis)) { setError('X-Axis and Y-Axis fields are required'); return; }
-    if (currentWidget.type === 'table' && currentWidget.dataSource.fields.length === 0) { setError('Please select fields for the table'); return; }
-
-    setError(null);
-
-    const widgetToSave = {
-      ...currentWidget,
-      id: isEditing ? currentWidget.id : generateId() // Assign new ID if not editing
-    };
-
-    // Optimistically update UI or wait for preview? Let's update UI first.
-    if (isEditing) {
-      setWidgets(widgets.map(w => w.id === widgetToSave.id ? widgetToSave : w));
-    } else {
-      setWidgets([...widgets, widgetToSave]);
+  const handleAddWidget = async () => {
+    // Validate widget configuration
+    if (!currentWidget.title) {
+      setError('Widget title is required');
+      return;
     }
 
-    // Generate preview for the newly added/updated widget
-    setLoadingPreview(true);
-     try {
-          // const response = await axios.post('/api/dashboard/preview-widget', widgetToSave);
-          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-          const mockPreview = generateMockWidgetData(widgetToSave, widgetToSave.id);
-          setPreviewData(prev => ({ ...prev, [widgetToSave.id]: mockPreview }));
-     } catch (error) {
-         console.error('Error generating preview after add/update:', error);
-         // Keep the widget in the list, but maybe show a preview error?
-         setPreviewData(prev => ({ ...prev, [widgetToSave.id]: { error: 'Preview failed' } }));
-     } finally {
-         setLoadingPreview(false);
-     }
+    if (currentWidget.dataSource.documentIds.length === 0) {
+      setError('Please select at least one document');
+      return;
+    }
 
+    const requiredFields = currentWidget.type === 'table' ?
+      ['fields'] : ['xAxis', 'yAxis'];
 
-    resetCurrentWidget(); // Clear the form
+    for (const field of requiredFields) {
+      if (!currentWidget.config[field]) {
+        setError(`Please select a ${field.replace('Axis', ' axis')}`);
+        return;
+      }
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Generate preview data
+      const response = await axios.post('/api/dashboard/preview-widget', currentWidget);
+      setPreviewData(response.data);
+
+      // Add widget to dashboard
+      const newWidget = {
+        ...currentWidget,
+        id: isEditing ? currentWidget.id : `widget-${Date.now()}`
+      };
+
+      if (isEditing) {
+        // Update existing widget
+        setWidgets(widgets.map(w => w.id === newWidget.id ? newWidget : w));
+        setIsEditing(false);
+      } else {
+        // Add new widget
+        setWidgets([...widgets, newWidget]);
+      }
+
+      // Reset current widget
+      setCurrentWidget({
+        id: '',
+        title: '',
+        type: 'bar',
+        size: 'medium',
+        dataSource: {
+          documentIds: selectedDocuments,
+          filters: [],
+          fields: []
+        },
+        config: {
+          xAxis: '',
+          yAxis: '',
+          groupBy: ''
+        }
+      });
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error generating widget preview:', error);
+      setError('Failed to generate widget. Please check your configuration.');
+      setLoading(false);
+    }
   };
 
   const handleEditWidget = (widget) => {
     setCurrentWidget(widget);
     setIsEditing(true);
-    setSelectedDocuments(widget.dataSource.documentIds); // Sync selected docs
-    // Fetch fields again in case context changed, handled by useEffect
-  };
-
-  const handleCancelEdit = () => {
-      resetCurrentWidget();
+    setSelectedDocuments(widget.dataSource.documentIds);
   };
 
   const handleRemoveWidget = (widgetId) => {
     setWidgets(widgets.filter(w => w.id !== widgetId));
-    // Remove preview data for the deleted widget
-    setPreviewData(prev => {
-        const { [widgetId]: _, ...rest } = prev;
-        return rest;
-    });
   };
 
   const handleDragEnd = (result) => {
@@ -408,85 +232,151 @@ const CustomDashboardBuilder = () => {
   };
 
   const handleSaveDashboard = async () => {
-    if (!dashboardName.trim()) { setError('Dashboard name is required'); return; }
-    if (widgets.length === 0) { setError('Please add at least one widget'); return; }
+    if (!dashboardName) {
+      setError('Dashboard name is required');
+      return;
+    }
 
-    setLoadingSave(true);
+    if (widgets.length === 0) {
+      setError('Please add at least one widget to the dashboard');
+      return;
+    }
+
+    setLoading(true);
     setError(null);
 
     try {
       const dashboardData = {
         name: dashboardName,
         widgets: widgets,
-        // Add layout information if needed, e.g., widget order
-        layout: widgets.map(w => w.id),
         createdAt: new Date().toISOString()
       };
 
-      // TODO: Replace with actual API endpoint
-      // await axios.post('/api/dashboards', dashboardData);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate save
-      console.log('Dashboard saved:', dashboardData);
+      await axios.post('/api/dashboards', dashboardData);
 
-
-      // Switch to preview tab to show the saved state
+      // Navigate to dashboards list or show success message
+      setLoading(false);
       setActiveTabKey('preview');
-      setPreviewMode(true); // Indicate this is the saved state
+      setPreviewMode(true);
 
     } catch (error) {
       console.error('Error saving dashboard:', error);
       setError('Failed to save dashboard. Please try again.');
-    } finally {
-      setLoadingSave(false);
+      setLoading(false);
     }
   };
 
-  // Render a single widget based on its config and preview data
-  const renderWidget = (widget) => {
-      const widgetPreview = previewData[widget.id];
+  const renderWidgetPreview = (widget) => {
+    if (!widget || !widget.id) return null;
 
-      if (loadingPreview && currentWidget.id === widget.id) {
-          return <div className="d-flex justify-content-center align-items-center h-100"><Spinner animation="border" size="sm" /></div>;
-      }
+    // Find widget data in preview data
+    const widgetData = previewData?.find(data => data.widgetId === widget.id);
 
-      if (!widgetPreview || widgetPreview.error) {
-          return <div className="widget-preview-placeholder text-danger">{widgetPreview?.error || 'Preview not available'}</div>;
-      }
-      if (!widgetPreview.data) {
-           return <div className="widget-preview-placeholder">No data for preview</div>;
-      }
+    if (!widgetData || !widgetData.data) {
+      return (
+        <div className="widget-preview-placeholder">
+          <span>No data available for preview</span>
+        </div>
+      );
+    }
 
-      const chartOptions = { ...(widgetPreview.options || {}), maintainAspectRatio: false };
-
-      switch (widget.type) {
-          case 'bar': return <Bar data={widgetPreview.data} options={chartOptions} />;
-          case 'line': return <Line data={widgetPreview.data} options={chartOptions} />;
-          case 'pie': return <Pie data={widgetPreview.data} options={chartOptions} />;
-          case 'doughnut': return <Doughnut data={widgetPreview.data} options={chartOptions} />;
-          case 'table':
-              if (!widgetPreview.data.headers || !widgetPreview.data.rows) {
-                  return <div className="widget-preview-placeholder text-danger">Invalid table data format</div>;
+    switch (widget.type) {
+      case 'bar':
+        return (
+          <Bar
+            data={widgetData.data}
+            options={widgetData.options || {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: widget.title
+                }
               }
-              return (
-                  <div className="table-responsive widget-table-container">
-                      <Table striped bordered hover size="sm">
-                          <thead>
-                              <tr>{widgetPreview.data.headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
-                          </thead>
-                          <tbody>
-                              {widgetPreview.data.rows.map((row, i) => (
-                                  <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
-                              ))}
-                          </tbody>
-                      </Table>
-                  </div>
-              );
-          default: return <div className="widget-preview-placeholder">Unsupported type</div>;
-      }
+            }}
+          />
+        );
+
+      case 'line':
+        return (
+          <Line
+            data={widgetData.data}
+            options={widgetData.options || {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: widget.title
+                }
+              }
+            }}
+          />
+        );
+
+      case 'pie':
+        return (
+          <Pie
+            data={widgetData.data}
+            options={widgetData.options || {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: widget.title
+                }
+              }
+            }}
+          />
+        );
+
+      case 'doughnut':
+        return (
+          <Doughnut
+            data={widgetData.data}
+            options={widgetData.options || {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: widget.title
+                }
+              }
+            }}
+          />
+        );
+
+      case 'table':
+        return (
+          <div className="table-responsive">
+            <table className="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  {widgetData.data.headers.map((header, index) => (
+                    <th key={index}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {widgetData.data.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="widget-preview-placeholder">
+            <span>Unsupported widget type</span>
+          </div>
+        );
+    }
   };
-
-
-  // --- Render Functions for Tabs ---
 
   const renderDesignTab = () => (
     <Container fluid>
@@ -505,150 +395,250 @@ const CustomDashboardBuilder = () => {
       </Row>
 
       <Row>
-        {/* Configuration Column */}
         <Col md={4}>
-          <Card className="widget-config-card shadow-sm mb-4">
-            <Card.Header as="h5">{isEditing ? 'Edit Widget' : 'Configure New Widget'}</Card.Header>
+          <Card className="widget-config-card">
+            <Card.Header>Widget Configuration</Card.Header>
             <Card.Body>
               <Form>
-                {/* Widget Title */}
                 <Form.Group className="mb-3">
                   <Form.Label>Widget Title</Form.Label>
-                  <Form.Control type="text" value={currentWidget.title} onChange={handleWidgetTitleChange} placeholder="Enter widget title" />
+                  <Form.Control
+                    type="text"
+                    value={currentWidget.title}
+                    onChange={handleWidgetTitleChange}
+                    placeholder="Enter widget title"
+                  />
                 </Form.Group>
 
-                {/* Widget Type */}
                 <Form.Group className="mb-3">
                   <Form.Label>Widget Type</Form.Label>
-                  <Form.Select value={currentWidget.type} onChange={handleWidgetTypeChange}>
-                    {chartTypes.map(type => <option key={type.id} value={type.id}>{type.name}</option>)}
+                  <Form.Select
+                    value={currentWidget.type}
+                    onChange={handleWidgetTypeChange}
+                  >
+                    {chartTypes.map(type => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
-                {/* Widget Size */}
                 <Form.Group className="mb-3">
                   <Form.Label>Widget Size</Form.Label>
-                  <Form.Select value={currentWidget.size} onChange={handleWidgetSizeChange}>
-                    {widgetSizes.map(size => <option key={size.id} value={size.id}>{size.name}</option>)}
+                  <Form.Select
+                    value={currentWidget.size}
+                    onChange={handleWidgetSizeChange}
+                  >
+                    {widgetSizes.map(size => (
+                      <option key={size.id} value={size.id}>
+                        {size.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
-                {/* Data Source (Documents) */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Data Source (Documents)</Form.Label>
-                  {loadingDocuments ? <Spinner animation="border" size="sm" /> : (
-                    <Form.Select multiple value={selectedDocuments} onChange={handleDocumentSelection} style={{ height: '100px' }}>
-                      {documents.map(doc => <option key={doc._id} value={doc._id}>{doc.originalFileName}</option>)}
-                    </Form.Select>
-                  )}
-                  <Form.Text className="text-muted">Hold Ctrl/Cmd to select multiple.</Form.Text>
+                  <Form.Label>Data Source</Form.Label>
+                  <Form.Select
+                    multiple
+                    value={selectedDocuments}
+                    onChange={handleDocumentSelection}
+                    className="document-selector"
+                  >
+                    {documents.map(doc => (
+                      <option key={doc._id} value={doc._id}>
+                        {doc.originalFileName}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Text className="text-muted">
+                    Hold Ctrl (Windows) or Cmd (Mac) to select multiple documents
+                  </Form.Text>
                 </Form.Group>
 
-                {/* Fields Configuration */}
-                {loadingFields ? <Spinner animation="border" size="sm" /> : availableFields.length > 0 && (
+                {currentWidget.type !== 'table' && (
                   <>
-                    {currentWidget.type !== 'table' && (
-                      <>
-                        <Form.Group className="mb-3">
-                          <Form.Label>X-Axis</Form.Label>
-                          <Form.Select value={currentWidget.config.xAxis} onChange={(e) => handleFieldSelection('xAxis', e)}>
-                            <option value="">Select Field</option>
-                            {availableFields.map(f => <option key={f.id} value={f.id}>{f.name} ({f.type})</option>)}
-                          </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Y-Axis</Form.Label>
-                          <Form.Select value={currentWidget.config.yAxis} onChange={(e) => handleFieldSelection('yAxis', e)}>
-                            <option value="">Select Field</option>
-                            {availableFields.filter(f => f.type === 'numeric').map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                          </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Group By (Optional)</Form.Label>
-                          <Form.Select value={currentWidget.config.groupBy} onChange={(e) => handleFieldSelection('groupBy', e)}>
-                            <option value="">No Grouping</option>
-                            {availableFields.map(f => <option key={f.id} value={f.id}>{f.name} ({f.type})</option>)}
-                          </Form.Select>
-                        </Form.Group>
-                      </>
-                    )}
-                    {currentWidget.type === 'table' && (
-                      <Form.Group className="mb-3">
-                        <Form.Label>Table Fields</Form.Label>
-                        <Form.Select multiple value={currentWidget.dataSource.fields} onChange={handleTableFieldSelection} style={{ height: '100px' }}>
-                          {availableFields.map(f => <option key={f.id} value={f.id}>{f.name} ({f.type})</option>)}
-                        </Form.Select>
-                         <Form.Text className="text-muted">Hold Ctrl/Cmd to select multiple.</Form.Text>
-                      </Form.Group>
-                    )}
+                    <Form.Group className="mb-3">
+                      <Form.Label>X-Axis</Form.Label>
+                      <Form.Select
+                        value={currentWidget.config.xAxis}
+                        onChange={(e) => handleFieldSelection('xAxis', e)}
+                      >
+                        <option value="">Select X-Axis Field</option>
+                        {availableFields.map(field => (
+                          <option key={field.id} value={field.id}>
+                            {field.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Y-Axis</Form.Label>
+                      <Form.Select
+                        value={currentWidget.config.yAxis}
+                        onChange={(e) => handleFieldSelection('yAxis', e)}
+                      >
+                        <option value="">Select Y-Axis Field</option>
+                        {availableFields.filter(f => f.type === 'numeric').map(field => (
+                          <option key={field.id} value={field.id}>
+                            {field.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Group By (Optional)</Form.Label>
+                      <Form.Select
+                        value={currentWidget.config.groupBy}
+                        onChange={(e) => handleFieldSelection('groupBy', e)}
+                      >
+                        <option value="">No Grouping</option>
+                        {availableFields.map(field => (
+                          <option key={field.id} value={field.id}>
+                            {field.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
                   </>
                 )}
-                 {availableFields.length === 0 && selectedDocuments.length > 0 && !loadingFields && (
-                     <Alert variant="warning" size="sm">No fields available for the selected document(s).</Alert>
-                 )}
 
+                {currentWidget.type === 'table' && (
+                  <Form.Group className="mb-3">
+                    <Form.Label>Table Fields</Form.Label>
+                    <Form.Select
+                      multiple
+                      value={currentWidget.dataSource.fields}
+                      onChange={(e) => {
+                        const options = e.target.options;
+                        const selectedFields = [];
 
-                {/* Action Buttons */}
-                <div className="d-flex justify-content-between mt-4">
-                   <Button variant="secondary" onClick={generateCurrentWidgetPreview} disabled={loadingPreview || loadingFields}>
-                       {loadingPreview ? <Spinner animation="border" size="sm" /> : 'Preview Widget'}
-                   </Button>
-                   <div className="d-flex gap-2">
-                       {isEditing && <Button variant="outline-secondary" size="sm" onClick={handleCancelEdit}>Cancel Edit</Button>}
-                       <Button variant="primary" onClick={handleAddOrUpdateWidget} disabled={loadingPreview || loadingFields}>
-                           {isEditing ? 'Update Widget' : 'Add Widget'}
-                       </Button>
-                   </div>
+                        for (let i = 0; i < options.length; i++) {
+                          if (options[i].selected) {
+                            selectedFields.push(options[i].value);
+                          }
+                        }
+
+                        setCurrentWidget(prev => ({
+                          ...prev,
+                          dataSource: {
+                            ...prev.dataSource,
+                            fields: selectedFields
+                          }
+                        }));
+                      }}
+                      className="field-selector"
+                    >
+                      {availableFields.map(field => (
+                        <option key={field.id} value={field.id}>
+                          {field.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Text className="text-muted">
+                      Hold Ctrl (Windows) or Cmd (Mac) to select multiple fields
+                    </Form.Text>
+                  </Form.Group>
+                )}
+
+                <div className="d-grid gap-2">
+                  <Button
+                    variant="primary"
+                    onClick={handleAddWidget}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : isEditing ? (
+                      'Update Widget'
+                    ) : (
+                      'Add Widget'
+                    )}
+                  </Button>
                 </div>
               </Form>
             </Card.Body>
           </Card>
         </Col>
 
-        {/* Dashboard Layout Column */}
         <Col md={8}>
-          <Card className="dashboard-preview-card shadow-sm">
-            <Card.Header as="h5">Dashboard Layout</Card.Header>
+          <Card className="dashboard-preview-card">
+            <Card.Header>Dashboard Layout</Card.Header>
             <Card.Body>
-              {error && <Alert variant="danger" onClose={() => setError(null)} dismissible>{error}</Alert>}
+              {error && (
+                <Alert variant="danger" onClose={() => setError(null)} dismissible>
+                  {error}
+                </Alert>
+              )}
 
               {widgets.length === 0 ? (
-                <div className="empty-dashboard-message text-center text-muted py-5">
-                  <i className="fas fa-plus-circle fa-3x mb-3"></i>
-                  <p>Your dashboard is empty.<br />Configure and add widgets using the form on the left.</p>
+                <div className="empty-dashboard-message">
+                  <p>Your dashboard is empty. Configure and add widgets using the form on the left.</p>
                 </div>
               ) : (
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <Droppable droppableId="dashboard-widgets">
                     {(provided) => (
-                      <div className="dashboard-widgets-container" {...provided.droppableProps} ref={provided.innerRef}>
+                      <div
+                        className="dashboard-widgets-container"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
                         <Row>
                           {widgets.map((widget, index) => (
-                            <Draggable key={widget.id} draggableId={widget.id} index={index}>
+                            <Draggable
+                              key={widget.id}
+                              draggableId={widget.id}
+                              index={index}
+                            >
                               {(provided) => (
-                                <Col md={widgetSizes.find(s => s.id === widget.size)?.cols || 6} className="mb-4" ref={provided.innerRef} {...provided.draggableProps}>
-                                  <Card className="widget-card h-100 shadow-sm">
-                                    <Card.Header className="d-flex justify-content-between align-items-center widget-header" {...provided.dragHandleProps}>
-                                      <span className="fw-bold">{widget.title}</span>
+                                <Col
+                                  md={widgetSizes.find(s => s.id === widget.size)?.cols || 6}
+                                  className="mb-4"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                >
+                                  <Card className="widget-card">
+                                    <Card.Header
+                                      className="d-flex justify-content-between align-items-center"
+                                      {...provided.dragHandleProps}
+                                    >
+                                      <span>{widget.title}</span>
                                       <div className="widget-actions">
-                                        <Button variant="outline-primary" size="sm" onClick={() => handleEditWidget(widget)} className="me-1 py-0 px-1"><i className="fas fa-edit fa-xs"></i></Button>
-                                        <Button variant="outline-danger" size="sm" onClick={() => handleRemoveWidget(widget.id)} className="py-0 px-1"><i className="fas fa-trash fa-xs"></i></Button>
+                                        <Button
+                                          variant="outline-secondary"
+                                          size="sm"
+                                          onClick={() => handleEditWidget(widget)}
+                                          className="me-2"
+                                        >
+                                          <i className="fas fa-edit"></i>
+                                        </Button>
+                                        <Button
+                                          variant="outline-danger"
+                                          size="sm"
+                                          onClick={() => handleRemoveWidget(widget.id)}
+                                        >
+                                          <i className="fas fa-trash"></i>
+                                        </Button>
                                       </div>
                                     </Card.Header>
-                                    <Card.Body className="widget-body">
-                                      {/* Render actual widget content/preview */}
-                                      {renderWidget(widget)}
+                                    <Card.Body>
+                                      <div className="widget-type-indicator">
+                                        <i className={`fas fa-${chartTypes.find(t => t.id === widget.type)?.icon || 'chart-bar'}`}></i>
+                                        <span>{chartTypes.find(t => t.id === widget.type)?.name || 'Widget'}</span>
+                                      </div>
+                                      {previewData && renderWidgetPreview(widget)}
                                     </Card.Body>
-                                     <Card.Footer className="text-muted small widget-footer">
-                                         Type: {chartTypes.find(t => t.id === widget.type)?.name || 'N/A'} | Size: {widgetSizes.find(s => s.id === widget.size)?.name || 'N/A'}
-                                     </Card.Footer>
                                   </Card>
                                 </Col>
                               )}
                             </Draggable>
                           ))}
-                          {provided.placeholder}
                         </Row>
+                        {provided.placeholder}
                       </div>
                     )}
                   </Droppable>
@@ -656,9 +646,20 @@ const CustomDashboardBuilder = () => {
               )}
 
               {widgets.length > 0 && (
-                <div className="dashboard-actions text-end mt-4">
-                  <Button variant="success" onClick={handleSaveDashboard} disabled={loadingSave}>
-                    {loadingSave ? <><Spinner animation="border" size="sm" className="me-2" />Saving...</> : 'Save Dashboard'}
+                <div className="dashboard-actions mt-4">
+                  <Button
+                    variant="success"
+                    onClick={handleSaveDashboard}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner animation="border" size="sm" className="me-2" />
+                        Saving Dashboard...
+                      </>
+                    ) : (
+                      'Save Dashboard'
+                    )}
                   </Button>
                 </div>
               )}
@@ -670,40 +671,42 @@ const CustomDashboardBuilder = () => {
   );
 
   const renderPreviewTab = () => (
-    <Container fluid className="dashboard-preview-container mt-4">
+    <Container fluid className="dashboard-preview-container">
       <Row className="mb-4">
         <Col>
           <div className="d-flex justify-content-between align-items-center">
-            <h2>{dashboardName} <Badge bg="info" pill>{previewMode ? 'Saved View' : 'Live Preview'}</Badge></h2>
+            <h2>{dashboardName}</h2>
             {previewMode && (
-              <Button variant="outline-primary" onClick={() => { setActiveTabKey('design'); setPreviewMode(false); }}>
-                <i className="fas fa-edit me-2"></i>Edit Dashboard
+              <Button
+                variant="outline-primary"
+                onClick={() => {
+                  setActiveTabKey('design');
+                  setPreviewMode(false);
+                }}
+              >
+                Edit Dashboard
               </Button>
             )}
-             {!previewMode && widgets.length > 0 && (
-                 <Button variant="success" onClick={handleSaveDashboard} disabled={loadingSave}>
-                    {loadingSave ? <><Spinner animation="border" size="sm" className="me-2" />Saving...</> : 'Save Dashboard'}
-                 </Button>
-             )}
           </div>
-           {widgets.length === 0 && (
-               <Alert variant="info">This dashboard has no widgets yet. Go to the 'Design' tab to add some.</Alert>
-           )}
         </Col>
       </Row>
 
       <Row>
         {widgets.map((widget) => (
-          <Col key={widget.id} md={widgetSizes.find(s => s.id === widget.size)?.cols || 6} className="mb-4">
-            <Card className="widget-card h-100 shadow-sm">
-              <Card.Header className="fw-bold">{widget.title}</Card.Header>
-              <Card.Body className="widget-body">
-                {/* Render widget based on preview data */}
-                {renderWidget(widget)}
+          <Col
+            key={widget.id}
+            md={widgetSizes.find(s => s.id === widget.size)?.cols || 6}
+            className="mb-4"
+          >
+            <Card className="widget-card">
+              <Card.Header>{widget.title}</Card.Header>
+              <Card.Body>
+                {previewData ? renderWidgetPreview(widget) : (
+                  <div className="d-flex justify-content-center align-items-center" style={{ height: '200px' }}>
+                    <Spinner animation="border" />
+                  </div>
+                )}
               </Card.Body>
-               <Card.Footer className="text-muted small widget-footer">
-                   Type: {chartTypes.find(t => t.id === widget.type)?.name || 'N/A'}
-               </Card.Footer>
             </Card>
           </Col>
         ))}
@@ -711,15 +714,17 @@ const CustomDashboardBuilder = () => {
     </Container>
   );
 
-  // --- Main Component Return ---
-
   return (
-    <div className="custom-dashboard-builder p-3">
-      <Tabs activeKey={activeTabKey} onSelect={(k) => setActiveTabKey(k)} id="dashboard-tabs" className="mb-3" fill>
-        <Tab eventKey="design" title={<><i className="fas fa-drafting-compass me-2"></i>Design</>}>
+    <div className="custom-dashboard-builder">
+      <Tabs
+        activeKey={activeTabKey}
+        onSelect={(key) => setActiveTabKey(key)}
+        className="mb-4"
+      >
+        <Tab eventKey="design" title="Design">
           {renderDesignTab()}
         </Tab>
-        <Tab eventKey="preview" title={<><i className="fas fa-eye me-2"></i>Preview</>} disabled={widgets.length === 0 && !previewMode}>
+        <Tab eventKey="preview" title="Preview">
           {renderPreviewTab()}
         </Tab>
       </Tabs>

@@ -83,3 +83,4 @@ document_processor_config = {
     "default_language": DEFAULT_LANGUAGE,
     "additional_languages": ADDITIONAL_LANGUAGES,
 }
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB file size limit
