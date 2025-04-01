@@ -1,9 +1,14 @@
-6.4.0
+6.5.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
-Release Date: March 31, 2025 # Update release date if needed
+Release Date: April 1, 2025
 Developed by: Aviad Kim
+
+Major Changes (v6.5.0):
+- Redesigned frontend UI using Tailwind CSS.
+- Replaced Material UI components with Tailwind-based structure.
+- Configured Tailwind CSS and removed old CSS files.
 
 Major Changes (v6.4.0):
 - Implemented ISIN detection (`pdf_processor/analysis/isin_detector.py`).
