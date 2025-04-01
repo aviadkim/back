@@ -2,6 +2,8 @@ import os
 import sys
 import pytest
 from flask import Flask, json
+from io import BytesIO
+import shutil
 
 # Add the parent directory to the path to import modules from the app
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -32,6 +34,19 @@ def client(app):
     """
     return app.test_client()
 
+@pytest.fixture(autouse=True)
+def setup_and_teardown():
+    """Setup and teardown for each test"""
+    # Setup test environment
+    test_upload_folder = 'test_uploads'
+    os.makedirs(test_upload_folder, exist_ok=True)
+    
+    yield
+    
+    # Cleanup after test
+    if os.path.exists(test_upload_folder):
+        shutil.rmtree(test_upload_folder)
+
 def test_health_check(client):
     """
     Test the health check endpoint
@@ -53,13 +68,42 @@ def test_get_documents_empty(client):
     assert len(data) >= 1
 
 def test_file_upload_no_file(client):
-    """
-    Test file upload without providing a file
-    """
-    response = client.post('/api/upload')
+    """Test file upload without providing a file"""
+    response = client.post('/api/upload', data={})
     assert response.status_code == 400
-    data = json.loads(response.data)
-    assert "error" in data
+    assert response.json['error'] == "No file provided"
+
+def test_file_upload_empty_filename(client):
+    """Test file upload with empty filename"""
+    data = {
+        'file': (BytesIO(b''), ''),
+        'language': 'he'
+    }
+    response = client.post('/api/upload', data=data, content_type='multipart/form-data')
+    assert response.status_code == 400
+    assert response.json['error'] == "No file selected"
+
+def test_file_upload_invalid_extension(client):
+    """Test file upload with invalid extension"""
+    data = {
+        'file': (BytesIO(b'test content'), 'test.txt'),
+        'language': 'he'
+    }
+    response = client.post('/api/upload', data=data, content_type='multipart/form-data')
+    assert response.status_code == 400
+    assert response.json['error'] == "File type not allowed"
+
+def test_file_upload_success(client):
+    """
+    Test successful file upload
+    """
+    data = {
+        'file': (BytesIO(b'Test PDF content'), 'test.pdf'),
+        'language': 'he'
+    }
+    
+    response = client.post('/api/upload', data=data, content_type='multipart/form-data')
+    assert response.status_code == 201
 
 def test_pdf_scanning_feature(client):
     """

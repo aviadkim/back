@@ -1,4 +1,4 @@
-# import PyPDF2 # Replaced by pypdf
+# from PyPDF2 import PdfReader, PdfWriter # Replaced by pypdf
 from pypdf import PdfReader # Import from pypdf
 import pdf2image
 import pytesseract

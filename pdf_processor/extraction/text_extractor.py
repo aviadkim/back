@@ -41,7 +41,7 @@ class PDFTextExtractor:
             # First try direct text extraction with PyPDF2
             with open(pdf_path, 'rb') as file:
                 try:
-                    reader = PyPDF2.PdfReader(file)
+                    reader = PdfReader(file)
                     page_count = len(reader.pages)
 
                     for page_num in range(page_count):

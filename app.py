@@ -55,6 +55,10 @@ def serve_frontend(path):
     static_folder = app.static_folder or 'frontend/build' # Use app's static folder
     if path != "" and os.path.exists(os.path.join(static_folder, path)):
         return send_from_directory(static_folder, path)
+    # Check if build directory exists
+    frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend/build")
+    if not os.path.exists(frontend_path):
+        return jsonify({"error": "Frontend not built. Please run npm run build in the frontend directory."}), 404
     # If path doesn't exist in static folder, serve index.html for client-side routing
     index_path = os.path.join(static_folder, 'index.html')
     if os.path.exists(index_path):

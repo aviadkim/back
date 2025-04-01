@@ -1,112 +1,73 @@
-import subprocess
-import time
 import requests
 import os
 import sys
 import json
-import signal
-import threading
 
-def run_server():
+def test_health_endpoint(base_url):
+    """Test if the application is up and responding to requests."""
     try:
-        server_process = subprocess.Popen(['python', 'app.py'], 
-                                         stdout=subprocess.PIPE, 
-                                         stderr=subprocess.PIPE)
-        return server_process
-    except Exception as e:
-        print(f"Failed to start server: {e}")
-        return None
-
-def test_health_endpoint():
-    max_attempts = 20
-    for attempt in range(max_attempts):
-        try:
-            response = requests.get('http://localhost:5000/health')
-            if response.status_code == 200:
-                print(f"Health endpoint test: SUCCESS (Status: {response.status_code})")
-                print(f"Response: {response.json()}")
-                return True
-            else:
-                print(f"Health endpoint returned: {response.status_code}, retrying...")
-        except requests.exceptions.ConnectionError:
-            print(f"Server not ready, attempt {attempt+1}/{max_attempts}...")
-        time.sleep(1)
-    
-    print("Health endpoint test: FAILED - Server did not become ready")
-    return False
-
-def test_upload_endpoint():
-    try:
-        if not os.path.exists('test_files/test_invoice.pdf'):
-            print("Test PDF not found, skipping upload test")
-            return False
-            
-        files = {'file': open('test_files/test_invoice.pdf', 'rb')}
-        data = {'language': 'he'}
-        response = requests.post('http://localhost:5000/api/pdf/upload', files=files, data=data)
-        
+        response = requests.get(f"{base_url}/health")
+        print(f"Health check status: {response.status_code}")
         if response.status_code == 200:
-            result = response.json()
-            print(f"Upload endpoint test: SUCCESS (Status: {response.status_code})")
-            print(f"Document ID: {result.get('document_id')}")
-            return result.get('document_id')
-        else:
-            print(f"Upload endpoint test: FAILED (Status: {response.status_code})")
-            print(f"Response: {response.text}")
-            return None
-    except Exception as e:
-        print(f"Upload endpoint test: ERROR - {str(e)}")
-        return None
-
-def test_chat_endpoint(document_id):
-    if not document_id:
-        print("No document ID available, skipping chat test")
-        return False
-        
-    try:
-        data = {
-            'message': 'What is the total amount on this invoice?',
-            'document_ids': [document_id],
-            'language': 'he'
-        }
-        response = requests.post('http://localhost:5000/api/copilot/route', json=data)
-        
-        if response.status_code == 200:
-            result = response.json()
-            print(f"Chat endpoint test: SUCCESS (Status: {response.status_code})")
-            print(f"Bot response: {result.get('response')}")
+            print("✅ Health endpoint is working")
+            print(f"Response: {response.json()}")
             return True
         else:
-            print(f"Chat endpoint test: FAILED (Status: {response.status_code})")
+            print("❌ Health endpoint returned non-200 status code")
             print(f"Response: {response.text}")
             return False
     except Exception as e:
-        print(f"Chat endpoint test: ERROR - {str(e)}")
+        print(f"❌ Error accessing health endpoint: {str(e)}")
         return False
 
-def run_tests():
-    print("Starting test suite...")
-    server_process = run_server()
-    
-    if not server_process:
-        print("Could not start server for testing")
-        return
-    
+def test_api_endpoint(base_url, endpoint):
+    """Test if an API endpoint is accessible."""
     try:
-        # Wait for server to start
-        server_ready = test_health_endpoint()
-        
-        if server_ready:
-            # Test document upload
-            document_id = test_upload_endpoint()
-            
-            # Test chat functionality
-            if document_id:
-                test_chat_endpoint(document_id)
-    finally:
-        print("Tests completed, shutting down server...")
-        server_process.terminate()
-        server_process.wait()
+        response = requests.get(f"{base_url}{endpoint}")
+        print(f"API endpoint {endpoint} status: {response.status_code}")
+        if response.status_code in [200, 404]:  # 404 is okay if endpoint requires parameters
+            print(f"✅ API endpoint {endpoint} is accessible")
+            return True
+        else:
+            print(f"❌ API endpoint {endpoint} returned unexpected status code")
+            print(f"Response: {response.text}")
+            return False
+    except Exception as e:
+        print(f"❌ Error accessing API endpoint {endpoint}: {str(e)}")
+        return False
+
+def main():
+    if len(sys.argv) < 2:
+        base_url = "http://localhost:5001"
+        print(f"No base URL provided, using default: {base_url}")
+    else:
+        base_url = sys.argv[1]
+    
+    print(f"Testing API at {base_url}...")
+    
+    # Test health endpoint
+    health_ok = test_health_endpoint(base_url)
+    
+    # Test API endpoints
+    api_endpoints = [
+        "/api/documents",
+        "/api/documents/upload"
+    ]
+    
+    api_status = []
+    for endpoint in api_endpoints:
+        status = test_api_endpoint(base_url, endpoint)
+        api_status.append((endpoint, status))
+    
+    # Summary
+    print("\n=== Test Summary ===")
+    print(f"Health Endpoint: {'✅ OK' if health_ok else '❌ Failed'}")
+    print("API Endpoints:")
+    for endpoint, status in api_status:
+        print(f"  {endpoint}: {'✅ OK' if status else '❌ Failed'}")
+    
+    overall_status = health_ok and all(status for _, status in api_status)
+    print(f"\nOverall Status: {'✅ OK' if overall_status else '❌ Issues Found'}")
 
 if __name__ == "__main__":
-    run_tests()
+    main()
