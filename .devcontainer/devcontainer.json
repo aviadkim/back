@@ -27,6 +27,7 @@
     },
     
     "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+    "postStartCommand": "chmod +x ./launcher.py && ./launcher.py",
     
     "features": {
         "ghcr.io/devcontainers/features/python:1": {
