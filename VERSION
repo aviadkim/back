@@ -1,9 +1,12 @@
-6.5.0
+6.6.0
 
 Financial Document Analysis System - Refactored & Enhanced
 
 Release Date: April 1, 2025
 Developed by: Aviad Kim
+
+Major Changes (v6.6.0):
+- Next version
 
 Major Changes (v6.5.0):
 - Redesigned frontend UI using Tailwind CSS.
