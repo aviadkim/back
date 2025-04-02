@@ -1,0 +1,442 @@
+* [33m73b7646[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mmaster[m[33m)[m Add advanced analysis and custom tables features to frontend
+* [33mc885588[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m Push changes from the last hour
+* [33m995ceba[m Bump version to 6.6.0
+* [33m75e23bb[m feat: update project files
+* [33meeefc21[m feat: Configure Codespace auto-start and fix launcher/app structure
+* [33m396a419[m docs: Update VERSION to 6.5.0
+* [33m095a5f8[m feat(frontend): Redesign UI with Tailwind CSS for v6.5.0
+* [33m1562127[m[33m ([m[1;33mtag: [m[1;33mv6.4.0[m[33m)[m feat: Implement backend modules and frontend components (v6.4.0)
+* [33m4089a42[m feat: Implement Week 4 frontend UX improvements - Add DocumentViewer component with react-pdf and tabs - Add Dashboard component with stats, charts, and recent docs - Add DocumentUploader component - Integrate components into routing and pages
+* [33m9e5059b[m feat: Implement Weeks 1-3 enhancements - Week 1: Core stability (config, errors, DB service) - Week 2: Advanced analysis (OCR, tables, entities) - Week 3: Financial ratio analysis - Add starting.md guide
+* [33m6a72c8e[m Fix frontend builds, improve upload logic, add dev/build workflows
+* [33m7d6cd7e[m feat: Add financial entity recognition, table detection, ratio analysis, dashboard, and query features
+* [33m50ca1cb[m[33m ([m[1;33mtag: [m[1;33mv6.2.0[m[33m)[m Feat: Implement frontend pages, update backend logic and Docker setup for v6.2.0
+* [33m63ea343[m[33m ([m[1;33mtag: [m[1;33mv6.1.0[m[33m)[m Feat: Update dependencies and fix test setup for v6.1.0
+* [33m453d0f8[m[33m ([m[1;33mtag: [m[1;33mv6.0.0[m[33m)[m Refactor: Standardize config, processing, routes, deployment for v6.0.0
+* [33mbd3c884[m Add AWS deployment files
+* [33m7204947[m Add quickstart script for one-click testing
+* [33m4e2b1a5[m Add run script for the application
+* [33m64d9bbf[m Add test application script
+* [33mdabf02d[m Complete the test_vertical_slice.py script implementation
+* [33m8a2a1a2[m Update vertical_slice_app.py with proper feature imports
+* [33m4a6ab28[m Add simplified PDF processor utility
+* [33mb8a60f7[m Add utils package initialization
+* [33m0d07304[m Add PDF scanning service implementation
+* [33m709d1b4[m Complete PDF scanning routes implementation
+* [33md15f57c[m Update pdf_scanning feature module initialization
+* [33m56fee50[m Add table_extraction service implementation
+* [33mb6eac49[m Add table_extraction routes implementation
+* [33md2d92ed[m Add table_extraction feature module initialization
+* [33m285acf0[m Add document_chat service implementation
+* [33m31c2d9a[m Add document_chat routes implementation
+* [33mdd4a1ef[m Add document_chat feature module initialization
+* [33m0515cee[m Update README with simplified installation instructions
+* [33mfe705fb[m Make deployment status check more resilient
+* [33m29483ed[m Add simplified dependencies installation script
+* [33m7b6164c[m Fix huggingface-hub dependency conflict
+* [33mb062a13[m Add workflow to check deployment status
+* [33mafd48ee[m Add Elastic Beanstalk environment configuration
+* [33m7644a86[m Add Elastic Beanstalk configuration
+* [33m3523f36[m Add GitHub Actions workflow for AWS Elastic Beanstalk deployment
+* [33mb2cfe76[m Release v5.0.0 - Financial Document Analysis System with Vertical Slice Architecture
+* [33m2669da9[m Add release notes for v5.0
+* [33md032544[m Add test runner script
+* [33m2c47383[m Add changelog for v5.0
+* [33m0a2721d[m Add version file for v5.0
+* [33m6590c0f[m Add detailed migration guide
+* [33m2121ab5[m Add comprehensive requirements.txt
+* [33md620519[m Create comprehensive README for v5.0
+* [33m8250455[m Complete start script implementation
+* [33m9c345b0[m Add basic app tests
+* [33m7e5ca97[m Add basic CSS styles
+* [33m294019c[m Add Tailwind CSS styles
+* [33md69cc2b[m Add React application entry point
+* [33m5615092[m Add main App component
+* [33m8351ddf[m Add table extractor component
+* [33mb09f173[m Complete document chat component implementation
+* [33mf032f94[m Add document uploader component
+* [33mcc80ba9[m Complete table extraction service implementation
+* [33mf195a27[m Add table extraction feature module
+* [33m1fca2e8[m Add document chat service implementation
+* [33m2025dfd[m Add document chat feature module
+* [33m410d68b[m Add PDF scanning service implementation
+* [33mbda0c3a[m Add PDF scanning feature module
+* [33md0d9767[m Add agent framework initialization file
+* [33m4fd7e73[m Add agent coordinator implementation
+* [33m4468102[m Complete Flask app with agent mock endpoints
+* [33mcd80cfd[m Update version to 4.1
+* [33m6c2e5aa[m Add fixed script with port 5001 and enriched frontend
+* [33md4cad10[m Add script to fix and run original system
+* [33m18cb13e[m Add comprehensive system test script
+* [33m183d27e[m Add version tracking file
+* [33maa06765[m Add master script to run everything
+* [33m011af92[m Add simple frontend build script
+* [33mfaa8cda[m Add environment fix script to handle issues
+* [33ma7d0807[m Add setup and run script
+* [33m1b063a0[m Complete setup script for React frontend
+* [33m6930cdc[m Add script to kill server processes
+* [33m5dfa0b1[m Add simplified frontend server on port 8080
+* [33ma857f82[m Update serve_frontend.py to use an available port
+* [33m02febcd[m Add script to properly serve frontend with mock APIs
+* [33mde5e0df[m Add simplified development app version
+* [33m4b7c286[m Update Dockerfile to install gunicorn and create directories
+* [33mfad8d06[m Update run_app.py with improved environment settings
+* [33mc1795c7[m Add simplified app runner script
+* [33mc188329[m Add custom dependency installation script
+* [33md5ea50f[m Update requirements.txt with compatible NumPy and pandas versions
+* [33m74d2f2c[m Add comprehensive test script with browser preview
+* [33m9dc6a0e[m Fix MongoDB configuration and app setup
+* [33m42a65f4[m Update networkx requirement to be more flexible
+* [33m96819ea[m Add simple test script for basic functionality
+* [33md233efb[m Add simple PDF creation script without Unicode issues
+* [33m2af71f9[m Add MongoDB service to docker-compose.yml
+*   [33md814ac2[m Merge pull request #4 from aviadkim/fix-pdf-processor-and-frontend
+[32m|[m[33m\[m  
+[32m|[m * [33m2326ac9[m[33m ([m[1;31morigin/fix-pdf-processor-and-frontend[m[33m)[m Update frontend to use correct API endpoints and improve document selection
+[32m|[m * [33m3aa805c[m Fix copilot router service to properly handle document IDs and error messages
+[32m|[m * [33m2be81f8[m Fix PDFProcessor initialization to accept file_path parameter and improve extraction
+[32m|[m[32m/[m  
+* [33mc4bb706[m[33m ([m[1;31morigin/fix-pdf-and-frontend[m[33m)[m Add comprehensive setup guide with troubleshooting tips
+* [33m845eac6[m Update copilot router service to handle document IDs and chat with documents
+* [33m9f3cd43[m Add comprehensive .env.example file with all required variables
+* [33mb98b380[m Update frontend to use correct API endpoints and improve error handling
+* [33m89575e4[m Fix PDFProcessor initialization to accept file_path parameter
+* [33m2138003[m Commit changes
+* [33med7bc0b[m Add upload widget component with progress tracking and multi-language support
+* [33m0df9a94[m Add GitHub Actions workflow for AWS Elastic Beanstalk deployment
+* [33m9777fa7[m feat(backend): הוספת שירותי AWS ותמיכה בפרונטאנד החדש
+* [33mc5cb6f3[m[33m ([m[1;31morigin/feature/frontend-v3.1[m[33m)[m feat(frontend): הוספת פרונטאנד חדש גרסה 3.1 עבור ניתוח מסמכים פיננסיים
+* [33m7182fae[m feat: Install dependencies, switch to DynamoDB, fix startup issues
+* [33mcf8f123[m Improve requirement extraction parsing logic
+* [33mdc2d4f5[m Implement financial document analysis assistants with vertical slice architecture
+* [33m015ac45[m Create 02-dynamodb-policy.config
+* [33m21ee3e0[m Create 01-permissions.config
+* [33mfad430e[m Create Dockerrun.aws.json
+* [33m9b39d98[m Update docker-compose.yml
+* [33m573fdb3[m Update deploy-to-eb.yml
+* [33mc9be8b0[m Update deploy-to-eb.yml
+* [33m33143d5[m Update deploy-to-eb.yml
+* [33m4abbf69[m Update deploy-to-eb.yml
+* [33mde0c3e1[m Update deploy-to-eb.yml
+* [33me6f347b[m Update deploy-to-eb.yml
+* [33m29c4c78[m Update deploy-to-eb.yml
+* [33maf1e89b[m Update deploy-to-eb.yml
+* [33m8b59dc5[m Update deploy-to-eb.yml
+* [33m07509bb[m Update config.yml
+* [33m7659e31[m feat(frontend): Implement real upload progress and improve UI styling
+* [33me20bc80[m feat: Add devcontainer configuration for Codespaces
+* [33mb73ef7e[m docs: Add project stabilization and enhancement plan
+* [33mceeeb8b[m feat: Add dev dependencies, fix linting, update security
+* [33m98e8675[m feat: Stabilize dependencies, fix deployment config, implement persistence
+* [33mff9aec3[m chore: Update deployment configuration files
+* [33m85cc4db[m feat: Refactor core components and update dependencies
+* [33m672435a[m refactor(langchain): Standardize HuggingFaceEmbeddings usage in tests
+*   [33med7b9b3[m Merge remote-tracking branch 'origin/master'
+[34m|[m[35m\[m  
+[34m|[m * [33m926e7e1[m Update deploy-to-lightsail-dynamo.yml
+[34m|[m * [33m00beb20[m Update deploy-to-lightsail-dynamo.yml
+[34m|[m * [33md29f931[m Update deploy-to-eb.yml
+[34m|[m * [33m10c13ef[m Update Dockerfile
+[34m|[m * [33m7ce081d[m Update deploy-to-lightsail-dynamo.yml
+[34m|[m * [33mb3c298f[m Update deploy-to-eb.yml
+* [35m|[m [33mc35116e[m refactor(langchain): Standardize embeddings provider to use langchain-huggingface
+* [35m|[m [33mfaefbe3[m refactor(langchain): Update imports for langchain>=0.1.0
+* [35m|[m [33m7407926[m refactor(ai): Centralize Gemini provider in AIModel, remove direct usage
+* [35m|[m [33me298bb8[m feat(deploy): Configure deployment for EB Docker platform
+* [35m|[m [33m9c9e9e5[m feat: Add pinned requirements and devcontainer config
+* [35m|[m [33mb3adeac[m refactor: Remove Procfile, use Docker CMD
+* [35m|[m [33m8df13ce[m chore: Remove unused/conflicting deployment workflows
+[35m|[m[35m/[m  
+* [33m030e19e[m Create test_llm_config.py
+* [33m70ac6e3[m Update docker-compose.yml
+* [33m71ed6c5[m Update Dockerfile
+* [33me26425b[m Update coordinator.py
+* [33mab24d5e[m Update database.py
+* [33mdff037c[m fix: Update dependencies for build/runtime compatibility
+* [33m90432d1[m Fix Elastic Beanstalk deployment with correct solution stack name
+* [33m6b1effb[m Improve Lightsail deployment with test step and better environment variables
+* [33m6497682[m Update Dockerfile to include MongoDB and fix environment variables
+* [33m74c3c5b[m Add NGINX configuration for file uploads and Hebrew support
+* [33m91d5658[m Add Procfile for Elastic Beanstalk
+* [33mcbcfda4[m Add Elastic Beanstalk logging configuration
+* [33m3681421[m Add Elastic Beanstalk packages configuration
+* [33m1ef377c[m Add Elastic Beanstalk environment configuration
+* [33me20cd76[m Add Elastic Beanstalk configuration file
+* [33mba9ef55[m Fix AWS Lightsail deployment with proper deployment check
+* [33m5d6a597[m Fix AWS Elastic Beanstalk deployment with correct Python configuration
+* [33m9f578b6[m Fix Elastic Beanstalk deployment workflow
+* [33mb6f7b98[m Add test_files directory for test assets
+* [33md415a58[m Add tests package initialization file
+* [33m4f2554b[m Add PDF scanning tests
+* [33m3157720[m Add chatbot service layer with MongoDB integration
+* [33md3b6cdd[m Add chatbot routes with API documentation
+* [33m7f8d57d[m Add chatbot feature blueprint
+* [33m2b4ea30[m Add PDF scanning service layer with MongoDB integration
+* [33m3453d27[m Add PDF scanning routes with proper API documentation
+* [33m117df67[m Add PDF scanning feature blueprint
+* [33m9e51c63[m Add features package for Vertical Slice Architecture
+* [33m111b1f8[m Add comprehensive README with Elastic Beanstalk deployment instructions
+* [33m8dd5ed7[m Add Dockerfile for Elastic Beanstalk deployment
+* [33m51587fa[m Add complete Elastic Beanstalk deployment workflow
+* [33mf1af04d[m Update README with deployment information
+* [33m69fcf38[m Add step to create Elastic Beanstalk environment if it doesn't exist
+* [33m4249724[m Add step to create Elastic Beanstalk application if it doesn't exist
+* [33m6daaac1[m Update coordinator.py
+* [33mf0d00b1[m Add GitHub Actions workflow for Elastic Beanstalk deployment
+* [33m72e9d05[m Add Elastic Beanstalk configuration
+* [33mb244409[m Fix AWS CLI installation in workflow
+* [33mddc492a[m Deprecate old workflow to prevent conflicts
+* [33me3bf88e[m Fix AWS region in GitHub Actions workflow
+* [33m004313a[m Add GitHub Actions deployment documentation
+* [33m16999f2[m Add GitHub Actions workflow for AWS Lightsail with DynamoDB
+* [33mded97a7[m Add guide for obtaining HuggingFace API key
+* [33ma42db75[m Add simplified AWS deployment guide with DynamoDB
+* [33m8539b91[m Add deployment script for AWS Lightsail with DynamoDB
+* [33m769f5af[m Complete DynamoDB client implementation
+* [33m5913096[m Add simplified AWS DynamoDB setup script
+* [33m21a5c89[m Add AWS CLI installation script for GitHub Codespace
+* [33m8e99158[m Add comprehensive AWS deployment documentation
+* [33mf0b67c0[m Complete the detailed AWS deployment guide
+* [33m7a14618[m Add script to set up GitHub Actions integration
+* [33mae9bdde[m Add GitHub Actions workflow for AWS Lightsail deployment
+* [33md0c492e[m Add detailed step-by-step deployment instructions
+* [33ma9a35d0[m Update README with comprehensive deployment instructions
+* [33md199b95[m Add storage client for handling document uploads to AWS Lightsail
+* [33m067abb2[m Add script to set up Lightsail object storage for document uploads
+* [33mc9e19fa[m Create comprehensive AWS deployment guide
+* [33m1f443b5[m Update requirements.txt to include AWS SDK
+* [33m6b88565[m Update app.py to support AWS Secrets Manager
+* [33m2d751ac[m Add AWS Secrets Manager integration
+* [33mb49ce8f[m Add script to set up AWS Secrets Manager
+* [33mf03f781[m Add deployment script for AWS Lightsail
+* [33m0fcac71[m Add Lightsail container deployment configuration
+* [33mb3e9c90[m Add Next Version Implementation Plan
+* [33m37d55f1[m Update coordinator.py
+* [33m247214c[m Update coordinator.py
+* [33ma312f58[m Update coordinator.py
+* [33m5b4dd61[m Create __init__.py for agent framework package
+* [33m7fd6a03[m Implement memory agent for document context management
+* [33mb64ccbd[m Update coordinator.py
+* [33mdbeef0a[m Complete PDF processor utility implementation
+* [33ma2dcb29[m Implement document processing and analysis service
+* [33m0892a75[m Create Flask API routes for LangChain integration (chat and tables)
+* [33m3883db1[m Create Flask API routes for document management
+* [33m99ffc12[m Implement ExtractedDataView component for displaying document analysis results
+* [33m075c09d[m Implement UserContext provider for authentication and settings management
+* [33mc192397[m Implement DocumentContext provider for document state management
+* [33m7923300[m Complete DocumentList component implementation
+* [33m778b1c0[m Fix: Add Typography import to App.jsx
+* [33m6606b2f[m Update App.jsx with new routes and components
+* [33m485fe1b[m Update UserContext.jsx
+* [33m8923af1[m Update ErrorBoundary.jsx
+* [33m3b21dcf[m Update StatisticsCard.jsx
+* [33m8fcba77[m Update UserSettingsPage.jsx
+* [33ma0cd3be[m Update ExtractedDataView.jsx
+* [33m87ea6cb[m Update DocumentDetailPage.jsx
+* [33mcdf6cfc[m Create stub for ErrorBoundary
+* [33m24c51c1[m Create stub for UserContext
+* [33m6390310[m Create stub for ExtractedDataView
+* [33ma6bf28b[m Create stub for StatisticsCard
+* [33mb49ff91[m Create stub for UserSettingsPage
+* [33mf16746f[m Create stub for DocumentDetailPage
+* [33m5a1fb41[m Move DocumentList.jsx to proper location in Vertical Slice Architecture
+* [33me57a458[m Update DocumentList.jsx
+* [33m374bcbc[m Create  DocumentList.jsx
+* [33m59f368b[m Create dashboard page with quick access to features and statistics
+* [33maa722d6[m Create document context for state management
+* [33m9f2706b[m Create breadcrumbs component for navigation
+* [33m107f0ec[m Complete the AppNavigation component implementation
+* [33m042623a[m Create main app component with routing and theming
+* [33mbc03d88[m Add suggested questions component for chat interface
+* [33m7b6e0fc[m Implement message list component for chat interface
+* [33m0b6a978[m Add document context component for chat interface
+* [33md909cd4[m Complete document uploader component implementation
+* [33md42c77d[m Complete document uploader component implementation
+* [33me0f0873[m Finish table generator component implementation
+* [33m94e0c36[m Add chatbot interface component for frontend
+* [33me99fdc6[m Add extracted data visualization component for PDF documents
+* [33mf7dfabb[m Add PDF document uploader component for frontend
+* [33m8b3067b[m Add guide for working with Vertical Slice Architecture
+* [33m5ca796c[m Complete table generator test script
+* [33ma270789[m Add improved API key test script with multiple methods
+* [33m87d30c1[m Add simple runner for agent demonstration
+* [33m9f3a5eb[m Add agent capabilities demonstration script
+* [33m8570179[m Add embeddings provider for consistent embedding access
+* [33m6c9f04c[m Add simple API key test script
+* [33m5cbe87c[m Add README for chatbot tests
+* [33maeb9be8[m Add script to run all chatbot tests
+* [33m8714a3a[m Add table generator for chatbot
+* [33mc4ceb5f[m Add chatbot API tests
+* [33m349a63e[m Add chatbot capabilities test
+* [33m62cff7d[m Add Hugging Face API connection test
+* [33mf6a54ea[m Add chatbot tests package init file
+* [33mebdf75c[m Create __init__.py
+* [33m7fae263[m Create test_chatbot_api.py
+* [33m091a165[m Update app.py
+* [33ma1f5610[m Create models.py
+* [33mc7200f5[m Add chatbot services implementation
+* [33md30b773[m Add chatbot API endpoints
+* [33m02e3172[m Add chatbot feature initial structure
+* [33m0a045f9[m Create document explaining Vertical Slice Architecture
+* [33m5b6cad1[m Update main app.py to use vertical slice architecture
+* [33m425b12c[m Complete PDF scanning tests
+* [33mfe95d7c[m Create tests directory for PDF scanning
+* [33m852dc99[m Create API endpoints for PDF scanning feature
+* [33me2845f1[m Create PDF scanning service for business logic
+* [33mcc207ac[m Complete the PDF scanning document models
+* [33mb0e4b66[m Create PDF scanning feature module
+* [33mf08a414[m Create features package for Vertical Slice Architecture
+* [33m3c2eda9[m Add file utilities for handling uploads and processing
+* [33me3a0ec6[m Create AI utilities for document analysis using various LLM providers
+* [33mae5c74d[m Create database utilities module
+* [33m2f09423[m Move PDF processor to shared module
+* [33m3127f95[m Create shared module for common utilities
+* [33m8f5d8d4[m Add comprehensive README.md with project information and setup instructions
+* [33m08f122b[m Add setup script to ensure proper project initialization
+* [33m704e3be[m Add __init__.py for routes module
+* [33m9179259[m Implement language model routes for AI chatbot functionality
+* [33mc4eb92b[m Add __init__.py to make agent_framework a proper module
+* [33m43619aa[m Implement agent coordinator to manage various agents
+* [33m6bdbc05[m Implement memory agent for storing and retrieving conversation context
+* [33m758f657[m Add requirements.txt file with necessary dependencies
+* [33m6443652[m Create basic .env file from template
+* [33mf1e15f6[m Fix file upload test by adding empty data dict for consistency
+* [33mb4b49ea[m Update docker-compose.yml
+* [33m6388bea[m Update requirements.txt
+* [33m793ef89[m Update diagnostic.py
+* [33m9147ff8[m Update app.py
+* [33m40eb089[m Update diagnostic.html
+* [33m5804519[m Update diagnostic.py
+* [33m837e2ba[m Add README with deployment and usage instructions
+* [33m65bebd2[m Add new UI design from Canvas Gemini with diagnostic button
+* [33m44224b0[m Add new frontend design with diagnostic button
+* [33md35402c[m Add pdf2image to requirements.txt for OCR functionality
+* [33m5efcb30[m Update PDF processor with robust OCR implementation
+* [33m26ae71c[m Add sample environment variables file
+* [33ma94d225[m Add render.yaml for Render configuration
+* [33m01b28ff[m Add Dockerfile for proper dependencies installation
+* [33m2c92d0e[m Add dynamic diagnostic link to test page
+* [33m72ecb48[m Add jinja2 import for template loading
+* [33m21a3807[m Fix template loading in app.py for diagnostic tool
+* [33m600e092[m Add PDF processor diagnostic tool
+* [33m317a0ad[m Simplify langchain routes for Render deployment
+* [33m13a5f94[m Create lightweight memory agent for Render deployment
+* [33m641438c[m Replace heavy model loading with lightweight dummy implementation for Render
+* [33m0ddd336[m Add pandas to requirements.txt
+* [33mfa4e9c1[m Update scikit-learn version for compatibility with Python 3.12
+* [33m136673b[m Update render.yaml with supported Render regions
+* [33mf5f2062[m Add .gitkeep to templates directory
+* [33md226e47[m Add .gitkeep to logs directory
+* [33m0682814[m Add .gitkeep to uploads directory
+* [33m71e3a1a[m Add .gitkeep to embeddings directory
+* [33m22b9bd7[m Add .gitkeep to data directory
+* [33m8c5d765[m Update .gitignore to allow frontend build files
+* [33m2daeee3[m Update render.yaml to use Docker runtime
+* [33m64327e8[m Add Dockerfile for container deployment
+* [33mc9c6f05[m Update pdf_processor.py with simplified OCR for cloud deployment
+* [33m361b37d[m Update memory_agent.py to remove FAISS dependency
+* [33m2e9389c[m Update requirements.txt to fix installation issues
+* [33m5dd9bd5[m Add Render deployment configuration
+* [33mc9d6a19[m Fix CORS issues and add better error handling
+* [33m5f57ae5[m Update tests to correct file upload endpoint method
+* [33mcc3b858[m Update chatbot.js to reference the new process_document endpoint
+* [33mbbec5be[m Fix API endpoint conflict by renaming langchain upload route
+* [33m43264e1[m Update .env with version 2.1 and enhanced OCR settings
+* [33mf93554d[m Update README.md to reflect version 2.1
+* [33mbceed6b[m Add VERSION.md with comprehensive system summary for version 2.1
+* [33mb81262e[m Create main CSS stylesheet for the application
+* [33m4caa16c[m Create comprehensive README with setup and usage instructions
+* [33m8aa9bec[m Complete startup script with test and application start
+* [33m8427069[m Update test cases to match implementation
+* [33m907ac5e[m Add script to create all required directories
+* [33meba2bdc[m Create chatbot JavaScript implementation
+* [33m37d59d3[m Create main JavaScript for document handling
+* [33mffbc70c[m Create index.html with fixed chatbot visibility
+* [33m6535865[m Add CSS to make chatbot visible on all screens
+* [33mde9d020[m Add proper .env configuration
+* [33ma050d23[m Fix API health endpoint for chatbot
+* [33md96cc9f[m Implement proper OCR functionality in PDF Processor
+* [33mc8f1f9f[m Fix test to use correct API endpoint and expected status
+* [33m1f79bf4[m Fix relative imports and add error handling for LangChain routes
+* [33m972e32b[m Update frontend API service to match backend endpoints
+* [33mc99917f[m Update app.py with enhanced CORS and static file handling
+* [33m843602b[m Update .env with placeholder HuggingFace API key
+* [33m6686f9b[m Update routes/__init__.py to prevent circular imports
+* [33m2e7d68c[m Update import to support both PDFProcessor and extract_text_from_pdf
+* [33me605448[m Fix import issue by adding extract_text_from_pdf function
+* [33m939c84f[m תיקון בעיית ייבוא בקובץ utils/__init__.py
+* [33m543440a[m הוספת סקריפט setup.sh להתקנה ואתחול אוטומטי של המערכת
+* [33m1f9073b[m הוספת סקריפט בדיקה מקיף לשירותי ענן לקראת פריסה כ-SaaS
+* [33m533bc1f[m הוספת סקריפט לבדיקת חיבור לשירותי OCR בענן (AWS Textract)
+* [33m2523636[m עדכון README.md עם הוראות התקנה ופריסה מפורטות כולל SaaS
+* [33m88f8fde[m הוספת סקריפט הפעלה לפריסה אוטומטית של האפליקציה לענן
+* [33m7fb6908[m הוספת קובץ בדיקת חיבור ל-Hugging Face API
+* [33m4ae110e[m הוספת Dockerfile לבניית תמונת Docker של האפליקציה
+* [33m78ad7a4[m עדכון docker-compose.yml עם קונפיגורציה מלאה הכוללת שירות אפליקציה ומונגו
+* [33mdf2c250[m עדכון קובץ .env עם הגדרות דיפולטיביות
+* [33mb7eaf39[m הוספת קובץ .env עם הגדרות ברירת מחדל
+* [33m6e434b6[m השלמת מודל טבלה עם יכולות מתקדמות לעיבוד נתונים פיננסיים
+* [33mf04dc8e[m יצירת נתיבי API לטיפול במסמכים - העלאה, עיבוד וייצוא
+* [33m546359c[m עדכון קובץ app.py המלא עם הגדרות נכונות
+* [33m52b8166[m עדכון קובץ התלויות (requirements.txt) עם כל הספריות הנדרשות
+* [33m436546f[m עדכון נתיבי API לתמיכה בשתי שפות (עברית ואנגלית)
+* [33me889bd1[m הוספת תמיכה בריבוי שפות (עברית ואנגלית) למתאם הסוכנים
+* [33m6f6b092[m הוספת מעבד PDF מלא עם יכולות חילוץ טקסט, טבלאות ומידע פיננסי
+* [33m0d48c53[m הוספת סוכן זיכרון לניהול אחסון מסמכים ושליפת מידע
+* [33m9c3ac31[m Add comprehensive chat and template API support
+* [33md2162da[m Complete TableEditor component with all features
+* [33meac1cc2[m Add ChatBot component with modern UI
+* [33m9345552[m Add modern theme with better styling
+* [33md03a90c[m Fix document routes by adding proper configuration for uploads and error handling
+* [33m02f9a25[m Fix CORS issues by adding CORS headers
+* [33md6d24dd[m[33m ([m[1;33mtag: [m[1;33mv2.0.0[m[33m)[m v2.0.0: שדרוג משמעותי של מערכת הבדיקות ושיפור יציבות המערכת
+* [33m28858b7[m[33m ([m[1;33mtag: [m[1;33mv1.9.9[m[33m)[m v1.9.9: שיפור מערך הטסטים ותיקון בדיקות אינטגרציה
+* [33mc72c652[m[33m ([m[1;33mtag: [m[1;33mv1.9.8[m[33m)[m v1.9.8: הוספת תמיכה ב-Docker ו-MongoDB / Add Docker and MongoDB support
+*   [33m0a0bcc4[m v1.9.7: merge remote changes and update port configuration
+[36m|[m[1;31m\[m  
+[36m|[m * [33mfbb07c1[m Complete coordinator.py with user_id parameter for process_document
+[36m|[m * [33mbe4a6e2[m Add .env file for environment variables
+[36m|[m * [33m8ce72bb[m Fix error handling for missing analyze_financial_data method
+[36m|[m * [33m2856737[m Add .env.example for environment variables
+[36m|[m * [33m760554d[m Update app.py to include LangChain routes
+[36m|[m * [33me2ee48a[m Add LangChain routes for document analysis
+[36m|[m * [33m92240b6[m Add LangChain Financial Document Processor
+[36m|[m * [33m4f4b77a[m Add LangChain and Mistral AI dependencies
+[36m|[m * [33m6d1d338[m Add pymongo dependency to requirements.txt
+[36m|[m * [33mdd8f28f[m Add new API routes for analytics and document search
+[36m|[m * [33mc5332fc[m Update process_natural_language_query to store queries
+[36m|[m * [33m321a911[m Update document_routes.py with new API routes for memory and analytics
+[36m|[m * [33m1aedeee[m Update coordinator.py with support for memory and analytics agents
+[36m|[m * [33m0d3e460[m Update __init__.py to include new agents
+[36m|[m * [33m4cc1fce[m Add analytics_agent.py implementation
+[36m|[m * [33m7704ab5[m Update memory_agent.py with provided code
+[36m|[m * [33m47782a8[m Add memory_agent.py implementation
+[36m|[m * [33m1e71eb9[m Add document database models
+[36m|[m * [33mc455594[m Add analytics_agent.py
+[36m|[m * [33m634f536[m Add memory_agent.py
+[36m|[m * [33m35a1806[m Add document_models.py
+* [1;31m|[m [33mb36beea[m[33m ([m[1;33mtag: [m[1;33mv1.9.7[m[33m)[m v1.9.7: שיפורים בתצורת השרת והגדרות סטטיות / Server configuration and static files improvements
+[1;31m|[m[1;31m/[m  
+* [33m33f920e[m v1.9.3: שיפור איכות קוד והפחתת כפילויות / Code quality improvements and DRY
+* [33ma5bb2a9[m v1.9.3: תיקון הפרדת imports וטיפול בשגיאות קוד / Fix import separation and code issues
+* [33m3267a8c[m v1.9.3: תיקון שגיאות תחביר ושיפור קוד / Code improvements and syntax fixes
+* [33m0dce4f4[m v1.9.3: עדכוני תשתית נוספים / Additional infrastructure updates
+* [33mc94d018[m v1.9.3: שיפור ביצועים וטיפול בקבצים גדולים / Performance and large file handling improvements
+* [33mf63c3c9[m v1.9.2: שיפור טיפול בשגיאות וביצועים / Performance and error handling improvements
+* [33mcc7c586[m v1.9.1: עדכון קבצי דוחות וכלי פיתוח נוספים / Update reports and additional development tools
+* [33m7c5ae0b[m v1.9: שיפור מערכת הבדיקות האוטומטיות והטיפול בתלויות / Improved test framework detection and dependency handling
+* [33m3bbb3c1[m v1.8: תיקון ושיפור כלי הפיתוח - שיפור מנהל הפרויקט ופתרון תקלות / Fixed and improved development tools - enhanced project manager and bug fixes
+* [33me439e39[m v1.7: הוספת כלי פיתוח חדשים לניהול וניתוח הפרויקט / Added new development tools for project management and analysis
+* [33m7aa72a8[m Add development tools for project analysis and workflow automation
+* [33ma586931[m v1.6: תיקון שגיאות תחביר בקוד של הניתוח הפיננסי והוספת איתור פורט פנוי
+* [33m3acf41e[m v1.5: תיקון הסוכן הפיננסי ושיפור יכולת השוואת דוחות פיננסיים
+* [33m13bec5a[m v1.4: הוספת מערכת מתקדמת לניתוח מסמכים פיננסיים עם סוכנים חכמים
+* [33m3ae79e0[m v1.4: הוספת מערכת מתקדמת לניתוח מסמכים פיננסיים עם סוכנים חכמים
+* [33macd8826[m v1.3: הוספת בוט חכם וניתוח מסמכים משופר
+* [33mcf3ef0c[m גרסה 1.2.0: הוספת סקריפט pdf_mupdf_reader.py ופיתוח ממשק משתמש מבוסס React
+* [33ma2e51d5[m[33m ([m[1;33mtag: [m[1;33mv1.2[m[33m)[m עדכון pdf_mupdf_reader.py לגרסה 1.2 - שיפורים בזיהוי מבנה טבלאות ותבניות נתונים
+* [33mbf9eb0d[m[33m ([m[1;33mtag: [m[1;33mv1.1[m[33m)[m הוספת pdf_mupdf_reader.py גרסה 1.1 - סקריפט חדש ומשופר לחילוץ טקסט, מספרי ISIN וטבלאות מקבצי PDF
+* [33m015f49b[m תיקון סקריפט הבנצ'מרק לעבודה עם הפונקציות הקיימות במערכת
+* [33m734162a[m הוספת סקריפט השוואת ביצועים ועדכון README עם מידע על מדדי השיפור
+* [33m0236cfd[m שיפור המערכת: הוספת זיהוי טבלאות ושיפור זיהוי ניירות ערך
+* [33ma804d8a[m גרסה 1.0 - מערכת לעיבוד דפי בנק אוטומטית

@@ -1,0 +1,2295 @@
+{
+  "file_count": 253,
+  "categories": {
+    "other": 167,
+    "analysis": 2,
+    "tests": 52,
+    "qa": 1,
+    "extraction": 2,
+    "app": 13,
+    "agent": 9,
+    "utils": 3,
+    "services": 1,
+    "routes": 2,
+    "models": 1
+  },
+  "files": [
+    {
+      "path": "./agent_framework/__init__.py",
+      "name": "__init__.py",
+      "category": "agent",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1522
+    },
+    {
+      "path": "./agent_framework/analytics_agent.py",
+      "name": "analytics_agent.py",
+      "category": "agent",
+      "imports_count": 6,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 14905
+    },
+    {
+      "path": "./agent_framework/aws_integration.py",
+      "name": "aws_integration.py",
+      "category": "agent",
+      "imports_count": 10,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 3203
+    },
+    {
+      "path": "./agent_framework/coordinator.py",
+      "name": "coordinator.py",
+      "category": "agent",
+      "imports_count": 4,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 6685
+    },
+    {
+      "path": "./agent_framework/embeddings_provider.py",
+      "name": "embeddings_provider.py",
+      "category": "agent",
+      "imports_count": 4,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 2845
+    },
+    {
+      "path": "./agent_framework/fix_openrouter.py",
+      "name": "fix_openrouter.py",
+      "category": "agent",
+      "imports_count": 9,
+      "functions_count": 3,
+      "classes_count": 1,
+      "size": 5697
+    },
+    {
+      "path": "./agent_framework/memory_agent.py",
+      "name": "memory_agent.py",
+      "category": "agent",
+      "imports_count": 6,
+      "functions_count": 10,
+      "classes_count": 1,
+      "size": 16343
+    },
+    {
+      "path": "./agent_framework/nlp_agent.py",
+      "name": "nlp_agent.py",
+      "category": "agent",
+      "imports_count": 3,
+      "functions_count": 2,
+      "classes_count": 1,
+      "size": 9857
+    },
+    {
+      "path": "./agent_framework/table_generator.py",
+      "name": "table_generator.py",
+      "category": "agent",
+      "imports_count": 2,
+      "functions_count": 8,
+      "classes_count": 1,
+      "size": 6581
+    },
+    {
+      "path": "./enhanced_financial_extractor.py",
+      "name": "enhanced_financial_extractor.py",
+      "category": "analysis",
+      "imports_count": 7,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 10861
+    },
+    {
+      "path": "./fix_portfolio_analysis.py",
+      "name": "fix_portfolio_analysis.py",
+      "category": "analysis",
+      "imports_count": 1,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 4941
+    },
+    {
+      "path": "./app.py",
+      "name": "app.py",
+      "category": "app",
+      "imports_count": 12,
+      "functions_count": 12,
+      "classes_count": 0,
+      "size": 15944
+    },
+    {
+      "path": "./check_app.py",
+      "name": "check_app.py",
+      "category": "app",
+      "imports_count": 4,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1473
+    },
+    {
+      "path": "./complete_app.py",
+      "name": "complete_app.py",
+      "category": "app",
+      "imports_count": 10,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 6688
+    },
+    {
+      "path": "./dev_app.py",
+      "name": "dev_app.py",
+      "category": "app",
+      "imports_count": 6,
+      "functions_count": 5,
+      "classes_count": 0,
+      "size": 3161
+    },
+    {
+      "path": "./utils/init_app.py",
+      "name": "init_app.py",
+      "category": "app",
+      "imports_count": 10,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 4609
+    },
+    {
+      "path": "./run_app.py",
+      "name": "run_app.py",
+      "category": "app",
+      "imports_count": 5,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1361
+    },
+    {
+      "path": "./run_minimal_app.py",
+      "name": "run_minimal_app.py",
+      "category": "app",
+      "imports_count": 2,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 427
+    },
+    {
+      "path": "./simple_app.py",
+      "name": "simple_app.py",
+      "category": "app",
+      "imports_count": 3,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1001
+    },
+    {
+      "path": "./tests/test_app.py",
+      "name": "test_app.py",
+      "category": "app",
+      "imports_count": 7,
+      "functions_count": 12,
+      "classes_count": 0,
+      "size": 4037
+    },
+    {
+      "path": "./test_flask_app.py",
+      "name": "test_flask_app.py",
+      "category": "app",
+      "imports_count": 1,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 394
+    },
+    {
+      "path": "./update_app.py",
+      "name": "update_app.py",
+      "category": "app",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1827
+    },
+    {
+      "path": "./update_flask_app.py",
+      "name": "update_flask_app.py",
+      "category": "app",
+      "imports_count": 5,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1755
+    },
+    {
+      "path": "./vertical_slice_app.py",
+      "name": "vertical_slice_app.py",
+      "category": "app",
+      "imports_count": 12,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 8538
+    },
+    {
+      "path": "./financial_data_extractor.py",
+      "name": "financial_data_extractor.py",
+      "category": "extraction",
+      "imports_count": 7,
+      "functions_count": 8,
+      "classes_count": 0,
+      "size": 11089
+    },
+    {
+      "path": "./ocr_text_extractor.py",
+      "name": "ocr_text_extractor.py",
+      "category": "extraction",
+      "imports_count": 9,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 7356
+    },
+    {
+      "path": "./models/document_models.py",
+      "name": "document_models.py",
+      "category": "models",
+      "imports_count": 5,
+      "functions_count": 7,
+      "classes_count": 6,
+      "size": 6031
+    },
+    {
+      "path": "./utils/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 205
+    },
+    {
+      "path": "./tests/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 70
+    },
+    {
+      "path": "./config/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 0
+    },
+    {
+      "path": "./features/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 73
+    },
+    {
+      "path": "./features/chatbot/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 225
+    },
+    {
+      "path": "./features/chatbot/tests/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 126
+    },
+    {
+      "path": "./features/document_chat/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 235
+    },
+    {
+      "path": "./features/pdf_scanning/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 232
+    },
+    {
+      "path": "./features/pdf_scanning/tests/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 27
+    },
+    {
+      "path": "./features/table_extraction/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 244
+    },
+    {
+      "path": "./services/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 59
+    },
+    {
+      "path": "./services/summarization/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 115
+    },
+    {
+      "path": "./services/compliance/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 129
+    },
+    {
+      "path": "./services/copilot_router/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 109
+    },
+    {
+      "path": "./services/financial_insights/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 119
+    },
+    {
+      "path": "./services/document_intake/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 118
+    },
+    {
+      "path": "./shared/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 27
+    },
+    {
+      "path": "./pdf_processor/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 308
+    },
+    {
+      "path": "./pdf_processor/utils/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 275
+    },
+    {
+      "path": "./routes/__init__.py",
+      "name": "__init__.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 58
+    },
+    {
+      "path": "./accessibility_agent.py",
+      "name": "accessibility_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1215
+    },
+    {
+      "path": "./pdf_processor/tables/advanced_table_detector.py",
+      "name": "advanced_table_detector.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 3,
+      "classes_count": 1,
+      "size": 1712
+    },
+    {
+      "path": "./agent_definitions.py",
+      "name": "agent_definitions.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 315
+    },
+    {
+      "path": "./agent_scripts.py",
+      "name": "agent_scripts.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1297
+    },
+    {
+      "path": "./agent_templates.py",
+      "name": "agent_templates.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1439
+    },
+    {
+      "path": "./services/aws/ai_service.py",
+      "name": "ai_service.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 9540
+    },
+    {
+      "path": "./shared/ai_utils.py",
+      "name": "ai_utils.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 11,
+      "classes_count": 2,
+      "size": 14067
+    },
+    {
+      "path": "./scripts/analyze_all_documents.py",
+      "name": "analyze_all_documents.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 6002
+    },
+    {
+      "path": "./analyze_codebase.py",
+      "name": "analyze_codebase.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 4375
+    },
+    {
+      "path": "./features/chatbot/api.py",
+      "name": "api.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 9418
+    },
+    {
+      "path": "./features/pdf_scanning/api.py",
+      "name": "api.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 10422
+    },
+    {
+      "path": "./routes/api.py",
+      "name": "api.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 688
+    },
+    {
+      "path": "./api_agent.py",
+      "name": "api_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1185
+    },
+    {
+      "path": "./dev_tools/app_diagnostics.py",
+      "name": "app_diagnostics.py",
+      "category": "other",
+      "imports_count": 14,
+      "functions_count": 13,
+      "classes_count": 1,
+      "size": 57937
+    },
+    {
+      "path": "./app_simple.py",
+      "name": "app_simple.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 3673
+    },
+    {
+      "path": "./config/aws_config.py",
+      "name": "aws_config.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 1091
+    },
+    {
+      "path": "./utils/aws_helpers.py",
+      "name": "aws_helpers.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 4189
+    },
+    {
+      "path": "./routes/aws_api/aws_routes.py",
+      "name": "aws_routes.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 5,
+      "classes_count": 0,
+      "size": 3707
+    },
+    {
+      "path": "./pdf_processor/aws/aws_table_extractor.py",
+      "name": "aws_table_extractor.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 3,
+      "classes_count": 1,
+      "size": 5052
+    },
+    {
+      "path": "./backend_agent.py",
+      "name": "backend_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1197
+    },
+    {
+      "path": "./agents/base/base_agent.py",
+      "name": "base_agent.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 8,
+      "classes_count": 1,
+      "size": 2997
+    },
+    {
+      "path": "./scripts/benchmark.py",
+      "name": "benchmark.py",
+      "category": "other",
+      "imports_count": 18,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 20566
+    },
+    {
+      "path": "./build_agent.py",
+      "name": "build_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1191
+    },
+    {
+      "path": "./check_binaries.py",
+      "name": "check_binaries.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 2345
+    },
+    {
+      "path": "./check_pypdf2.py",
+      "name": "check_pypdf2.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 842
+    },
+    {
+      "path": "./client_experience_agent.py",
+      "name": "client_experience_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1227
+    },
+    {
+      "path": "./code_style_agent.py",
+      "name": "code_style_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1206
+    },
+    {
+      "path": "./features/compliance/api/compliance_routes.py",
+      "name": "compliance_routes.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 5,
+      "classes_count": 2,
+      "size": 3911
+    },
+    {
+      "path": "./features/compliance/services/compliance_service.py",
+      "name": "compliance_service.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 7,
+      "classes_count": 2,
+      "size": 8421
+    },
+    {
+      "path": "./config.py",
+      "name": "config.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 1,
+      "size": 772
+    },
+    {
+      "path": "./config/configuration.py",
+      "name": "configuration.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2712
+    },
+    {
+      "path": "./tests/conftest.py",
+      "name": "conftest.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 1680
+    },
+    {
+      "path": "./containerization_agent.py",
+      "name": "containerization_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1224
+    },
+    {
+      "path": "./create_dirs.py",
+      "name": "create_dirs.py",
+      "category": "other",
+      "imports_count": 1,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 517
+    },
+    {
+      "path": "./dev_tools/data_generator.py",
+      "name": "data_generator.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 13608
+    },
+    {
+      "path": "./shared/database.py",
+      "name": "database.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 14274
+    },
+    {
+      "path": "./database_agent.py",
+      "name": "database_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1200
+    },
+    {
+      "path": "./services/database_service.py",
+      "name": "database_service.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 10,
+      "classes_count": 1,
+      "size": 4585
+    },
+    {
+      "path": "./demonstrate_agents.py",
+      "name": "demonstrate_agents.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 10697
+    },
+    {
+      "path": "./dependency_agent.py",
+      "name": "dependency_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1206
+    },
+    {
+      "path": "./deployment/deploy.py",
+      "name": "deploy.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 2289
+    },
+    {
+      "path": "./deployment_agent.py",
+      "name": "deployment_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1206
+    },
+    {
+      "path": "./dev_workflow.py",
+      "name": "dev_workflow.py",
+      "category": "other",
+      "imports_count": 31,
+      "functions_count": 32,
+      "classes_count": 4,
+      "size": 85470
+    },
+    {
+      "path": "./dev_tools/dev_workflow.py",
+      "name": "dev_workflow.py",
+      "category": "other",
+      "imports_count": 31,
+      "functions_count": 32,
+      "classes_count": 4,
+      "size": 85396
+    },
+    {
+      "path": "./diagnostic.py",
+      "name": "diagnostic.py",
+      "category": "other",
+      "imports_count": 30,
+      "functions_count": 19,
+      "classes_count": 0,
+      "size": 34505
+    },
+    {
+      "path": "./routes/document.py",
+      "name": "document.py",
+      "category": "other",
+      "imports_count": 12,
+      "functions_count": 9,
+      "classes_count": 0,
+      "size": 16073
+    },
+    {
+      "path": "./services/document_analyzer.py",
+      "name": "document_analyzer.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 5,
+      "classes_count": 0,
+      "size": 1880
+    },
+    {
+      "path": "./features/document_intake/services/document_classifier_service.py",
+      "name": "document_classifier_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 6450
+    },
+    {
+      "path": "./pdf_processor/document_processor.py",
+      "name": "document_processor.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 6946
+    },
+    {
+      "path": "./documentation_agent.py",
+      "name": "documentation_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1215
+    },
+    {
+      "path": "./scripts/download_models.py",
+      "name": "download_models.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2632
+    },
+    {
+      "path": "./utils/dynamodb_client.py",
+      "name": "dynamodb_client.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 12,
+      "classes_count": 1,
+      "size": 12097
+    },
+    {
+      "path": "./services/aws/dynamodb_service.py",
+      "name": "dynamodb_service.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 7,
+      "classes_count": 1,
+      "size": 3954
+    },
+    {
+      "path": "./enhanced_api_endpoints.py",
+      "name": "enhanced_api_endpoints.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 3699
+    },
+    {
+      "path": "./pdf_processor/extraction/enhanced_ocr.py",
+      "name": "enhanced_ocr.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 5365
+    },
+    {
+      "path": "./pdf_processor/tables/enhanced_table_detection.py",
+      "name": "enhanced_table_detection.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 9339
+    },
+    {
+      "path": "./pdf_processor/tables/enhanced_table_detector.py",
+      "name": "enhanced_table_detector.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 15605
+    },
+    {
+      "path": "./pdf_processor/tables/enhanced_table_extractor.py",
+      "name": "enhanced_table_extractor.py",
+      "category": "other",
+      "imports_count": 15,
+      "functions_count": 13,
+      "classes_count": 1,
+      "size": 38187
+    },
+    {
+      "path": "./pdf_processor/analysis/entity_recognition.py",
+      "name": "entity_recognition.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 8274
+    },
+    {
+      "path": "./utils/error_handler.py",
+      "name": "error_handler.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 4,
+      "classes_count": 2,
+      "size": 3211
+    },
+    {
+      "path": "./error_handling_agent.py",
+      "name": "error_handling_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1218
+    },
+    {
+      "path": "./features/data_extraction/api/extraction_routes.py",
+      "name": "extraction_routes.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 7,
+      "classes_count": 3,
+      "size": 4653
+    },
+    {
+      "path": "./shared/file_utils.py",
+      "name": "file_utils.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 10,
+      "classes_count": 0,
+      "size": 8736
+    },
+    {
+      "path": "./agents/financial/financial_agent.py",
+      "name": "financial_agent.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 37306
+    },
+    {
+      "path": "./features/financial_insights/services/financial_analysis_service.py",
+      "name": "financial_analysis_service.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 12,
+      "classes_count": 1,
+      "size": 12002
+    },
+    {
+      "path": "./pdf_processor/analysis/financial_analyzer.py",
+      "name": "financial_analyzer.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 23,
+      "classes_count": 1,
+      "size": 44230
+    },
+    {
+      "path": "./features/financial_insights/services/financial_data_service.py",
+      "name": "financial_data_service.py",
+      "category": "other",
+      "imports_count": 0,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1502
+    },
+    {
+      "path": "./financial_document_processor.py",
+      "name": "financial_document_processor.py",
+      "category": "other",
+      "imports_count": 11,
+      "functions_count": 4,
+      "classes_count": 2,
+      "size": 5405
+    },
+    {
+      "path": "./features/data_extraction/services/financial_metrics_service.py",
+      "name": "financial_metrics_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 3088
+    },
+    {
+      "path": "./pdf_processor/analysis/financial_ratio_analyzer.py",
+      "name": "financial_ratio_analyzer.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 7,
+      "classes_count": 1,
+      "size": 17275
+    },
+    {
+      "path": "./services/financial_service.py",
+      "name": "financial_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 930
+    },
+    {
+      "path": "./fix_document_route.py",
+      "name": "fix_document_route.py",
+      "category": "other",
+      "imports_count": 1,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 6379
+    },
+    {
+      "path": "./fix_frontend_serving.py",
+      "name": "fix_frontend_serving.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 4392
+    },
+    {
+      "path": "./fix_pypdf2.py",
+      "name": "fix_pypdf2.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1018
+    },
+    {
+      "path": "./fix_upload.py",
+      "name": "fix_upload.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 3663
+    },
+    {
+      "path": "./frontend_agent.py",
+      "name": "frontend_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1200
+    },
+    {
+      "path": "./get-pip.py",
+      "name": "get-pip.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 2300175
+    },
+    {
+      "path": "./pdf_processor/language/hebrew_handler.py",
+      "name": "hebrew_handler.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 7,
+      "classes_count": 1,
+      "size": 7339
+    },
+    {
+      "path": "./pdf_processor/tables/hebrew_table_detector.py",
+      "name": "hebrew_table_detector.py",
+      "category": "other",
+      "imports_count": 18,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 32047
+    },
+    {
+      "path": "./features/financial_insights/api/insights_routes.py",
+      "name": "insights_routes.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 7,
+      "classes_count": 3,
+      "size": 5224
+    },
+    {
+      "path": "./features/document_intake/api/intake_routes.py",
+      "name": "intake_routes.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 5,
+      "classes_count": 2,
+      "size": 4542
+    },
+    {
+      "path": "./integration.py",
+      "name": "integration.py",
+      "category": "other",
+      "imports_count": 9,
+      "functions_count": 5,
+      "classes_count": 0,
+      "size": 4489
+    },
+    {
+      "path": "./internationalization_agent.py",
+      "name": "internationalization_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1236
+    },
+    {
+      "path": "./pdf_processor/analysis/isin_detector.py",
+      "name": "isin_detector.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 9,
+      "classes_count": 1,
+      "size": 10930
+    },
+    {
+      "path": "./launcher.py",
+      "name": "launcher.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2809
+    },
+    {
+      "path": "./dev_tools/link_validator.py",
+      "name": "link_validator.py",
+      "category": "other",
+      "imports_count": 11,
+      "functions_count": 7,
+      "classes_count": 1,
+      "size": 8688
+    },
+    {
+      "path": "./list_routes.py",
+      "name": "list_routes.py",
+      "category": "other",
+      "imports_count": 1,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 125
+    },
+    {
+      "path": "./utils/logger.py",
+      "name": "logger.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 413
+    },
+    {
+      "path": "./utils/logging_setup.py",
+      "name": "logging_setup.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 899
+    },
+    {
+      "path": "./api/main.py",
+      "name": "main.py",
+      "category": "other",
+      "imports_count": 19,
+      "functions_count": 0,
+      "classes_count": 1,
+      "size": 7064
+    },
+    {
+      "path": "./agents/memory/memory_manager.py",
+      "name": "memory_manager.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 3718
+    },
+    {
+      "path": "./features/chatbot/models.py",
+      "name": "models.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 2,
+      "classes_count": 2,
+      "size": 2489
+    },
+    {
+      "path": "./features/pdf_scanning/models.py",
+      "name": "models.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 4,
+      "classes_count": 2,
+      "size": 5066
+    },
+    {
+      "path": "./pdf_processor/extraction/paddle_ocr.py",
+      "name": "paddle_ocr.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 5501
+    },
+    {
+      "path": "./api/routes/pdf_analysis.py",
+      "name": "pdf_analysis.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 0,
+      "classes_count": 1,
+      "size": 8089
+    },
+    {
+      "path": "./scripts/pdf_mupdf_reader.py",
+      "name": "pdf_mupdf_reader.py",
+      "category": "other",
+      "imports_count": 9,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 13472
+    },
+    {
+      "path": "./shared/pdf_utils.py",
+      "name": "pdf_utils.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 11,
+      "classes_count": 1,
+      "size": 14548
+    },
+    {
+      "path": "./performance_agent.py",
+      "name": "performance_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1209
+    },
+    {
+      "path": "./dev_tools/performance_monitor.py",
+      "name": "performance_monitor.py",
+      "category": "other",
+      "imports_count": 9,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 6873
+    },
+    {
+      "path": "./scripts/process_document.py",
+      "name": "process_document.py",
+      "category": "other",
+      "imports_count": 12,
+      "functions_count": 9,
+      "classes_count": 0,
+      "size": 37727
+    },
+    {
+      "path": "./process_documents.py",
+      "name": "process_documents.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2335
+    },
+    {
+      "path": "./pdf_processor/processor.py",
+      "name": "processor.py",
+      "category": "other",
+      "imports_count": 11,
+      "functions_count": 3,
+      "classes_count": 1,
+      "size": 7822
+    },
+    {
+      "path": "./dev_tools/project_analyzer.py",
+      "name": "project_analyzer.py",
+      "category": "other",
+      "imports_count": 9,
+      "functions_count": 9,
+      "classes_count": 0,
+      "size": 28375
+    },
+    {
+      "path": "./project_builder.py",
+      "name": "project_builder.py",
+      "category": "other",
+      "imports_count": 27,
+      "functions_count": 19,
+      "classes_count": 4,
+      "size": 64013
+    },
+    {
+      "path": "./dev_tools/project_builder.py",
+      "name": "project_builder.py",
+      "category": "other",
+      "imports_count": 27,
+      "functions_count": 19,
+      "classes_count": 4,
+      "size": 64013
+    },
+    {
+      "path": "./dev_tools/project_manager.py",
+      "name": "project_manager.py",
+      "category": "other",
+      "imports_count": 12,
+      "functions_count": 15,
+      "classes_count": 1,
+      "size": 37648
+    },
+    {
+      "path": "./utils/pdf/pypdf_adapter.py",
+      "name": "pypdf_adapter.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 8,
+      "classes_count": 0,
+      "size": 1125
+    },
+    {
+      "path": "./routes/query.py",
+      "name": "query.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 4589
+    },
+    {
+      "path": "./services/question_service.py",
+      "name": "question_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1314
+    },
+    {
+      "path": "./refactoring_agent.py",
+      "name": "refactoring_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1209
+    },
+    {
+      "path": "./features/copilot_router/api/router_routes.py",
+      "name": "router_routes.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1983
+    },
+    {
+      "path": "./features/copilot_router/services/router_service.py",
+      "name": "router_service.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 7584
+    },
+    {
+      "path": "./features/chatbot/routes.py",
+      "name": "routes.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 5956
+    },
+    {
+      "path": "./features/document_chat/routes.py",
+      "name": "routes.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 2745
+    },
+    {
+      "path": "./features/pdf_scanning/routes.py",
+      "name": "routes.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 3491
+    },
+    {
+      "path": "./features/table_extraction/routes.py",
+      "name": "routes.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 3717
+    },
+    {
+      "path": "./api/routes.py",
+      "name": "routes.py",
+      "category": "other",
+      "imports_count": 14,
+      "functions_count": 0,
+      "classes_count": 7,
+      "size": 9854
+    },
+    {
+      "path": "./run_agents.py",
+      "name": "run_agents.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 219
+    },
+    {
+      "path": "./run_demo.py",
+      "name": "run_demo.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1741
+    },
+    {
+      "path": "./services/aws/s3_service.py",
+      "name": "s3_service.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 2244
+    },
+    {
+      "path": "./scalability_agent.py",
+      "name": "scalability_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1209
+    },
+    {
+      "path": "./security_agent.py",
+      "name": "security_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1200
+    },
+    {
+      "path": "./serve_frontend.py",
+      "name": "serve_frontend.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 8,
+      "classes_count": 0,
+      "size": 6033
+    },
+    {
+      "path": "./features/chatbot/service.py",
+      "name": "service.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 5088
+    },
+    {
+      "path": "./features/document_chat/service.py",
+      "name": "service.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 4856
+    },
+    {
+      "path": "./features/pdf_scanning/service.py",
+      "name": "service.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 8988
+    },
+    {
+      "path": "./features/table_extraction/service.py",
+      "name": "service.py",
+      "category": "other",
+      "imports_count": 4,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 9340
+    },
+    {
+      "path": "./features/chatbot/services.py",
+      "name": "services.py",
+      "category": "other",
+      "imports_count": 8,
+      "functions_count": 8,
+      "classes_count": 1,
+      "size": 11492
+    },
+    {
+      "path": "./features/pdf_scanning/services.py",
+      "name": "services.py",
+      "category": "other",
+      "imports_count": 13,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 8213
+    },
+    {
+      "path": "./setup.py",
+      "name": "setup.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 8,
+      "classes_count": 0,
+      "size": 5201
+    },
+    {
+      "path": "./deployment/setup_aws_params.py",
+      "name": "setup_aws_params.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 2707
+    },
+    {
+      "path": "./routes/simple_document.py",
+      "name": "simple_document.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 3232
+    },
+    {
+      "path": "./simple_frontend.py",
+      "name": "simple_frontend.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 3248
+    },
+    {
+      "path": "./simple_pdf_extractor.py",
+      "name": "simple_pdf_extractor.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1974
+    },
+    {
+      "path": "./start.py",
+      "name": "start.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 6296
+    },
+    {
+      "path": "./utils/storage_client.py",
+      "name": "storage_client.py",
+      "category": "other",
+      "imports_count": 10,
+      "functions_count": 14,
+      "classes_count": 1,
+      "size": 12546
+    },
+    {
+      "path": "./features/summarization/api/summarization_routes.py",
+      "name": "summarization_routes.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 4317
+    },
+    {
+      "path": "./features/summarization/services/summarization_service.py",
+      "name": "summarization_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 5395
+    },
+    {
+      "path": "./features/data_extraction/services/table_extraction_service.py",
+      "name": "table_extraction_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 4,
+      "classes_count": 0,
+      "size": 4651
+    },
+    {
+      "path": "./pdf_processor/tables/table_extractor.py",
+      "name": "table_extractor.py",
+      "category": "other",
+      "imports_count": 13,
+      "functions_count": 16,
+      "classes_count": 1,
+      "size": 30457
+    },
+    {
+      "path": "./models/table_model.py",
+      "name": "table_model.py",
+      "category": "other",
+      "imports_count": 6,
+      "functions_count": 18,
+      "classes_count": 1,
+      "size": 11793
+    },
+    {
+      "path": "./services/table_service.py",
+      "name": "table_service.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 962
+    },
+    {
+      "path": "./testing_agent.py",
+      "name": "testing_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1197
+    },
+    {
+      "path": "./pdf_processor/extraction/text_extractor.py",
+      "name": "text_extractor.py",
+      "category": "other",
+      "imports_count": 7,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 8334
+    },
+    {
+      "path": "./services/aws/textract_service.py",
+      "name": "textract_service.py",
+      "category": "other",
+      "imports_count": 5,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 5466
+    },
+    {
+      "path": "./ui_ux_agent.py",
+      "name": "ui_ux_agent.py",
+      "category": "other",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1191
+    },
+    {
+      "path": "./update_frontend.py",
+      "name": "update_frontend.py",
+      "category": "other",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1536
+    },
+    {
+      "path": "./simple_qa.py",
+      "name": "simple_qa.py",
+      "category": "qa",
+      "imports_count": 5,
+      "functions_count": 3,
+      "classes_count": 1,
+      "size": 3846
+    },
+    {
+      "path": "./routes/document_routes.py",
+      "name": "document_routes.py",
+      "category": "routes",
+      "imports_count": 4,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 4341
+    },
+    {
+      "path": "./routes/langchain_routes.py",
+      "name": "langchain_routes.py",
+      "category": "routes",
+      "imports_count": 8,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 15344
+    },
+    {
+      "path": "./services/document_service.py",
+      "name": "document_service.py",
+      "category": "services",
+      "imports_count": 5,
+      "functions_count": 8,
+      "classes_count": 1,
+      "size": 4796
+    },
+    {
+      "path": "./tests/api_integration_test.py",
+      "name": "api_integration_test.py",
+      "category": "tests",
+      "imports_count": 11,
+      "functions_count": 11,
+      "classes_count": 1,
+      "size": 21576
+    },
+    {
+      "path": "./comprehensive_test.py",
+      "name": "comprehensive_test.py",
+      "category": "tests",
+      "imports_count": 12,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 7643
+    },
+    {
+      "path": "./tests/comprehensive_test.py",
+      "name": "comprehensive_test.py",
+      "category": "tests",
+      "imports_count": 20,
+      "functions_count": 12,
+      "classes_count": 1,
+      "size": 33745
+    },
+    {
+      "path": "./test_files/create_simple_pdf.py",
+      "name": "create_simple_pdf.py",
+      "category": "tests",
+      "imports_count": 1,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1284
+    },
+    {
+      "path": "./tests/frontend_ui_test.py",
+      "name": "frontend_ui_test.py",
+      "category": "tests",
+      "imports_count": 16,
+      "functions_count": 13,
+      "classes_count": 1,
+      "size": 30919
+    },
+    {
+      "path": "./features/chatbot/tests/run_all_tests.py",
+      "name": "run_all_tests.py",
+      "category": "tests",
+      "imports_count": 8,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2972
+    },
+    {
+      "path": "./run_tests.py",
+      "name": "run_tests.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 3162
+    },
+    {
+      "path": "./simple_test.py",
+      "name": "simple_test.py",
+      "category": "tests",
+      "imports_count": 9,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 6324
+    },
+    {
+      "path": "./simplified_test.py",
+      "name": "simplified_test.py",
+      "category": "tests",
+      "imports_count": 8,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 3701
+    },
+    {
+      "path": "./system_test.py",
+      "name": "system_test.py",
+      "category": "tests",
+      "imports_count": 9,
+      "functions_count": 13,
+      "classes_count": 1,
+      "size": 12222
+    },
+    {
+      "path": "./test_agent_framework.py",
+      "name": "test_agent_framework.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 605
+    },
+    {
+      "path": "./test_api.py",
+      "name": "test_api.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1004
+    },
+    {
+      "path": "./test_api_endpoints.py",
+      "name": "test_api_endpoints.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1336
+    },
+    {
+      "path": "./tests/test_api_integration.py",
+      "name": "test_api_integration.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1923
+    },
+    {
+      "path": "./test_api_key.py",
+      "name": "test_api_key.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2576
+    },
+    {
+      "path": "./test_api_key_fixed.py",
+      "name": "test_api_key_fixed.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 4000
+    },
+    {
+      "path": "./test_app_comprehensive.py",
+      "name": "test_app_comprehensive.py",
+      "category": "tests",
+      "imports_count": 15,
+      "functions_count": 15,
+      "classes_count": 1,
+      "size": 12857
+    },
+    {
+      "path": "./test_app_functionality.py",
+      "name": "test_app_functionality.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 6,
+      "classes_count": 1,
+      "size": 4588
+    },
+    {
+      "path": "./test_aws_integration.py",
+      "name": "test_aws_integration.py",
+      "category": "tests",
+      "imports_count": 6,
+      "functions_count": 6,
+      "classes_count": 0,
+      "size": 5772
+    },
+    {
+      "path": "./features/chatbot/tests/test_chatbot_api.py",
+      "name": "test_chatbot_api.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 18,
+      "classes_count": 3,
+      "size": 5326
+    },
+    {
+      "path": "./features/chatbot/tests/test_chatbot_capabilities.py",
+      "name": "test_chatbot_capabilities.py",
+      "category": "tests",
+      "imports_count": 8,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 5605
+    },
+    {
+      "path": "./test_cloud_ocr.py",
+      "name": "test_cloud_ocr.py",
+      "category": "tests",
+      "imports_count": 6,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 3045
+    },
+    {
+      "path": "./test_cloud_services.py",
+      "name": "test_cloud_services.py",
+      "category": "tests",
+      "imports_count": 9,
+      "functions_count": 10,
+      "classes_count": 1,
+      "size": 9158
+    },
+    {
+      "path": "./test_copilot.py",
+      "name": "test_copilot.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 791
+    },
+    {
+      "path": "./test_core.py",
+      "name": "test_core.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 1260
+    },
+    {
+      "path": "./test_db_connection.py",
+      "name": "test_db_connection.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 611
+    },
+    {
+      "path": "./scripts/test_document.py",
+      "name": "test_document.py",
+      "category": "tests",
+      "imports_count": 7,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 5375
+    },
+    {
+      "path": "./tests/test_document_processing.py",
+      "name": "test_document_processing.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 392
+    },
+    {
+      "path": "./test_document_upload.py",
+      "name": "test_document_upload.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 3013
+    },
+    {
+      "path": "./test_enhanced_endpoints.py",
+      "name": "test_enhanced_endpoints.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2170
+    },
+    {
+      "path": "./test_enhanced_extraction.py",
+      "name": "test_enhanced_extraction.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 2030
+    },
+    {
+      "path": "./test_financial_analysis.py",
+      "name": "test_financial_analysis.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 871
+    },
+    {
+      "path": "./tests/test_financial_analysis.py",
+      "name": "test_financial_analysis.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 4,
+      "classes_count": 1,
+      "size": 7347
+    },
+    {
+      "path": "./test_financial_analyzer.py",
+      "name": "test_financial_analyzer.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 513
+    },
+    {
+      "path": "./test_gemini.py",
+      "name": "test_gemini.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 346
+    },
+    {
+      "path": "./test_huggingface.py",
+      "name": "test_huggingface.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 742
+    },
+    {
+      "path": "./features/chatbot/tests/test_huggingface_connection.py",
+      "name": "test_huggingface_connection.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 3461
+    },
+    {
+      "path": "./test_imports.py",
+      "name": "test_imports.py",
+      "category": "tests",
+      "imports_count": 7,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 964
+    },
+    {
+      "path": "./tests/test_langchain_integration.py",
+      "name": "test_langchain_integration.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 200
+    },
+    {
+      "path": "./test_llm_config.py",
+      "name": "test_llm_config.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 946
+    },
+    {
+      "path": "./test_mongo.py",
+      "name": "test_mongo.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 678
+    },
+    {
+      "path": "./tests/test_mongodb_integration.py",
+      "name": "test_mongodb_integration.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 1132
+    },
+    {
+      "path": "./test_openrouter.py",
+      "name": "test_openrouter.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 0,
+      "classes_count": 0,
+      "size": 1451
+    },
+    {
+      "path": "./test_pdf_extraction.py",
+      "name": "test_pdf_extraction.py",
+      "category": "tests",
+      "imports_count": 10,
+      "functions_count": 2,
+      "classes_count": 0,
+      "size": 6041
+    },
+    {
+      "path": "./test_pdf_processing.py",
+      "name": "test_pdf_processing.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1368
+    },
+    {
+      "path": "./tests/test_pdf_scanning.py",
+      "name": "test_pdf_scanning.py",
+      "category": "tests",
+      "imports_count": 6,
+      "functions_count": 7,
+      "classes_count": 0,
+      "size": 7059
+    },
+    {
+      "path": "./features/pdf_scanning/tests/test_pdf_scanning.py",
+      "name": "test_pdf_scanning.py",
+      "category": "tests",
+      "imports_count": 11,
+      "functions_count": 13,
+      "classes_count": 0,
+      "size": 4278
+    },
+    {
+      "path": "./scripts/test_system.py",
+      "name": "test_system.py",
+      "category": "tests",
+      "imports_count": 7,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 4361
+    },
+    {
+      "path": "./test_table_extraction.py",
+      "name": "test_table_extraction.py",
+      "category": "tests",
+      "imports_count": 2,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 650
+    },
+    {
+      "path": "./test_table_generator.py",
+      "name": "test_table_generator.py",
+      "category": "tests",
+      "imports_count": 4,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 5386
+    },
+    {
+      "path": "./test_upload_endpoint.py",
+      "name": "test_upload_endpoint.py",
+      "category": "tests",
+      "imports_count": 3,
+      "functions_count": 1,
+      "classes_count": 0,
+      "size": 1377
+    },
+    {
+      "path": "./test_vertical_slice.py",
+      "name": "test_vertical_slice.py",
+      "category": "tests",
+      "imports_count": 5,
+      "functions_count": 9,
+      "classes_count": 0,
+      "size": 5748
+    },
+    {
+      "path": "./pdf_processor/aws/aws_pdf_processor.py",
+      "name": "aws_pdf_processor.py",
+      "category": "utils",
+      "imports_count": 11,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 5740
+    },
+    {
+      "path": "./utils/pdf_processor.py",
+      "name": "pdf_processor.py",
+      "category": "utils",
+      "imports_count": 6,
+      "functions_count": 5,
+      "classes_count": 1,
+      "size": 5834
+    },
+    {
+      "path": "./tests/test_pdf_processor.py",
+      "name": "test_pdf_processor.py",
+      "category": "utils",
+      "imports_count": 3,
+      "functions_count": 3,
+      "classes_count": 0,
+      "size": 4159
+    }
+  ]
+}

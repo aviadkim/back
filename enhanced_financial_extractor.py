@@ -1,286 +1,302 @@
 import re
 import json
+import os
 import logging
-import pandas as pd
-import numpy as np
-from datetime import datetime
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger("financial_extractor")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def extract_isin_numbers(text):
-    """Extract ISIN numbers from text"""
-    isin_pattern = r'[A-Z]{2}[A-Z0-9]{9}[0-9]'
-    return list(set(re.findall(isin_pattern, text)))  # Remove duplicates
-
-def extract_financial_metadata(all_text, isin_numbers):
-    """Extract complete financial data for each security"""
-    financial_data = {}
+class EnhancedFinancialExtractor:
+    """Enhanced extractor for financial data from documents"""
     
-    # Common financial terms and their patterns
-    patterns = {
-        'security_types': {
-            'bond': r'bond|debenture|note|treasury',
-            'equity': r'equity|stock|share|common',
-            'etf': r'ETF|fund|index fund',
-            'structured': r'structured|certificate|note',
-            'derivative': r'option|future|forward|swap'
-        },
-        'quantity': [
-            r'(?:Nominal|Amount|Quantity|Qty)[:\s]+([0-9,\.]+)',
-            r'([0-9,\.]+)[\s]+(?:units|shares)',
-            r'(?:Position|Holding)[:\s]+([0-9,\.]+)'
-        ],
-        'price': [
-            r'(?:Price|Rate)[:\s]+([0-9,\.]+)',
-            r'(?:NAV|value per share)[:\s]+([0-9,\.]+)',
-            r'([0-9,\.]+)[\s]+(?:per share|per unit)'
-        ],
-        'market_value': [
-            r'(?:Market Value|Valuation|Value)[:\s]+([0-9,\.]+[KMB]?)',
-            r'(?:Total)[:\s]+([0-9,\.]+[KMB]?)'
-        ],
-        'currency': r'\b(USD|EUR|GBP|CHF|JPY|ILS)\b',
-        'percentage': [
-            r'(?:Weight|Allocation|%)[:\s]+([0-9\.]+%)',
-            r'(?:Weight|Allocation)[:\s]+([0-9\.]+)\s?%'
-        ],
-        'date': [
-            r'\b(\d{1,2}[./]\d{1,2}[./]\d{2,4})\b',
-            r'\b(\d{4}-\d{2}-\d{2})\b'
-        ],
-        'performance': [
-            r'(?:YTD|Return|Performance)[:\s]+([\+\-]?[0-9\.]+%)',
-            r'(?:YTD|Return|Performance)[:\s]+([\+\-]?[0-9\.]+)\s?%'
-        ]
-    }
+    def __init__(self):
+        # ISIN pattern: 2 letters followed by 10 digits/letters
+        self.isin_pattern = r'\b([A-Z]{2}[A-Z0-9]{10})\b'
+        
+        # Currency patterns
+        self.currency_symbols = r'[$€£₪]'
+        self.currency_codes = r'\b(USD|EUR|GBP|ILS)\b'
+        
+        # Number patterns
+        self.number_pattern = r'[\d,]+\.?\d*'
+        
+        # Percentage pattern
+        self.percentage_pattern = r'(\d+\.?\d*)[ ]?%'
     
-    # Process each ISIN
-    for isin in isin_numbers:
-        # Get context around the ISIN
-        context_pattern = r'(.{0,500}' + re.escape(isin) + r'.{0,500})'
-        context_matches = re.findall(context_pattern, all_text, re.DOTALL)
+    def process_document(self, document_id):
+        """Process a document to extract all financial information"""
+        # Get the document content (assuming extraction file exists)
+        extraction_path = self._get_extraction_path(document_id)
         
-        if not context_matches:
-            financial_data[isin] = {'isin': isin, 'data_found': False}
-            continue
-            
-        context = context_matches[0]
+        if not os.path.exists(extraction_path):
+            logger.error(f"Extraction file not found: {extraction_path}")
+            return None
         
-        # Initialize data structure for this ISIN
-        data = {
-            'isin': isin,
-            'data_found': True,
-            'context': context,
-            'security_type': None,
-            'name': None,
-            'quantity': None,
-            'price': None,
-            'market_value': None,
-            'currency': None,
-            'percentage': None,
-            'dates': [],
-            'performance': None,
-            'additional_metrics': {}
+        # Read the extraction file
+        try:
+            with open(extraction_path, 'r') as f:
+                extraction_data = json.load(f)
+                content = extraction_data.get('content', '')
+        except Exception as e:
+            logger.error(f"Error reading extraction file: {e}")
+            return None
+        
+        # Extract financial data
+        result = self.extract_data(content)
+        
+        # Save the enhanced extraction
+        enhanced_path = self._get_enhanced_path(document_id)
+        with open(enhanced_path, 'w') as f:
+            json.dump(result, f, indent=2)
+        
+        return result
+    
+    def extract_data(self, text):
+        """Extract all financial data from text"""
+        result = {
+            'isins': self._extract_isins(text),
+            'currencies': self._extract_currencies(text),
+            'percentages': self._extract_percentages(text),
+            'securities': self._extract_securities(text),
+            'tables': self._extract_table_data(text)
         }
+        return result
+    
+    def _extract_isins(self, text):
+        """Extract ISIN numbers from text"""
+        isins = re.findall(self.isin_pattern, text)
+        logger.info(f"Extracted {len(isins)} ISINs")
+        return isins
+    
+    def _extract_currencies(self, text):
+        """Extract currency amounts from text"""
+        # Look for currency symbol followed by number
+        symbol_amounts = re.findall(f'{self.currency_symbols}[ ]?({self.number_pattern})', text)
         
-        # Extract security name
-        name_pattern = r'(?:' + re.escape(isin) + r'[^\n]*?([A-Z][A-Za-z\s\-\.\&0-9]{5,50}))'
-        name_matches = re.findall(name_pattern, context)
-        if name_matches:
-            data['name'] = name_matches[0].strip()
+        # Look for number followed by currency code
+        code_amounts = re.findall(f'({self.number_pattern})[ ]?{self.currency_codes}', text)
+        
+        currencies = []
+        
+        # Process symbol amounts
+        for amount in symbol_amounts:
+            currencies.append({
+                'amount': amount,
+                'type': 'symbol_amount'
+            })
+        
+        # Process code amounts
+        for amount in code_amounts:
+            currencies.append({
+                'amount': amount,
+                'type': 'code_amount'
+            })
+        
+        logger.info(f"Extracted {len(currencies)} currency amounts")
+        return currencies
+    
+    def _extract_percentages(self, text):
+        """Extract percentage values from text"""
+        percentages = re.findall(self.percentage_pattern, text)
+        logger.info(f"Extracted {len(percentages)} percentages")
+        return percentages
+    
+    def _extract_securities(self, text):
+        """Extract securities information (ISIN with associated data)"""
+        securities = []
+        
+        # Find all ISINs
+        isins = re.findall(self.isin_pattern, text)
+        
+        for isin in isins:
+            # Get a window of text around the ISIN (100 chars before and after)
+            isin_index = text.find(isin)
+            start = max(0, isin_index - 100)
+            end = min(len(text), isin_index + 100)
+            context = text[start:end]
             
-        # Determine security type
-        for sec_type, pattern in patterns['security_types'].items():
-            if re.search(pattern, context, re.IGNORECASE):
-                data['security_type'] = sec_type
-                break
-                
-        # Extract each data point
-        for metric, metric_patterns in patterns.items():
-            if metric == 'security_types':  # Already handled
-                continue
-                
-            if isinstance(metric_patterns, list):
-                for pattern in metric_patterns:
-                    matches = re.findall(pattern, context, re.IGNORECASE)
-                    if matches:
-                        # Handle special cases
-                        if metric == 'dates':
-                            data[metric].extend(matches)
-                        else:
-                            data[metric] = matches[0]
-                            break
+            # Look for numbers in this context
+            numbers = re.findall(self.number_pattern, context)
+            
+            # Look for currency symbols in this context
+            currencies = re.findall(self.currency_symbols, context)
+            
+            # Look for possible security names (capital letters followed by text)
+            name_match = re.search(r'\b([A-Z][A-Za-z\.\, ]{2,30})(Inc|Corp|Ltd|AG|SA|NV|Plc|Group|ETF)?', context)
+            name = name_match.group(0) if name_match else None
+            
+            security = {
+                'isin': isin,
+                'name': name,
+                'numbers': numbers[:5],  # Limit to first 5 numbers
+                'currencies': currencies
+            }
+            
+            securities.append(security)
+        
+        logger.info(f"Extracted data for {len(securities)} securities")
+        return securities
+    
+    def _extract_table_data(self, text):
+        """Attempt to extract table structures from text"""
+        tables = []
+        
+        # Look for potential tables (lines with consistent delimiters)
+        lines = text.split("\n")
+        current_table = []
+        
+        for line in lines:
+            # If line contains multiple tab or multiple space sequences
+            if "\t" in line or "  " in line:
+                # Check if this is a data line
+                if re.search(self.isin_pattern, line) or re.search(self.number_pattern, line):
+                    current_table.append(line)
+            elif current_table:
+                # End of table
+                if len(current_table) > 1:  # At least 2 lines to be a table
+                    tables.append(current_table)
+                current_table = []
+        
+        # Don't forget to add the last table if we ended on a table line
+        if current_table and len(current_table) > 1:
+            tables.append(current_table)
+        
+        processed_tables = []
+        
+        # Process each potential table
+        for table_lines in tables:
+            # Try to determine columns based on spacing
+            header = table_lines[0]
+            
+            # Check if we can split by tabs
+            if "\t" in header:
+                columns = header.split("\t")
+                rows = [line.split("\t") for line in table_lines[1:]]
             else:
-                # Single pattern (like currency)
-                matches = re.findall(metric_patterns, context)
-                if matches:
-                    data[metric] = matches[0]
+                # Try to split based on multiple spaces
+                columns = re.split(r'\s{2,}', header.strip())
+                rows = [re.split(r'\s{2,}', line.strip()) for line in table_lines[1:]]
+            
+            # Only keep tables with at least 2 columns
+            if len(columns) >= 2:
+                processed_tables.append({
+                    'columns': columns,
+                    'rows': rows
+                })
         
-        financial_data[isin] = data
+        logger.info(f"Extracted {len(processed_tables)} potential tables")
+        return processed_tables
     
-    return financial_data
+    def _get_extraction_path(self, document_id):
+        """Get the path to the extraction file"""
+        return f"extractions/{document_id}_extraction.json"
+    
+    def _get_enhanced_path(self, document_id):
+        """Get the path to the enhanced extraction file"""
+        # Create the directory if it doesn't exist
+        os.makedirs("enhanced_extractions", exist_ok=True)
+        return f"enhanced_extractions/{document_id}_enhanced.json"
 
-def analyze_portfolio(holdings_data):
-    """Perform comprehensive portfolio analysis"""
-    # Convert to DataFrame
-    df = pd.DataFrame.from_dict(holdings_data, orient='index')
-    
-    # Check if DataFrame is empty
-    if df.empty:
-        return {
-            'total_value': 0,
-            'security_count': 0,
-            'asset_allocation': {},
-            'currency_allocation': {},
-            'top_holdings': [],
-            'risk_metrics': {},
-            'performance': {}
-        }
-    
-    # Ensure numeric values
-    numeric_columns = ['market_value', 'quantity', 'price', 'percentage']
-    for col in numeric_columns:
-        if col in df.columns:
-            # Check if the column has any non-null values
-            if df[col].notna().any():
-                # Convert string percentages to floats
-                if col == 'percentage':
-                    # Handle percentage values with % symbol
-                    df[col] = df[col].astype(str).str.replace('%', '', regex=False)
-                    df[col] = pd.to_numeric(df[col], errors='coerce') / 100.0
-                else:
-                    # Handle numeric values with commas
-                    df[col] = df[col].astype(str).str.replace(',', '', regex=False)
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-    
-    # Initialize results
-    results = {
-        'total_value': 0,
-        'security_count': len(df),
-        'asset_allocation': {},
-        'currency_allocation': {},
-        'top_holdings': [],
-        'risk_metrics': {},
-        'performance': {}
-    }
-    
-    # Calculate total value
-    if 'market_value' in df.columns and df['market_value'].notna().any():
-        results['total_value'] = df['market_value'].sum()
-    
-    # Calculate asset allocation
-    if 'security_type' in df.columns and df['security_type'].notna().any() and 'market_value' in df.columns:
-        try:
-            # Filter out rows with NaN values
-            valid_rows = df[df['security_type'].notna() & df['market_value'].notna()]
-            if not valid_rows.empty:
-                asset_allocation = valid_rows.groupby('security_type')['market_value'].sum()
-                asset_allocation_dict = asset_allocation.to_dict()
-                
-                # Calculate percentages
-                for asset_type, value in asset_allocation_dict.items():
-                    if asset_type and not pd.isna(asset_type):
-                        results['asset_allocation'][asset_type] = {
-                            'value': value,
-                            'percentage': value / results['total_value'] * 100 if results['total_value'] else 0
-                        }
-        except Exception as e:
-            print(f"Error calculating asset allocation: {e}")
-    
-    # Identify top holdings
-    if 'market_value' in df.columns and df['market_value'].notna().any():
-        try:
-            # Filter valid rows and get top 10
-            valid_rows = df[df['market_value'].notna()]
-            if not valid_rows.empty:
-                top_holdings = valid_rows.nlargest(10, 'market_value')
-                
-                for idx, row in top_holdings.iterrows():
-                    holding_data = {
-                        'isin': idx,
-                        'market_value': row['market_value'],
-                        'percentage': row['market_value'] / results['total_value'] * 100 if results['total_value'] else 0
-                    }
-                    
-                    # Add name if available
-                    if 'name' in row and not pd.isna(row['name']):
-                        holding_data['name'] = row['name']
-                    else:
-                        holding_data['name'] = 'Unknown'
-                    
-                    results['top_holdings'].append(holding_data)
-        except Exception as e:
-            print(f"Error identifying top holdings: {e}")
-    
-    return results
+# Create a function to use this class with an existing document
+def enhance_document_extraction(document_id):
+    """Enhance the extraction for an existing document"""
+    extractor = EnhancedFinancialExtractor()
+    result = extractor.process_document(document_id)
+    if result:
+        print(f"Enhanced extraction completed for document {document_id}")
+        print(f"Found {len(result['isins'])} ISINs")
+        print(f"Found {len(result['securities'])} securities with contextual data")
+        print(f"Found {len(result['tables'])} potential tables")
+        return True
+    else:
+        print(f"Failed to enhance extraction for document {document_id}")
+        return False
 
-def generate_custom_table(extracted_data, table_spec):
-    """Generate a custom table based on user specifications"""
-    # Convert to DataFrame for easier manipulation
-    df = pd.DataFrame.from_dict(extracted_data, orient='index')
-    
-    # Apply filters
-    if 'filters' in table_spec:
-        for column, filter_value in table_spec['filters'].items():
-            if column in df.columns:
-                if isinstance(filter_value, dict):
-                    # Complex filter with operators
-                    if 'gt' in filter_value:
-                        df = df[df[column] > filter_value['gt']]
-                    if 'lt' in filter_value:
-                        df = df[df[column] < filter_value['lt']]
-                    if 'eq' in filter_value:
-                        df = df[df[column] == filter_value['eq']]
-                    if 'contains' in filter_value:
-                        df = df[df[column].str.contains(filter_value['contains'], na=False)]
-                else:
-                    # Simple equality filter
-                    df = df[df[column] == filter_value]
-    
-    # Sort data
-    if 'sort_by' in table_spec and table_spec['sort_by'] in df.columns:
-        ascending = table_spec.get('sort_order', 'asc') == 'asc'
-        df = df.sort_values(by=table_spec['sort_by'], ascending=ascending)
-    
-    # Select columns
-    if 'columns' in table_spec:
-        columns = [col for col in table_spec['columns'] if col in df.columns]
-        df = df[columns]
-    
-    return df
-
-# Main function for testing
 if __name__ == "__main__":
     import sys
+    if len(sys.argv) > 1:
+        document_id = sys.argv[1]
+        enhance_document_extraction(document_id)
+    else:
+        print("Please provide a document ID")
+
+# Compatibility functions for enhanced_api_endpoints.py
+def analyze_portfolio(document_id):
+    """Analyze portfolio data from a document
+    This is a compatibility function that uses the EnhancedFinancialExtractor
+    """
+    extractor = EnhancedFinancialExtractor()
+    result = extractor.process_document(document_id)
     
-    if len(sys.argv) < 2:
-        print("Usage: python enhanced_financial_extractor.py <ocr_json_file>")
-        sys.exit(1)
+    if not result:
+        return {
+            'security_count': 0,
+            'total_value': 0,
+            'asset_allocation': {},
+            'currency_allocation': {},
+            'performance': {},
+            'risk_metrics': {},
+            'top_holdings': []
+        }
     
-    # Load OCR text
-    with open(sys.argv[1], 'r', encoding='utf-8') as f:
-        ocr_data = json.load(f)
+    # Extract securities info
+    securities = result.get('securities', [])
     
-    # Combine all text
-    all_text = ""
-    for page_num, page_data in ocr_data.items():
-        all_text += page_data.get("text", "") + "\n\n"
+    # Count securities
+    security_count = len(securities)
     
-    # Extract ISIN numbers
-    isin_numbers = extract_isin_numbers(all_text)
-    print(f"Found {len(isin_numbers)} ISIN numbers")
+    # Placeholder for more sophisticated analysis
+    # In a real implementation, this would extract more data
     
-    # Extract financial metadata
-    financial_data = extract_financial_metadata(all_text, isin_numbers)
+    analysis = {
+        'security_count': security_count,
+        'total_value': 0,  # Would calculate total portfolio value
+        'asset_allocation': {},  # Would calculate asset allocation
+        'currency_allocation': {},  # Would analyze currencies
+        'performance': {},  # Would analyze performance metrics 
+        'risk_metrics': {},  # Would calculate risk metrics
+        'top_holdings': []  # Would identify top holdings
+    }
     
-    # Save results
-    output_file = sys.argv[1].replace("_ocr.json", "_enhanced_financial.json")
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(financial_data, f, indent=2, ensure_ascii=False)
+    return analysis
+
+def generate_custom_table(document_id, columns=None):
+    """Generate a custom table from document data
+    This is a compatibility function that uses the EnhancedFinancialExtractor
+    """
+    if columns is None:
+        columns = ['isin', 'name', 'currency']
     
-    print(f"Enhanced financial data saved to {output_file}")
+    extractor = EnhancedFinancialExtractor()
+    result = extractor.process_document(document_id)
+    
+    if not result:
+        return {
+            'columns': columns,
+            'rows': [],
+            'document_id': document_id
+        }
+    
+    # Extract securities info
+    securities = result.get('securities', [])
+    
+    # Transform securities into rows
+    rows = []
+    for security in securities:
+        row = {}
+        if 'isin' in columns:
+            row['isin'] = security.get('isin', '')
+        if 'name' in columns:
+            row['name'] = security.get('name', '')
+        if 'currency' in columns:
+            # Use the first currency found in the security context
+            currencies = security.get('currencies', [])
+            row['currency'] = currencies[0] if currencies else ''
+        
+        rows.append(row)
+    
+    return {
+        'columns': columns,
+        'rows': rows,
+        'document_id': document_id
+    }

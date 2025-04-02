@@ -9,6 +9,8 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import tempfile
 import shutil
+from enhanced_financial_extractor import EnhancedFinancialExtractor
+
 
 
 # Import enhanced endpoints
@@ -283,28 +285,32 @@ def get_document_financial(document_id):
 
 @app.route('/api/documents/<document_id>/tables', methods=['GET'])
 def get_document_tables(document_id):
-    """Get the tables extracted from a document"""
-    try:
-        # Check for tables data
-        tables_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_tables.json")
-        
-        if not os.path.exists(tables_path):
-            return jsonify({"error": "Table data not found"}), 404
-        
-        # Load the tables data
-        with open(tables_path, 'r', encoding='utf-8') as f:
-            tables = json.load(f)
-        
-        return jsonify({
-            "document_id": document_id,
-            "table_count": len(tables),
-            "tables": tables
-        }), 200
-        
-    except Exception as e:
-        logger.error(f"Error getting table data for {document_id}: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
+    """Get tables extracted from a document"""
+    # Get the extraction path
+    extraction_path = get_extraction_path(document_id)
+    
+    # Check if the document exists
+    document_path = get_document_path(document_id)
+    if not os.path.exists(document_path):
+        return jsonify({"error": "Document not found"}), 404
+    
+    # If extraction file exists, read tables from it
+    tables = []
+    
+    if os.path.exists(extraction_path):
+        try:
+            with open(extraction_path, 'r') as f:
+                extraction_data = json.load(f)
+                tables = extraction_data.get('tables', [])
+        except Exception as e:
+            app.logger.error(f"Error reading extraction data: {e}")
+    
+    # Return tables (empty list if none found)
+    return jsonify({
+        "tables": tables,
+        "document_id": document_id,
+        "table_count": len(tables)
+    })
 @app.route('/api/qa/ask', methods=['POST'])
 def ask_question():
     """Ask a question about a document"""
@@ -400,6 +406,38 @@ def serve_frontend(path):
     
     return send_from_directory(static_folder, 'index.html')
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))
-    app.run(host='0.0.0.0', port=port, debug=True)
+@app.route('/api/documents/<document_id>/enhanced')
+def get_document_enhanced(document_id):
+    """Get enhanced financial extraction for a document"""
+    # Check if the document exists
+    document_path = get_document_path(document_id)
+    if not os.path.exists(document_path):
+        return jsonify({"error": "Document not found"}), 404
+    
+    # Check if enhanced extraction already exists
+    enhanced_path = f"enhanced_extractions/{document_id}_enhanced.json"
+    if os.path.exists(enhanced_path):
+        try:
+            with open(enhanced_path, 'r') as f:
+                enhanced_data = json.load(f)
+            return jsonify({
+                "document_id": document_id,
+                "enhanced_data": enhanced_data
+            })
+        except Exception as e:
+            app.logger.error(f"Error reading enhanced extraction: {e}")
+    
+    # Perform enhanced extraction
+    try:
+        extractor = EnhancedFinancialExtractor()
+        result = extractor.process_document(document_id)
+        if result:
+            return jsonify({
+                "document_id": document_id,
+                "enhanced_data": result
+            })
+        else:
+            return jsonify({"error": "Enhanced extraction failed"}), 500
+    except Exception as e:
+        app.logger.error(f"Error during enhanced extraction: {e}")
+        return jsonify({"error": f"Enhanced extraction error: {str(e)}"}), 500
