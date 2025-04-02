@@ -5,6 +5,22 @@ import sys
 import json
 from enhanced_pdf_processor import EnhancedPDFProcessor
 
+# Add a conftest.py fixture to avoid import error
+if not os.path.exists('tests'):
+    os.makedirs('tests', exist_ok=True)
+    with open('tests/conftest.py', 'w') as f:
+        f.write("""
+import pytest
+import os
+
+@pytest.fixture
+def test_pdf_path():
+    test_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    if not os.path.exists(test_dir):
+        os.makedirs(test_dir, exist_ok=True)
+    return os.path.join(test_dir, 'sample.pdf')
+""")
+
 def test_document_processing(test_pdf_path):
     processor = EnhancedPDFProcessor()
     doc_id = "doc_test"
