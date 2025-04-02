@@ -1,6 +1,27 @@
+import os
+import pytest
 import requests
 import sys
 import json
+from enhanced_pdf_processor import EnhancedPDFProcessor
+
+def test_document_processing(test_pdf_path):
+    processor = EnhancedPDFProcessor()
+    doc_id = "doc_test"
+    
+    # Ensure extractions directory exists
+    os.makedirs('extractions', exist_ok=True)
+    
+    # Process document
+    result = processor.process_document(test_pdf_path, doc_id)
+    
+    # Check extraction file exists
+    filename = os.path.basename(test_pdf_path)
+    expected_path = os.path.join(
+        'extractions',
+        f"{doc_id}_{filename.replace('.pdf', '_extraction.json')}"
+    )
+    assert os.path.exists(expected_path), f"Extraction file not found at {expected_path}"
 
 def test_enhanced_endpoints(document_id, base_url="http://localhost:5001"):
     """Test the enhanced API endpoints"""
@@ -27,7 +48,7 @@ def test_enhanced_endpoints(document_id, base_url="http://localhost:5001"):
     print("\n2. Testing custom table endpoint...")
     try:
         table_spec = {
-            "columns": ["isin", "name", "currency", "security_type"],
+            "columns": ["isin", "name", "currency"],
             "sort_by": "isin",
             "sort_order": "asc"
         }
