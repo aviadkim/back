@@ -1,10 +1,19 @@
-# Python
+# Environment variables - keep API keys private
+.env
+.env.*
+!.env.example
+
+# Key backups
+.key_backups*
+*.bak
+*.backup
+
+# Python artifacts
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -21,101 +30,22 @@ wheels/
 .installed.cfg
 *.egg
 
-# Node modules
-node_modules/
+# Logs
+*.log
+logs/
+api_debug.log
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Test files and temporary data
+qa_test_results/
+extractions/
+uploads/
+exports/
+financial_data/
+tmp/
+temp/
 
-# VSCode
-.vscode/
-
-# Distribution / packaging
-.env
-
-# Results files (except frontend build files)
-data/*.json
-uploads/*.json
-
-# Keep any JSON files in frontend
-!frontend/build/*.json
-!frontend/build/static/**/*.json
-!frontend/build/manifest.json
-!frontend/build/static/**/*.json
-!package.json
-!package-lock.json
-
-# Virtual environment
-venv/
-ENV/
-
-# Images
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.svg
-!frontend/build/static/**/*.png
-!frontend/build/static/**/*.svg
-
-# Caches
-.cache/
-.pytest_cache/
-
-# Dependencies
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.env
-
-# Build outputs
-dist/
-*.exe
-*.dll
-*.so
-*.dylib
-
-# IDE
+# IDE files
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# Logs
-logs/**/*.log
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Database
-*.sqlite
-*.sqlite3
-*.db
-
-# Storage - allow empty directories
-data/.gitkeep
-uploads/.gitkeep
-logs/.gitkeep
-
-# Test files
-test_output/
-test_files/
-test_documents/
-
-# OS
-.DS_Store
-Thumbs.db
-
-
-# Virtual environment
-.venv/
-venv/
-
-
-# Frontend build output
-frontend/build/
