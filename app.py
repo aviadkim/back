@@ -1,77 +1,405 @@
-import os
-from flask import Flask, jsonify, send_from_directory
-from flask import send_from_directory
-import os
-from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
-import logging
+# file: app.py
 
-# Import configuration
-from config.configuration import (
-    SECRET_KEY, DEBUG, PORT, UPLOAD_FOLDER,
-    MAX_CONTENT_LENGTH, MONGO_URI
+from flask import Flask, request, jsonify, render_template, send_from_directory
+import os
+import json
+import uuid
+import logging
+from werkzeug.utils import secure_filename
+from datetime import datetime
+import tempfile
+import shutil
+
+
+# Import enhanced endpoints
+from enhanced_api_endpoints import register_enhanced_endpoints
+# Import our processing modules
+from ocr_text_extractor import extract_text_with_ocr, OCRQuestionAnswering
+from financial_data_extractor import (
+    extract_isin_numbers, 
+    find_associated_data,
+    extract_tables_from_text,
+    convert_tables_to_dataframes
 )
 
-# Import routes
-from routes.api import api_blueprint
-from routes.document import document_api
-
-# Configure logging (Ensure logging is set up, possibly via configuration.py)
-# If configuration.py handles basicConfig, this might not be needed here.
-# However, getting the logger instance is fine.
-logger = logging.getLogger(__name__)
-
+# Configure app
 app = Flask(__name__, static_folder='frontend/build', static_url_path='/')
 
-# Apply configuration from imported variables
-app.config['SECRET_KEY'] = SECRET_KEY
-app.config['DEBUG'] = DEBUG
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-app.config['MONGO_URI'] = MONGO_URI
+# Register enhanced endpoints
+app = register_enhanced_endpoints(app)
 
-# Ensure upload folder exists
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB limit
+app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
+
+# Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Fix for proxy headers
-app.wsgi_app = ProxyFix(app.wsgi_app)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(f"app_{datetime.now().strftime('%Y%m%d')}.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("app")
 
-# Configure CORS (allow all origins for simplicity in dev)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+# Utility functions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-# Register blueprints
-app.register_blueprint(api_blueprint, url_prefix='/api')
-app.register_blueprint(document_api, url_prefix='/api/document')
+def get_document_path(document_id):
+    """Get the path to the document file and its extracted data"""
+    # In a real app, you would look up the file path in a database
+    # For simplicity, we'll just look in the uploads directory
+    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+        if document_id in filename:
+            return os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    return None
 
-# Health check route
+def get_extraction_path(document_id):
+    """Get the path to the extracted data for a document"""
+    base_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_ocr.json")
+    if os.path.exists(base_path):
+        return base_path
+    return None
+
+# Routes
 @app.route('/health')
 def health_check():
-    return jsonify({"status": "ok", "message": "System is operational"})
+    return jsonify({
+        "status": "ok",
+        "message": "System is operational"
+    })
 
-# Serve React frontend for any other routes
+@app.route('/api/documents/upload', methods=['POST'])
+def upload_document():
+    """Upload a document for processing"""
+    try:
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        
+        file = request.files['file']
+        
+        # If user does not select file, browser also submits an empty part without filename
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+        
+        if file and allowed_file(file.filename):
+            # Get language parameter with default
+            language = request.form.get('language', 'heb+eng')
+            
+            # Generate unique ID for the document
+            document_id = f"doc_{uuid.uuid4().hex[:8]}"
+            
+            # Secure the filename and save the file
+            original_filename = secure_filename(file.filename)
+            filename = f"{document_id}_{original_filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            
+            logger.info(f"Document uploaded: {original_filename} (ID: {document_id})")
+            
+            # Start processing in the background
+            # In a production system, you would queue this for async processing
+            # For simplicity, we'll process it synchronously here
+            try:
+                logger.info(f"Starting OCR processing: {document_id}")
+                document = extract_text_with_ocr(file_path, language=language)
+                
+                if document:
+                    # Save extracted text
+                    extraction_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_ocr.json")
+                    with open(extraction_path, 'w', encoding='utf-8') as f:
+                        json.dump(document, f, indent=2, ensure_ascii=False)
+                    
+                    logger.info(f"OCR processing completed: {document_id}")
+                    
+                    # Extract financial data
+                    all_text = ""
+                    for page_num, page_data in document.items():
+                        all_text += page_data.get("text", "") + "\n\n"
+                    
+                    # Extract ISIN numbers
+                    isin_numbers = extract_isin_numbers(all_text)
+                    
+                    # Extract associated data for each ISIN
+                    financial_data = []
+                    for isin in isin_numbers:
+                        data = find_associated_data(all_text, isin, document)
+                        if data:
+                            financial_data.append(data)
+                    
+                    # Save financial data
+                    financial_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_financial.json")
+                    with open(financial_path, 'w', encoding='utf-8') as f:
+                        json.dump(financial_data, f, indent=2, ensure_ascii=False)
+                    
+                    logger.info(f"Financial data extraction completed: {document_id}")
+                    
+                    # Extract tables
+                    tables = extract_tables_from_text(all_text)
+                    
+                    # Save tables
+                    if tables:
+                        tables_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_tables.json")
+                        with open(tables_path, 'w', encoding='utf-8') as f:
+                            json.dump(tables, f, indent=2, ensure_ascii=False)
+                        
+                        logger.info(f"Table extraction completed: {document_id} ({len(tables)} tables)")
+                
+                return jsonify({
+                    "message": "Document uploaded and processed successfully",
+                    "document_id": document_id,
+                    "filename": original_filename,
+                    "language": language,
+                    "page_count": len(document) if document else 0,
+                    "isin_count": len(isin_numbers) if 'isin_numbers' in locals() else 0,
+                    "table_count": len(tables) if 'tables' in locals() else 0,
+                    "status": "completed"
+                }), 200
+                
+            except Exception as e:
+                logger.error(f"Error processing document {document_id}: {str(e)}")
+                return jsonify({
+                    "message": "Document uploaded but processing failed",
+                    "document_id": document_id,
+                    "filename": original_filename,
+                    "error": str(e),
+                    "status": "failed"
+                }), 200
+        
+        return jsonify({"error": "Invalid file type"}), 400
+        
+    except Exception as e:
+        logger.error(f"Error uploading document: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/documents/<document_id>', methods=['GET'])
+def get_document(document_id):
+    """Get document details and status"""
+    try:
+        # Look for the document file
+        document_path = get_document_path(document_id)
+        if not document_path:
+            return jsonify({"error": "Document not found"}), 404
+        
+        # Check for extracted data
+        extraction_path = get_extraction_path(document_id)
+        
+        if extraction_path:
+            # Load the extracted data
+            with open(extraction_path, 'r', encoding='utf-8') as f:
+                document = json.load(f)
+            
+            # Load financial data if available
+            financial_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_financial.json")
+            financial_data = None
+            if os.path.exists(financial_path):
+                with open(financial_path, 'r', encoding='utf-8') as f:
+                    financial_data = json.load(f)
+            
+            return jsonify({
+                "document_id": document_id,
+                "filename": os.path.basename(document_path),
+                "page_count": len(document),
+                "financial_data_available": financial_data is not None,
+                "isin_count": len(financial_data) if financial_data else 0,
+                "status": "completed"
+            }), 200
+        else:
+            # Document exists but no extracted data yet
+            return jsonify({
+                "document_id": document_id,
+                "filename": os.path.basename(document_path),
+                "status": "processing"
+            }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting document {document_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/documents/<document_id>/content', methods=['GET'])
+def get_document_content(document_id):
+    """Get the extracted content of a document"""
+    try:
+        # Check for extracted data
+        extraction_path = get_extraction_path(document_id)
+        
+        if not extraction_path:
+            return jsonify({"error": "Document content not found"}), 404
+        
+        # Load the extracted data
+        with open(extraction_path, 'r', encoding='utf-8') as f:
+            document = json.load(f)
+        
+        # Get the requested page range
+        start_page = request.args.get('start_page', default=0, type=int)
+        end_page = request.args.get('end_page', default=999, type=int)
+        
+        # Filter pages by the requested range
+        filtered_document = {}
+        for page_num, page_data in document.items():
+            page_index = int(page_num)
+            if start_page <= page_index <= end_page:
+                filtered_document[page_num] = page_data
+        
+        return jsonify({
+            "document_id": document_id,
+            "page_count": len(document),
+            "content": filtered_document
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting document content for {document_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/documents/<document_id>/financial', methods=['GET'])
+def get_document_financial(document_id):
+    """Get the financial data extracted from a document"""
+    try:
+        # Check for financial data
+        financial_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_financial.json")
+        
+        if not os.path.exists(financial_path):
+            return jsonify({"error": "Financial data not found"}), 404
+        
+        # Load the financial data
+        with open(financial_path, 'r', encoding='utf-8') as f:
+            financial_data = json.load(f)
+        
+        return jsonify({
+            "document_id": document_id,
+            "isin_count": len(financial_data),
+            "financial_data": financial_data
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting financial data for {document_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/documents/<document_id>/tables', methods=['GET'])
+def get_document_tables(document_id):
+    """Get the tables extracted from a document"""
+    try:
+        # Check for tables data
+        tables_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{document_id}_tables.json")
+        
+        if not os.path.exists(tables_path):
+            return jsonify({"error": "Table data not found"}), 404
+        
+        # Load the tables data
+        with open(tables_path, 'r', encoding='utf-8') as f:
+            tables = json.load(f)
+        
+        return jsonify({
+            "document_id": document_id,
+            "table_count": len(tables),
+            "tables": tables
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting table data for {document_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/qa/ask', methods=['POST'])
+def ask_question():
+    """Ask a question about a document"""
+    try:
+        # Get request data
+        data = request.json
+        
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
+        document_id = data.get('document_id')
+        question = data.get('question')
+        
+        if not document_id:
+            return jsonify({"error": "No document_id provided"}), 400
+            
+        if not question:
+            return jsonify({"error": "No question provided"}), 400
+        
+        # Get document path
+        document_path = get_document_path(document_id)
+        if not document_path:
+            return jsonify({"error": "Document not found"}), 404
+        
+        # Check if we have extracted data
+        extraction_path = get_extraction_path(document_id)
+        
+        if extraction_path:
+            # Load extracted data
+            with open(extraction_path, 'r', encoding='utf-8') as f:
+                extracted_text = json.load(f)
+            
+            # Use the QA system with pre-extracted text
+            qa_system = OCRQuestionAnswering(extracted_text=extracted_text)
+        else:
+            # Use the QA system with the document path
+            qa_system = OCRQuestionAnswering(pdf_path=document_path)
+        
+        # Ask the question
+        answer = qa_system.ask(question)
+        
+        return jsonify({
+            "document_id": document_id,
+            "question": question,
+            "answer": answer,
+            "confidence": 0.8  # This is a placeholder - you would compute this properly
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error processing question: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/documents', methods=['GET'])
+def list_documents():
+    """List all documents"""
+    try:
+        documents = []
+        
+        # In a real app, you would query a database
+        # For simplicity, we'll just look in the uploads directory
+        for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+            if filename.startswith('doc_') and not filename.endswith('.json'):
+                document_id = filename.split('_')[1].split('.')[0]
+                
+                # Check for extracted data to determine status
+                extraction_path = os.path.join(app.config['UPLOAD_FOLDER'], f"doc_{document_id}_ocr.json")
+                status = "completed" if os.path.exists(extraction_path) else "processing"
+                
+                documents.append({
+                    "document_id": f"doc_{document_id}",
+                    "filename": filename,
+                    "upload_date": datetime.fromtimestamp(os.path.getctime(os.path.join(app.config['UPLOAD_FOLDER'], filename))).isoformat(),
+                    "status": status
+                })
+        
+        return jsonify({"documents": documents}), 200
+        
+    except Exception as e:
+        logger.error(f"Error listing documents: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Serve frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    static_folder = app.static_folder or 'frontend/build' # Use app's static folder
-    if path != "" and os.path.exists(os.path.join(static_folder, path)):
+    """Serve the React frontend"""
+    static_folder = app.static_folder or 'frontend/build'
+    if not os.path.exists(static_folder):
+        return jsonify({"error": "Frontend not built"}), 404
+    
+    if path and os.path.exists(os.path.join(static_folder, path)):
         return send_from_directory(static_folder, path)
-    # Check if build directory exists
-    frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend/build")
-    if not os.path.exists(frontend_path):
-        return jsonify({"error": "Frontend not built. Please run npm run build in the frontend directory."}), 404
-    # If path doesn't exist in static folder, serve index.html for client-side routing
-    index_path = os.path.join(static_folder, 'index.html')
-    if os.path.exists(index_path):
-         return send_from_directory(static_folder, 'index.html')
-    else:
-         # Fallback if index.html is missing
-         logger.error(f"index.html not found in static folder: {static_folder}")
-         return "Frontend not found.", 404
-
+    
+    return send_from_directory(static_folder, 'index.html')
 
 if __name__ == '__main__':
-    # Use PORT from imported config
-    logger.info(f"Starting application in {os.getenv('FLASK_ENV', 'development')} mode on port {PORT}")
-    # Use DEBUG from imported config
-    app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
-
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=True)
