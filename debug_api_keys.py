@@ -111,7 +111,7 @@ def test_ai_service():
         logger.info("\nAI service configuration:")
         logger.info(f"Default model: {ai_service.default_model}")
         logger.info(f"OpenRouter key valid: {ai_service.has_valid_openrouter_key}")
-        logger.info(f"HuggingFace key valid: {ai_service.has_valid_hf_key}")
+        logger.info(f"HuggingFace key valid: {ai_service.has_valid_YOUR_HUGGINGFACE_API_KEY}")
         logger.info(f"Gemini key valid: {ai_service.has_valid_gemini_key}")
         
         # Test with a simple prompt
@@ -192,8 +192,8 @@ def fix_issues():
                 
             with open(".env", "w") as f:
                 for line in lines:
-                    if line.startswith("OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
-                        f.write(f"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
+                    if line.startswith("OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+                        f.write(f"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
                     else:
                         f.write(line)
                         

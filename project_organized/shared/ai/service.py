@@ -37,21 +37,21 @@ class AIService:
         self.openrouter_model = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-chat-v3-0324:free")
         
         # Save key validity for later checks - use stricter validation
-        self.has_valid_hf_key = bool(self.huggingface_api_key and len(self.huggingface_api_key) > 20 
-                                    and not self.huggingface_api_key.startswith('hf_dummy'))
+        self.has_valid_YOUR_HUGGINGFACE_API_KEY = bool(self.huggingface_api_key and len(self.huggingface_api_key) > 20 
+                                    and not self.huggingface_api_key.startswith('YOUR_HUGGINGFACE_API_KEY'))
         self.has_valid_gemini_key = bool(self.gemini_api_key and len(self.gemini_api_key) > 20 
-                                        and not self.gemini_api_key.startswith('AIzaNot'))
+                                        and not self.gemini_api_key.startswith('YOUR_GEMINI_API_KEY'))
         self.has_valid_openrouter_key = bool(self.openrouter_api_key and len(self.openrouter_api_key) > 20 
                                             and self.openrouter_api_key.startswith('sk-or-'))
         
         # Print startup info in colorful format for better visibility
         if self.has_valid_openrouter_key:
             logger.info(f"Using OpenRouter with model: {self.openrouter_model}")
-        elif not self.has_valid_hf_key and not self.has_valid_gemini_key:
+        elif not self.has_valid_YOUR_HUGGINGFACE_API_KEY and not self.has_valid_gemini_key:
             logger.warning("No valid API keys found for AI services. Using enhanced fallback responses.")
             logger.info("System will function with basic extraction capabilities.")
         else:
-            if self.has_valid_hf_key:
+            if self.has_valid_YOUR_HUGGINGFACE_API_KEY:
                 logger.info(f"Using Hugging Face model: {self.huggingface_model}")
             if self.has_valid_gemini_key:
                 logger.info(f"Using Google Gemini model: {self.gemini_model}")
@@ -84,7 +84,7 @@ class AIService:
                 if self.has_valid_gemini_key:
                     logger.info("Falling back to Gemini")
                     return self._query_gemini(full_prompt)
-                elif self.has_valid_hf_key:
+                elif self.has_valid_YOUR_HUGGINGFACE_API_KEY:
                     logger.info("Falling back to HuggingFace")
                     return self._query_huggingface(full_prompt)
                 else:
@@ -93,7 +93,7 @@ class AIService:
         
         # Try to generate a response with the specified model or fallback
         try:
-            if model_to_use == "huggingface" and self.has_valid_hf_key:
+            if model_to_use == "huggingface" and self.has_valid_YOUR_HUGGINGFACE_API_KEY:
                 try:
                     return self._query_huggingface(full_prompt)
                 except Exception as e:
@@ -107,7 +107,7 @@ class AIService:
                     logger.error(f"Gemini API error: {e}")
                     return self._enhanced_fallback_response(prompt, context)
             
-            elif model_to_use == "fallback" or not any([self.has_valid_openrouter_key, self.has_valid_hf_key, self.has_valid_gemini_key]):
+            elif model_to_use == "fallback" or not any([self.has_valid_openrouter_key, self.has_valid_YOUR_HUGGINGFACE_API_KEY, self.has_valid_gemini_key]):
                 logger.info("Using enhanced fallback response mode")
                 return self._enhanced_fallback_response(prompt, context)
                     

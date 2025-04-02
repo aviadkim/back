@@ -1,0 +1,74 @@
+===== openrouter Model Test Results =====
+Date: Wed Apr  2 13:54:49 UTC 2025
+
+2025-04-02 13:54:49,539 - INFO - Using PDF file: /workspaces/back/uploads/doc_de0c7654_2._Messos_28.02.2025.pdf
+2025-04-02 13:54:49,539 - INFO - Uploading document /workspaces/back/uploads/doc_de0c7654_2._Messos_28.02.2025.pdf
+Traceback (most recent call last):
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/util/connection.py", line 95, in create_connection
+    raise err
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connectionpool.py", line 416, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connection.py", line 244, in request
+    super(HTTPConnection, self).request(method, url, body=body, headers=headers)
+  File "/usr/local/python/3.9.21/lib/python3.9/http/client.py", line 1285, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/local/python/3.9.21/lib/python3.9/http/client.py", line 1331, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/local/python/3.9.21/lib/python3.9/http/client.py", line 1280, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/local/python/3.9.21/lib/python3.9/http/client.py", line 1040, in _send_output
+    self.send(msg)
+  File "/usr/local/python/3.9.21/lib/python3.9/http/client.py", line 980, in send
+    self.connect()
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connection.py", line 205, in connect
+    conn = self._new_conn()
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7459a507e7f0>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
+    retries = retries.increment(
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/urllib3/util/retry.py", line 594, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=5003): Max retries exceeded with url: /api/documents/upload (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7459a507e7f0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspaces/back/test_document_qa_with_pdf.py", line 234, in <module>
+    sys.exit(main())
+  File "/workspaces/back/test_document_qa_with_pdf.py", line 230, in main
+    tester.run_full_test()
+  File "/workspaces/back/test_document_qa_with_pdf.py", line 202, in run_full_test
+    success = self.upload_document()
+  File "/workspaces/back/test_document_qa_with_pdf.py", line 110, in upload_document
+    response = self.session.post(
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/requests/sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/local/python/3.9.21/lib/python3.9/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=5003): Max retries exceeded with url: /api/documents/upload (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7459a507e7f0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+real	0m0.327s
+user	0m0.209s
+sys	0m0.024s

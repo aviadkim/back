@@ -16,7 +16,7 @@ echo "Creating .env.example file..."
 cat > /workspaces/back/.env.example << 'EOL'
 # API Keys for External Services
 # Replace with your actual API keys
-OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
 # HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 # GEMINI_API_KEY=your_gemini_api_key_here
 
