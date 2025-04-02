@@ -12,7 +12,7 @@ echo "Performing deep API key cleaning..."
 cat > /workspaces/back/.env << 'EOL'
 # API Keys for External Services
 # Replace with your actual API keys
-OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
 # HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 # GEMINI_API_KEY=your_gemini_api_key_here
 
@@ -33,9 +33,9 @@ EOL
 # 3. Clean all potential API keys with brute force approach
 echo "Deep cleaning all files for API keys..."
 find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/sk-or-[a-zA-Z0-9_-]\{30,\}/YOUR_OPENROUTER_API_KEY/g'
-find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
-find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
-find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i "s/'OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
+find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
+find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i "s/'OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
 find /workspaces/back -type f -name "*.py" -o -name "*.sh" -o -name "*.env*" -o -name "*.md" | xargs sed -i 's/api_key = "YOUR_OPENROUTER_API_KEY"/g'
 
 # 4. Create a robust .gitignore

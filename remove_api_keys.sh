@@ -23,14 +23,14 @@ clean_file() {
     sed -i 's/sk-or-[a-zA-Z0-9][a-zA-Z0-9]*[^"'\''[:space:]]*/YOUR_OPENROUTER_API_KEY/g' "$file"
     
     # Replace another OpenRouter API key format
-    sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY "$file"
+    sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
     
     # Replace any other API key patterns
     sed -i 's/AIza[A-Za-z0-9_\-][A-Za-z0-9_\-]*/YOUR_GEMINI_API_KEY/g' "$file"
     sed -i 's/hf_[A-Za-z0-9][A-Za-z0-9]*/YOUR_HUGGINGFACE_API_KEY/g' "$file"
     
     # Fix broken strings in code that may have been introduced by previous sed commands
-    sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY/g' "$file"
+    sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
     sed -i 's/openrouter_api_key = "YOUR_OPENROUTER_API_KEY/openrouter_api_key = "YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY/g' "$file"
     sed -i 's/api_key = "YOUR_OPENROUTER_API_KEY/api_key = "YOUR_OPENROUTER_API_KEY/g' "$file"
 }
@@ -64,7 +64,7 @@ echo "Creating clean .env file..."
 cat > "/workspaces/back/.env" << 'EOL'
 # API Keys for External Services
 # Replace with your actual API keys
-OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
 # HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 # GEMINI_API_KEY=your_gemini_api_key_here
 

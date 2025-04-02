@@ -29,7 +29,7 @@ if git diff --cached | grep -E "sk-or-v1-[a-zA-Z0-9]{10,}" > /dev/null; then
     git diff --cached --name-only | while read file; do
         if [ -f "$file" ]; then
             sed -i 's/sk-or-[a-zA-Z0-9]\{20,\}/YOUR_OPENROUTER_API_KEY/g' "$file"
-            sed -i 's/OPENROUTER_API_KEY=.*$/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY/g' "$file"
+            sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
         fi
     done
     git add .

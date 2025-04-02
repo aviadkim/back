@@ -192,8 +192,8 @@ def fix_issues():
                 
             with open(".env", "w") as f:
                 for line in lines:
-                    if line.startswith("OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
-                        f.write(f"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+                    if line.startswith("OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
+                        f.write(f"OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
                     else:
                         f.write(line)
                         

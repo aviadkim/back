@@ -1,18 +1,18 @@
 #!/bin/bash
-# Start both backend and frontend
+echo "Starting Financial Document Processor with vertical slice architecture..."
 
-echo "Starting backend with vertical slice architecture..."
-cd project_organized
-python app.py > ../logs/backend.log 2>&1 &
-BACKEND_PID=$!
-cd ..
+# Make sure we're in the correct directory
+cd "$(dirname "$0")"
 
-echo "Backend started with PID $BACKEND_PID"
-echo "Application is running at http://localhost:5001"
+# Activate virtual environment if it exists
+if [ -d "../venv" ]; then
+    source ../venv/bin/activate
+fi
 
-# Trap Ctrl+C to clean up processes
-trap "echo 'Shutting down...'; kill $BACKEND_PID; exit" INT TERM
+# Make sure environment variables are loaded
+if [ -f ../.env ]; then
+    export $(grep -v '^#' ../.env | xargs)
+fi
 
-# Wait for Ctrl+C
-echo "Press Ctrl+C to stop the application"
-wait
+echo "Starting Flask application..."
+python app.py

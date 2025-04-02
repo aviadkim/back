@@ -1,8 +1,0 @@
-"""
-Adapter for enhanced_pdf_processor.py
-This redirects to the new vertical slice architecture.
-"""
-import logging
-from project_organized.features.pdf_processing.processor import EnhancedPDFProcessor
-
-logging.warning("Using enhanced_pdf_processor.py from deprecated location. Please update imports to use 'from features.pdf_processing import EnhancedPDFProcessor'")

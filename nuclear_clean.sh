@@ -41,7 +41,7 @@ for file in "/workspaces/back/debug_api_keys.py" "/workspaces/back/project_organ
     if [ -f "$file" ]; then
         echo "Special handling for $file..."
         # Replace any line containing API key assignment
-        sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+        sed -i 's/OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
         sed -i 's/api_key = "YOUR_OPENROUTER_API_KEY"
     fi
 done
@@ -63,7 +63,7 @@ if [ -f "/workspaces/back/.env" ]; then
     cat > "/workspaces/back/.env" << 'EOL'
 # API Keys for External Services
 # Replace with your actual API keys
-OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
 # HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 # GEMINI_API_KEY=your_gemini_api_key_here
 

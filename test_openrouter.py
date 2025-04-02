@@ -136,7 +136,7 @@ if __name__ == "__main__":
     if not direct_result:
         logger.info("\nTo fix OpenRouter integration:")
         logger.info("1. Get an API key from https://openrouter.ai/")
-        logger.info("2. Add it to your .env file as OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEYYOUR_OPENROUTER_API_KEY
+        logger.info("2. Add it to your .env file as OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY
         logger.info("3. Set DEFAULT_MODEL=openrouter in your .env file")
     elif not ai_service_result:
         logger.info("\nDirect API works but the integration has issues.")
