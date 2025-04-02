@@ -1,4 +1,5 @@
 #!/bin/bash
+<<<<<<< HEAD
 
 echo "Making test scripts executable..."
 chmod +x /workspaces/back/test_document_qa_with_pdf.py
@@ -22,3 +23,14 @@ echo "  ./run_with_real_pdf.sh         # Test Q&A with any PDF file"
 echo "  ./test_document_qa_with_pdf.py # Test Q&A with a PDF file"
 echo "  ./benchmark_models.sh          # Benchmark different AI models"
 echo "  ./test_real_world_qa.py        # Run comprehensive tests"
+=======
+echo "Making all scripts executable..."
+chmod +x /workspaces/back/start_production.sh
+chmod +x /workspaces/back/stop_server.sh
+chmod +x /workspaces/back/document_dashboard.py
+chmod +x /workspaces/back/launch_production.sh
+chmod +x /workspaces/back/make_scripts_executable.sh
+
+echo "All scripts are now executable."
+echo "You can now run ./launch_production.sh to set up everything."
+>>>>>>> main
