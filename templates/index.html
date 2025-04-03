@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניתוח מסמכים פיננסיים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: rgba(59, 130, 246, 0.9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: rgba(37, 99, 235, 1);
+        }
+        
+        .btn-ghost {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-ghost:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-danger {
+            color: #ef4444;
+        }
+        
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        
+        .document-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .document-card:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-user {
+            align-self: flex-end;
+            background-color: #1d4ed8;
+            border-bottom-right-radius: 0.25rem;
+        }
+        
+        .message-bot {
+            align-self: flex-start;
+            background-color: #374151;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .status-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        
+        .diagnostic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            margin: 1rem 0;
+            background-color: #10b981;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .diagnostic-btn:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-white mb-2">
+                מערכת ניתוח מסמכים פיננסיים
+            </h1>
+            <p class="text-gray-300">
+                העלה מסמכים פיננסיים וקבל תובנות באמצעות צ'אט מבוסס AI
+            </p>
+            
+            <!-- Diagnostic Button -->
+            <div class="mt-4">
+                <a href="/system-diagnostic" class="diagnostic-btn">
+                    <i data-feather="activity" class="mr-2"></i>
+                    אבחון מערכת PDF
+                </a>
+            </div>
+        </header>
+        
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Document Upload Section -->
+            <div class="w-full lg:w-1/2 space-y-6">
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4">העלאת מסמך</h2>
+                    <form id="upload-form" class="space-y-4">
+                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition-colors">
+                            <input type="file" id="file-upload" class="hidden" accept=".pdf,.xlsx,.csv" multiple>
+                            <label for="file-upload" class="cursor-pointer">
+                                <i data-feather="upload-cloud" class="mx-auto mb-2"></i>
+                                <p>גרור ושחרר קבצים, או לחץ לבחירה</p>
+                                <p class="text-sm text-gray-400 mt-1">(PDF, Excel, CSV)</p>
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label for="language-select" class="block text-sm mb-2">שפת המסמך</label>
+                            <select id="language-select" class="w-full bg-white/10 border border-gray-600 rounded-lg p-2 text-white">
+                                <option value="he">עברית</option>
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full">
+                            <i data-feather="file-plus" class="ml-2"></i>
+                            העלאה
+                        </button>
+                        
+                        <div id="upload-status" class="text-center hidden">
+                            <i data-feather="loader" class="loader inline-block mb-1"></i>
+                            <span>מעלה...</span>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Document List -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4">מסמכים</h2>
+                    <div id="documents-container" class="space-y-3">
+                        <!-- Documents will be added here dynamically -->
+                        <p id="no-documents" class="text-gray-400 text-center">אין מסמכים להצגה.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Section -->
+            <div class="w-full lg:w-1/2">
+                <div class="card h-full">
+                    <h2 class="text-xl font-semibold mb-4">צ'אט חכם</h2>
+                    <div class="chat-container">
+                        <div id="chat-messages" class="chat-messages">
+                            <!-- Messages will be added here dynamically -->
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="message-input" class="flex-1 bg-white/10 border border-gray-600 rounded-lg p-2 text-white" placeholder="הקלד את שאלתך...">
+                            <button id="send-button" class="btn btn-primary">
+                                <i data-feather="send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document Card Template -->
+    <template id="document-card-template">
+        <div class="document-card" data-id="">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 ml-3">
+                    <i data-feather="file"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium document-name"></h3>
+                    <p class="text-sm text-gray-400 document-status"></p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <span class="status-icon ml-2"></span>
+                <button class="btn btn-ghost btn-danger delete-document">
+                    <i data-feather="x-circle"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Feather icons
+            feather.replace();
+            
+            // DOM elements
+            const uploadForm = document.getElementById('upload-form');
+            const fileInput = document.getElementById('file-upload');
+            const languageSelect = document.getElementById('language-select');
+            const uploadStatus = document.getElementById('upload-status');
+            const documentsContainer = document.getElementById('documents-container');
+            const noDocumentsMessage = document.getElementById('no-documents');
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // Sample data for demonstration
+            let documents = [];
+            
+            // Add a welcome message
+            addChatMessage('bot', 'ברוך הבא! כיצד אוכל לעזור לך עם המסמכים שלך?');
+            
+            // Event listeners
+            uploadForm.addEventListener('submit', handleFileUpload);
+            sendButton.addEventListener('click', handleSendMessage);
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            });
+            
+            // Simulated file upload handler
+            function handleFileUpload(e) {
+                e.preventDefault();
+                const files = fileInput.files;
+                if (!files.length) return;
+                
+                uploadStatus.classList.remove('hidden');
+                
+                // Process each file
+                Array.from(files).forEach(file => {
+                    const docId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                    const newDoc = {
+                        id: docId,
+                        name: file.name,
+                        status: 'uploaded',
+                        language: languageSelect.value
+                    };
+                    
+                    documents.push(newDoc);
+                    updateDocumentsList();
+                    
+                    // Simulate API call to process file
+                    setTimeout(() => {
+                        updateDocumentStatus(docId, 'processing');
+                        
+                        // Simulate completion after processing
+                        setTimeout(() => {
+                            const isSuccess = Math.random() > 0.1; // 90% success rate for demo
+                            updateDocumentStatus(docId, isSuccess ? 'ready' : 'error');
+                            uploadStatus.classList.add('hidden');
+                        }, 3000);
+                    }, 1000);
+                });
+                
+                // Reset file input
+                fileInput.value = '';
+            }
+            
+            // Simulate sending a message
+            function handleSendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                addChatMessage('user', message);
+                messageInput.value = '';
+                
+                // Simulate response
+                setTimeout(() => {
+                    let response;
+                    if (languageSelect.value === 'he') {
+                        response = 'זוהי תשובה מדומה. בגרסה האמיתית, האפליקציה תשלח את השאלה שלך לשרת ותנתח את המסמכים שהעלית.';
+                    } else {
+                        response = 'This is a simulated response. In the real version, the app would send your question to the server and analyze your uploaded documents.';
+                    }
+                    addChatMessage('bot', response);
+                }, 1000);
+            }
+            
+            // Update document status
+            function updateDocumentStatus(id, newStatus) {
+                documents = documents.map(doc => 
+                    doc.id === id ? {...doc, status: newStatus} : doc
+                );
+                updateDocumentsList();
+            }
+            
+            // Update the documents list in the UI
+            function updateDocumentsList() {
+                if (documents.length === 0) {
+                    noDocumentsMessage.classList.remove('hidden');
+                    return;
+                }
+                
+                noDocumentsMessage.classList.add('hidden');
+                
+                // Clear current list
+                const existingCards = documentsContainer.querySelectorAll('.document-card');
+                existingCards.forEach(card => {
+                    if (!documents.some(doc => doc.id === card.dataset.id)) {
+                        card.remove();
+                    }
+                });
+                
+                // Add/update document cards
+                documents.forEach(doc => {
+                    let card = documentsContainer.querySelector(`.document-card[data-id="${doc.id}"]`);
+                    
+                    if (!card) {
+                        // Create new card from template
+                        const template = document.getElementById('document-card-template');
+                        card = template.content.cloneNode(true).querySelector('.document-card');
+                        card.dataset.id = doc.id;
+                        documentsContainer.appendChild(card);
+                        
+                        // Add delete event listener
+                        card.querySelector('.delete-document').addEventListener('click', () => {
+                            documents = documents.filter(d => d.id !== doc.id);
+                            card.remove();
+                            if (documents.length === 0) {
+                                noDocumentsMessage.classList.remove('hidden');
+                            }
+                        });
+                    }
+                    
+                    // Update card content
+                    card.querySelector('.document-name').textContent = doc.name;
+                    
+                    // Update status
+                    const statusText = {
+                        'uploaded': 'הועלה',
+                        'processing': 'בטיפול',
+                        'ready': 'מוכן',
+                        'error': 'שגיאה'
+                    };
+                    card.querySelector('.document-status').textContent = statusText[doc.status];
+                    
+                    // Update status icon
+                    const statusIcon = card.querySelector('.status-icon');
+                    statusIcon.innerHTML = '';
+                    
+                    let icon;
+                    switch(doc.status) {
+                        case 'uploaded':
+                            icon = feather.icons['file-plus'].toSvg({ class: 'text-gray-400' });
+                            break;
+                        case 'processing':
+                            icon = feather.icons['loader'].toSvg({ class: 'text-blue-400 loader' });
+                            break;
+                        case 'ready':
+                            icon = feather.icons['check-circle'].toSvg({ class: 'text-green-400' });
+                            break;
+                        case 'error':
+                            icon = feather.icons['x-circle'].toSvg({ class: 'text-red-400' });
+                            break;
+                    }
+                    statusIcon.innerHTML = icon;
+                });
+            }
+            
+            // Add chat message to UI
+            function addChatMessage(sender, text) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message message-${sender}`;
+                messageElement.textContent = text;
+                chatMessages.appendChild(messageElement);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Check for actual document upload API
+            async function checkAPIHealth() {
+                try {
+                    const response = await fetch('/health');
+                    const data = await response.json();
+                    if (data.status === 'ok') {
+                        console.log('API is operational');
+                    }
+                } catch (error) {
+                    console.error('API health check failed:', error);
+                }
+            }
+            
+            // Initialize
+            checkAPIHealth();
+            
+            // Populate with some sample documents for demonstration
+            setTimeout(() => {
+                const sampleDocs = [
+                    { id: 's1', name: 'דוח כספי 2023.pdf', status: 'ready', language: 'he' },
+                    { id: 's2', name: 'Financial Report Q1.pdf', status: 'processing', language: 'en' },
+                    { id: 's3', name: 'תזרים מזומנים.xlsx', status: 'error', language: 'he' }
+                ];
+                documents = sampleDocs;
+                updateDocumentsList();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

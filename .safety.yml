@@ -1,0 +1,37 @@
+# Safety Policy File
+# Used to ignore specific vulnerabilities after review.
+
+security:
+  ignore-vulnerabilities:
+    # transformers: Fix requires major version bump (4.38 -> 4.41/4.48).
+    # Vulnerabilities relate to dev tools/conversion scripts or indirect dependencies. Low risk for current usage.
+    74882: # Deserialization in conversion scripts (PVE-2025-74882)
+      reason: "Low risk: Conversion scripts not used in production."
+      expires: "2025-09-27" # Re-evaluate in 6 months
+    71049: # Dependency update for black CVE-2024-21503
+      reason: "Indirect dependency issue, low risk."
+      expires: "2025-09-27"
+    71048: # Dependency update for aiohttp CVE-2023-49082
+      reason: "Indirect dependency issue, low risk."
+      expires: "2025-09-27"
+    71037: # Dependency update for aiohttp CVE-2023-49081
+      reason: "Indirect dependency issue, low risk."
+      expires: "2025-09-27"
+
+    # python-jose: No newer version available.
+    # Vulnerabilities are complex to exploit (JWT bomb, algorithm confusion).
+    70716: # JWT bomb (CVE-2024-33664)
+      reason: "Low risk: Complex exploit, no user-controlled JWE."
+      expires: "2025-09-27"
+    70715: # Algorithm confusion (CVE-2024-33663)
+      reason: "Low risk: Not using affected key formats."
+      expires: "2025-09-27"
+
+    # ecdsa: No newer version available.
+    # Vulnerabilities relate to complex side-channel attacks.
+    64459: # Minerva attack (CVE-2024-23342)
+      reason: "Low risk: Side-channel attack complexity."
+      expires: "2025-09-27"
+    64396: # General side-channel (PVE-2024-64396)
+      reason: "Low risk: Side-channel attack complexity."
+      expires: "2025-09-27"

@@ -1,0 +1,266 @@
+.isin-table-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03); /* Subtle shadow */
+  overflow: hidden; /* Needed for wrapper */
+  border: 1px solid #e2e8f0; /* Light border */
+}
+
+.isin-table-header {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem; /* Space between elements */
+  padding: 12px 16px;
+  background-color: #f7fafc; /* Light header background */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.isin-table-header h3 {
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  color: #2d3748; /* Dark text */
+  margin: 0;
+  flex-shrink: 0; /* Prevent title from shrinking */
+}
+
+.isin-table-search {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #cbd5e0; /* Slightly darker border for input */
+  border-radius: 6px; /* More rounded */
+  padding-left: 12px; /* Padding for icon */
+  flex-grow: 1; /* Allow search to grow */
+  max-width: 300px; /* Limit max width */
+}
+
+.isin-table-search .search-icon {
+  color: #a0aec0; /* Lighter icon */
+  margin-left: 8px; /* Space after icon (RTL) */
+}
+
+.isin-table-search input {
+  border: none;
+  padding: 8px 10px 8px 0; /* Adjust padding */
+  outline: none;
+  font-size: 0.875rem; /* 14px */
+  width: 100%; /* Take full width within container */
+  background: transparent; /* Ensure input bg is transparent */
+}
+.isin-table-search input::placeholder {
+    color: #a0aec0;
+}
+
+.isin-table-search .clear-search-icon {
+    background: none;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0 8px;
+    margin-right: -4px; /* Adjust position */
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+}
+.isin-table-search .clear-search-icon:hover {
+    color: #718096;
+}
+
+
+.isin-table-wrapper {
+  overflow-x: auto; /* Enable horizontal scroll on table */
+  max-height: 400px; /* Limit height in full view */
+}
+.preview-mode .isin-table-wrapper {
+    max-height: none; /* No height limit in preview */
+    overflow-x: visible;
+}
+
+
+.isin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem; /* 14px */
+  min-width: 600px; /* Ensure minimum width for horizontal scroll */
+}
+
+.isin-table th {
+  background-color: #f9fafb; /* Slightly different header bg */
+  color: #4a5568; /* Medium gray text */
+  font-weight: 600;
+  text-align: right;
+  padding: 10px 16px; /* Adjust padding */
+  border-bottom: 2px solid #e2e8f0; /* Stronger bottom border */
+  user-select: none; /* Prevent text selection */
+  position: sticky; /* Make header sticky */
+  top: 0; /* Stick to top */
+  z-index: 10; /* Ensure header is above content */
+}
+
+.isin-table th.sortable {
+    cursor: pointer;
+}
+.isin-table th.sortable:hover {
+    background-color: #f0f4f8;
+}
+
+
+.isin-table th .sort-icon {
+  margin-right: 6px; /* Space before icon (RTL) */
+  font-size: 0.8em; /* Smaller icon */
+  color: #a0aec0; /* Lighter icon */
+  transition: color 0.2s ease;
+}
+.isin-table th:hover .sort-icon {
+    color: #718096;
+}
+.isin-table th .sort-icon.active {
+    color: #3182ce; /* Active sort icon color */
+}
+
+
+.isin-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #edf2f7; /* Lighter row separator */
+  color: #4a5568;
+  vertical-align: middle; /* Align cell content vertically */
+}
+
+.isin-table tbody tr:hover {
+  background-color: #f7fafc; /* Subtle hover */
+}
+
+.isin-table .isin-code {
+  font-family: 'Consolas', 'Monaco', monospace; /* Monospace font */
+  font-weight: 600;
+  color: #2d3748; /* Darker text for code */
+}
+
+.confidence-cell {
+  width: 130px; /* Fixed width */
+  min-width: 130px;
+}
+
+.confidence-value {
+  font-size: 0.8em; /* Smaller text */
+  color: #718096;
+  margin-bottom: 3px;
+  text-align: left; /* Align percentage left */
+}
+.confidence-na {
+    font-size: 0.8em;
+    color: #a0aec0;
+    font-style: italic;
+}
+
+.confidence-bar-container {
+  height: 5px; /* Thinner bar */
+  background-color: #edf2f7; /* Light background */
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidence-bar {
+  height: 100%;
+  background-color: #a0aec0; /* Default bar color (low confidence) */
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Confidence level colors */
+.high-confidence .confidence-bar {
+  background-color: #48bb78; /* Green for high */
+}
+.low-confidence .confidence-bar { /* Medium confidence */
+  background-color: #ecc94b; /* Yellow for medium */
+}
+/* Default color handles low confidence */
+
+
+.isin-table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+  color: #718096;
+  font-size: 0.875rem; /* 14px */
+}
+
+.clear-search-button {
+  background: none;
+  border: none;
+  color: #3182ce; /* Accent color */
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 4px; /* Add padding for easier clicking */
+}
+
+.clear-search-button:hover {
+  text-decoration: underline;
+}
+
+/* Loading and Empty States */
+.isin-table-loading,
+.isin-table-empty {
+  min-height: 150px; /* Ensure minimum height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03); */
+  color: #718096;
+  padding: 1rem;
+  text-align: center;
+}
+
+.isin-table-loading .loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #e2e8f0;
+  border-radius: 50%;
+  border-top-color: #3182ce;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.isin-table-empty i {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+  color: #cbd5e0; /* Lighter icon */
+}
+
+.no-results-message {
+    text-align: center;
+    font-style: italic;
+    color: #718096;
+    padding: 1rem;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .isin-table-header {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items */
+  }
+
+  .isin-table-search {
+    max-width: none; /* Full width on small screens */
+    width: 100%;
+  }
+
+  .isin-table th, .isin-table td {
+      padding: 8px 10px; /* Reduce padding */
+      white-space: nowrap; /* Prevent wrapping in cells */
+  }
+  .confidence-cell {
+      width: 100px; /* Reduce width */
+      min-width: 100px;
+  }
+}

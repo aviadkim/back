@@ -1,0 +1,55 @@
+# Environment variables - keep API keys private
+.env
+.env.*
+!.env.example
+
+# Key backups
+.key_backups*
+*.bak
+*.backup
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Logs
+*.log
+logs/
+api_debug.log
+
+# Test files and temporary data
+qa_test_results/
+extractions/
+uploads/
+exports/
+financial_data/
+tmp/
+temp/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+# Node.js dependencies
+node_modules/
+# Build artifacts
+*.zip

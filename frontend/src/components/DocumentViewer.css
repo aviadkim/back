@@ -1,0 +1,125 @@
+.document-viewer {
+  padding: 20px;
+}
+
+.page-spinner {
+  display: block;
+  margin: 50px auto;
+}
+
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow-x: auto; /* Allow horizontal scroll if PDF page is wide */
+  background-color: #f8f9fa; /* Light background for PDF area */
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.pdf-page {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to the page */
+    margin-bottom: 10px; /* Space below the page before pagination */
+}
+
+
+.pdf-pagination {
+    margin-top: 10px; /* Ensure space above pagination */
+}
+
+
+.pdf-navigation { /* Kept for potential use if Pagination component is removed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.page-info { /* Kept for potential use if Pagination component is removed */
+  margin: 0 15px;
+  font-size: 14px;
+}
+
+.split-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Equal columns */
+  gap: 15px; /* Space between panels */
+  height: calc(100vh - 220px); /* Adjust height based on surrounding elements */
+  overflow: hidden; /* Prevent outer scroll */
+}
+
+.original-panel, .extracted-panel {
+  overflow-y: auto; /* Allow vertical scroll within panels */
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  height: 100%; /* Fill the grid cell height */
+  background-color: #ffffff; /* White background for panels */
+}
+
+.text-viewer {
+  height: 100%;
+  display: flex; /* Use flex to make Card.Body fill height */
+  flex-direction: column;
+}
+
+.text-viewer .card-body {
+    flex-grow: 1; /* Allow body to take available space */
+    overflow-y: auto; /* Scroll within body */
+}
+
+
+.extracted-text {
+  white-space: pre-wrap; /* Preserve whitespace and wrap text */
+  word-wrap: break-word; /* Break long words */
+  font-family: 'Courier New', Courier, monospace; /* Monospace font for text */
+  font-size: 0.85rem; /* Slightly smaller font */
+  line-height: 1.5;
+  /* Default LTR, can be overridden by parent or specific class if needed */
+  /* direction: rtl; */
+  /* text-align: right; */
+}
+
+.tables-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.financial-data {
+  padding: 15px;
+  height: calc(100vh - 180px); /* Adjust height */
+  overflow-y: auto;
+}
+
+/* RTL support - Apply this class to elements needing RTL */
+.rtl-text {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Apply RTL to extracted text specifically if needed */
+.extracted-panel .extracted-text {
+    /* Uncomment if text should always be RTL */
+    /* direction: rtl; */
+    /* text-align: right; */
+}
+
+
+/* Responsive design */
+@media (max-width: 992px) {
+  .split-view {
+    grid-template-columns: 1fr; /* Stack columns */
+    grid-template-rows: auto auto; /* Adjust rows based on content */
+    height: auto; /* Allow height to adjust */
+    overflow: visible; /* Remove outer overflow */
+  }
+
+  .original-panel, .extracted-panel {
+      height: 60vh; /* Set a fixed height for stacked panels */
+      margin-bottom: 15px; /* Add space between stacked panels */
+  }
+}

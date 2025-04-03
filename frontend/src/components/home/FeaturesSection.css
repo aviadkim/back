@@ -1,0 +1,10 @@
+/* Placeholder for FeaturesSection styles */
+.features-section {
+    padding: 60px 0;
+}
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+/* Add other styles as needed */

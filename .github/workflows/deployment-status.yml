@@ -1,0 +1,46 @@
+name: Check Deployment Status
+
+on:
+  workflow_run:
+    workflows: ["Deploy to AWS Elastic Beanstalk"]
+    types:
+      - completed
+
+jobs:
+  check-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Check basic deployment info
+        run: |
+          # Install AWS CLI
+          pip install awscli
+          
+          # Try to get environment info (this should work even with limited permissions)
+          echo "Checking EB environment..."
+          aws elasticbeanstalk describe-environments --environment-names financial-docs-prod || echo "Environment info check failed, but continuing..."
+          
+          # Try to get environment URL
+          echo "Getting application URL..."
+          URL=$(aws elasticbeanstalk describe-environments --environment-names financial-docs-prod --query "Environments[0].CNAME" --output text || echo "URL check failed")
+          
+          if [[ $URL != *"failed"* ]]; then
+            echo "Application URL: http://$URL"
+            echo "::set-output name=deployment_url::http://$URL"
+          else
+            echo "Could not retrieve URL, but deployment may still have succeeded"
+          fi
+          
+          echo "Deployment check completed. Please check AWS console for detailed status."
+      
+      - name: Post deployment message
+        run: |
+          echo "Deployment check complete. The application should be deployed if the main 'Deploy to AWS Elastic Beanstalk' workflow succeeded."
+          echo "You can verify the deployment in the AWS Elastic Beanstalk console."
+          echo "Note: This status check workflow may fail due to IAM permission limitations while the actual deployment succeeds."

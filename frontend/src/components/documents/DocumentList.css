@@ -1,0 +1,54 @@
+/* Placeholder for DocumentList styles */
+.document-list {
+    display: grid;
+    gap: 1rem;
+}
+.document-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.document-card:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-color: #cbd5e0;
+}
+.document-icon {
+    font-size: 1.5rem;
+    color: #a0aec0;
+}
+.document-info {
+    flex-grow: 1;
+}
+.document-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #2d3748;
+}
+.document-meta {
+    font-size: 0.8rem;
+    color: #718096;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+.document-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.document-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+/* Status colors defined in DocumentHeader.css are reused here */
+/* Add other styles as needed */

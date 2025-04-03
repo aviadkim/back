@@ -1,0 +1,114 @@
+.document-uploader {
+  margin-bottom: 20px;
+  /* Removed max-width and margin: auto to allow parent control */
+}
+
+.upload-area {
+  padding: 10px; /* Reduced padding */
+}
+
+.upload-drop-zone {
+  padding: 40px 20px;
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa; /* Light background */
+}
+
+.upload-drop-zone:hover {
+  border-color: #007bff; /* Bootstrap primary */
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.upload-icon {
+  margin-bottom: 15px;
+  color: #6c757d; /* Bootstrap secondary */
+}
+
+.file-list-card {
+  max-height: 250px; /* Limit height of file list */
+  overflow-y: auto; /* Add scrollbar if needed */
+  margin-top: 1rem; /* Add some space above the list */
+  margin-bottom: 1rem; /* Add some space below the list */
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0; /* Remove default margin */
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px; /* Consistent padding */
+  border-bottom: 1px solid #eee; /* Separator */
+}
+.file-item:last-child {
+  border-bottom: none; /* Remove border for last item */
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Prevent long names from breaking layout */
+  flex-grow: 1; /* Allow info to take available space */
+  margin-right: 10px; /* Space before remove button */
+}
+
+.file-icon {
+  margin-right: 10px;
+  color: #dc3545; /* Bootstrap danger color for PDF icon */
+  font-size: 1.1em;
+}
+
+.file-name {
+  font-weight: 500;
+  margin-right: 10px;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for long names */
+}
+
+.file-size {
+  font-size: 0.8rem;
+  color: #6c757d; /* Bootstrap secondary */
+  white-space: nowrap; /* Prevent wrapping */
+  flex-shrink: 0; /* Prevent size from shrinking */
+}
+
+/* RTL Support utility class */
+.rtl-support {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .upload-drop-zone {
+    padding: 20px 10px;
+  }
+  
+  .file-name {
+    max-width: 180px; /* Adjust max-width as needed */
+    /* Ellipsis is already applied */
+  }
+
+  .file-item {
+     padding: 8px; /* Slightly reduce padding */
+  }
+
+  .file-size {
+     display: none; /* Hide file size on smaller screens */
+  }
+}
+
+/* Progress bar styling */
+.progress {
+  height: 1rem; /* Make progress bar a bit thicker */
+  font-size: 0.75rem; /* Adjust label font size */
+}

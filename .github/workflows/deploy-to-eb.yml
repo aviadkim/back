@@ -1,0 +1,179 @@
+name: Deploy to AWS Elastic Beanstalk
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Debug Dockerfile
+        run: |
+          echo "Contents of Dockerfile:"
+          cat Dockerfile || echo "No Dockerfile found"
+          echo "Contents of docker-compose.yml:"
+          cat docker-compose.yml || echo "No docker-compose.yml found"
+      
+      - name: Validate Docker setup
+        run: |
+          # Check if Docker files exist
+          if [ ! -f "Dockerfile" ]; then
+            echo "ERROR: Dockerfile is missing. Creating a basic one."
+            echo "FROM python:3.9-slim" > Dockerfile
+            echo "WORKDIR /app" >> Dockerfile
+            echo "COPY . ." >> Dockerfile
+            echo "RUN pip install -r requirements.txt" >> Dockerfile
+            echo "EXPOSE 10000" >> Dockerfile
+            echo "CMD [\"python\", \"app.py\"]" >> Dockerfile
+          fi
+          
+          if [ ! -f "docker-compose.yml" ]; then
+            echo "WARNING: docker-compose.yml is missing. This might be okay for Elastic Beanstalk."
+          fi
+      
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x "*.git*" "venv/*" "__pycache__/*"
+      
+      - name: Upload deployment package to S3
+        id: upload
+        run: |
+          # Create a timestamp for version uniqueness
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          VERSION_LABEL="financial-docs-${TIMESTAMP}-${{ github.sha }}"
+          echo "VERSION_LABEL=${VERSION_LABEL}" >> $GITHUB_OUTPUT
+          
+          # Create S3 bucket if it doesn't exist (will fail silently if bucket exists)
+          aws s3 mb s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }} || true
+          
+          # Upload the zip file
+          aws s3 cp deploy.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }}/${VERSION_LABEL}.zip
+          
+          echo "Uploaded deployment package to S3"
+      
+      - name: Create Elastic Beanstalk application if it doesn't exist
+        run: |
+          if ! aws elasticbeanstalk describe-applications --application-names financial-docs &> /dev/null; then
+            echo "Creating Elastic Beanstalk application 'financial-docs'"
+            aws elasticbeanstalk create-application --application-name financial-docs --description "Financial Documents Analysis Application"
+          else
+            echo "Application 'financial-docs' already exists"
+          fi
+      
+      - name: Create application version
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name financial-docs \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }} \
+            --source-bundle S3Bucket=elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }},S3Key=${{ steps.upload.outputs.VERSION_LABEL }}.zip \
+            --auto-create-application
+      
+      - name: Get available Docker solution stack
+        id: stack
+        run: |
+          STACK=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Docker') && contains(@, 'Amazon Linux 2023')] | [0]" --output text)
+          echo "DOCKER_STACK=${STACK}" >> $GITHUB_OUTPUT
+          echo "Found Docker stack: ${STACK}"
+      
+      - name: Check if environment exists
+        id: check-env
+        run: |
+          if aws elasticbeanstalk describe-environments --application-name financial-docs --environment-names financial-docs-env --query "Environments[?Status!='Terminated'] | length(@)" --output text | grep -q "^0$"; then
+            echo "Environment does not exist or is terminated"
+            echo "ENV_EXISTS=false" >> $GITHUB_OUTPUT
+          else
+            echo "Environment exists"
+            echo "ENV_EXISTS=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create new environment with debugging
+        if: steps.check-env.outputs.ENV_EXISTS == 'false'
+        run: |
+          echo "Creating new Elastic Beanstalk environment with debugging"
+          
+          # First create with minimal settings to get it working
+          aws elasticbeanstalk create-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }} \
+            --solution-stack-name "${{ steps.stack.outputs.DOCKER_STACK }}" \
+            --option-settings '[
+              {"Namespace": "aws:elasticbeanstalk:application:environment", "OptionName": "PORT", "Value": "10000"},
+              {"Namespace": "aws:elasticbeanstalk:cloudwatch:logs", "OptionName": "StreamLogs", "Value": "true"},
+              {"Namespace": "aws:elasticbeanstalk:environment:proxy", "OptionName": "ProxyServer", "Value": "nginx"}
+            ]'
+      
+      - name: Update existing environment
+        if: steps.check-env.outputs.ENV_EXISTS == 'true'
+        run: |
+          echo "Updating existing Elastic Beanstalk environment"
+          aws elasticbeanstalk update-environment \
+            --application-name financial-docs \
+            --environment-name financial-docs-env \
+            --version-label ${{ steps.upload.outputs.VERSION_LABEL }}
+      
+      - name: Wait for environment to be ready and check logs
+        run: |
+          echo "Waiting for environment to be ready..."
+          MAX_ATTEMPTS=30
+          ATTEMPT=0
+          
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT+1))
+            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --application-name financial-docs \
+              --environment-names financial-docs-env \
+              --query "Environments[0].Status" --output text)
+            
+            HEALTH=$(aws elasticbeanstalk describe-environments \
+              --application-name financial-docs \
+              --environment-names financial-docs-env \
+              --query "Environments[0].Health" --output text)
+            
+            echo "Status: $STATUS, Health: $HEALTH"
+            
+            if [ "$STATUS" = "Ready" ]; then
+              echo "Deployment successful! Environment is ready."
+              
+              # Get the environment URL
+              URL=$(aws elasticbeanstalk describe-environments \
+                --application-name financial-docs \
+                --environment-names financial-docs-env \
+                --query "Environments[0].CNAME" --output text)
+              
+              echo "Your application is available at: http://$URL"
+              break
+            elif [ "$STATUS" = "Launching" ] || [ "$STATUS" = "Updating" ]; then
+              echo "Environment is still $STATUS, waiting 30 seconds..."
+              sleep 30
+            elif [ "$STATUS" = "Terminated" ]; then
+              echo "Environment was terminated. Checking logs..."
+              
+              # Try to get logs if available
+              aws logs describe-log-groups --log-group-name-prefix /aws/elasticbeanstalk/financial-docs-env || echo "No logs available"
+              
+              echo "Environment creation failed. Please check the AWS console for detailed error messages."
+              exit 1
+            else
+              echo "Environment is in state: $STATUS"
+              echo "Continuing to wait..."
+              sleep 30
+            fi
+          done
+          
+          if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+            echo "Timed out waiting for environment to be ready"
+            exit 1
+          fi

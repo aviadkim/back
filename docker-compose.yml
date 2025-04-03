@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Backend API with auto-reload
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=1
+      - MONGO_URI=mongodb://mongodb:27017/financial_documents
+    volumes:
+      - ./:/app  # Mount the entire project for auto-reload
+    depends_on:
+      - mongodb
+    command: flask run --host=0.0.0.0 --port=5000
+  
+  # MongoDB
+  mongodb:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+  
+  # Frontend development server with hot reload
+  frontend:
+    image: node:16
+    working_dir: /app/frontend
+    command: npm start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app 
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - CHOKIDAR_USEPOLLING=true  # Better file watching in Docker
+      - WDS_SOCKET_PORT=0
+
+volumes:
+  mongodb_data:

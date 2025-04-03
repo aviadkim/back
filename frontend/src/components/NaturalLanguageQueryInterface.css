@@ -1,0 +1,144 @@
+.natural-language-query-interface {
+  padding: 20px 0;
+}
+
+.documents-card,
+.suggestions-card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.conversation-card {
+  height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  height: calc(100vh - 240px); /* Adjust based on header/footer height */
+}
+
+.messages-area {
+    overflow-y: auto;
+    padding: 10px;
+}
+
+
+.empty-conversation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #6c757d;
+  text-align: center;
+  padding: 20px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px 15px; /* Adjusted padding */
+  border-radius: 15px; /* Slightly more rounded */
+  max-width: 80%; /* Slightly narrower */
+  display: flex; /* Use flex for better layout */
+  flex-direction: column; /* Stack header and content */
+}
+
+.user-message {
+  background-color: #0d6efd; /* Bootstrap primary blue */
+  color: white;
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 5px; /* Slightly different shape */
+}
+
+.system-message {
+  background-color: #e9ecef; /* Lighter gray */
+  color: #212529; /* Darker text */
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 5px; /* Slightly different shape */
+}
+
+.error-message {
+  background-color: #f8d7da; /* Bootstrap danger light */
+  color: #842029; /* Bootstrap danger dark */
+  border: 1px solid #f5c2c7; /* Bootstrap danger border */
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px; /* Reduced margin */
+  font-size: 0.75rem; /* Smaller font */
+  color: #6c757d; /* Default gray */
+}
+
+.user-message .message-header {
+    color: rgba(255, 255, 255, 0.8); /* Lighter gray for user messages */
+}
+
+
+.message-content {
+  word-wrap: break-word; /* Ensure long words wrap */
+  white-space: pre-wrap; /* Preserve whitespace and newlines */
+  font-size: 0.95rem; /* Slightly larger content font */
+}
+
+.message-data {
+  margin-top: 10px;
+  border-top: 1px solid #dee2e6;
+  padding-top: 10px;
+  background-color: rgba(255, 255, 255, 0.5); /* Slight background for data section */
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.system-message .message-data {
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly different background for system data */
+}
+
+
+.suggestion-item {
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: none; /* Remove default borders */
+  padding: 8px 12px; /* Adjust padding */
+}
+
+.suggestion-item:hover {
+  background-color: #e9ecef; /* Match system message background */
+  color: #0d6efd; /* Highlight text on hover */
+}
+
+.query-input-footer {
+    background-color: #f8f9fa; /* Light background for footer */
+    border-top: 1px solid #dee2e6;
+    padding: 10px 15px;
+}
+
+
+/* RTL Support */
+.rtl-support {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-support .user-message {
+  margin-right: auto;
+  margin-left: 0;
+  align-self: flex-start; /* Adjust alignment for RTL */
+}
+
+.rtl-support .system-message {
+  margin-left: auto;
+  margin-right: 0;
+  align-self: flex-end; /* Adjust alignment for RTL */
+}
+
+.rtl-support .message-header {
+    /* Ensure time stays on the opposite side in RTL */
+    flex-direction: row-reverse;
+}

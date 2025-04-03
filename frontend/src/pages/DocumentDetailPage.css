@@ -1,0 +1,65 @@
+/* Placeholder for DocumentDetailPage styles */
+.document-detail-page {
+    /* Styles for the overall page container */
+}
+.document-detail-page .container {
+    /* Specific container styles if needed */
+}
+
+.tab-content {
+    margin-top: 1.5rem; /* Space below tabs */
+    background-color: #fff; /* Give content area a background */
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem; /* Padding inside content area */
+    min-height: 400px; /* Ensure content area has height */
+}
+
+/* Loading and Error states for the whole page */
+.document-detail-page.loading .container,
+.document-detail-page.error .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh; /* Ensure loading/error takes up space */
+}
+
+/* Styles for processing/error indicators within the tab content */
+.processing-indicator,
+.tab-content > .error-message { /* Target error message directly inside tab-content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #718096;
+    min-height: 300px; /* Ensure indicator takes space */
+}
+.processing-indicator i {
+    font-size: 2rem;
+    color: #3182ce;
+    margin-bottom: 1rem;
+}
+.tab-content > .error-message {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 1rem; /* Less padding */
+}
+.tab-content > .error-message i {
+    font-size: 2rem;
+    color: #e53e3e;
+    margin-bottom: 1rem;
+}
+.tab-content > .error-message h2 {
+    font-size: 1.1rem;
+    color: #c53030;
+    margin-bottom: 0.5rem;
+}
+.tab-content > .error-message p {
+    color: #e53e3e;
+}
+
+
+/* Add other styles as needed */

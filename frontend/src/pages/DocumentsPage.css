@@ -1,0 +1,81 @@
+.documents-page {
+  padding: 2rem 0;
+}
+
+.upload-section, .documents-section {
+  margin-bottom: 3rem;
+}
+
+.upload-widget {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.01);
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.dropzone:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 144, 226, 0.03);
+}
+
+.dropzone-content i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.dropzone-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.dropzone-hint {
+  color: var(--light-text);
+  font-size: 0.9rem;
+}
+
+.upload-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+}
+
+.language-selector label {
+  margin-left: 0.5rem;
+}
+
+.language-selector select {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: white;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button i {
+  margin-left: 0.5rem;
+}
+
+.documents-section .empty-state {
+  margin-top: 2rem;
+}

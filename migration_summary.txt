@@ -1,0 +1,8 @@
+=== Migration Summary ===
+Files to migrate:
+- API routes: 93
+- Agent files: 3
+- Service files: 16
+- Utility files: 10
+- Model files: 2
+- Old feature files: 40

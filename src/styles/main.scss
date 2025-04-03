@@ -1,0 +1,21 @@
+// Import utilities first
+@import 'utilities/variables';
+@import 'utilities/mixins';
+
+// Import base styles
+@import 'base/reset';
+@import 'base/typography';
+
+// Import layout components
+@import 'layout/header';
+@import 'layout/footer';
+@import 'layout/grid';
+
+// Import component styles
+@import 'components/buttons';
+@import 'components/cards';
+
+// Tailwind directives
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
