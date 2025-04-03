@@ -1,0 +1,160 @@
+.footer {
+  background-color: #1a365d; /* Primary color */
+  color: #a0aec0; /* Light text color */
+  padding: 3rem 0 1rem 0; /* Top padding, less bottom padding */
+  margin-top: 3rem; /* Space above the footer */
+  font-size: 0.9rem; /* Base font size for footer */
+}
+
+/* Use general container */
+.footer .container {
+  /* Container styles are in App.css */
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* Single column on mobile */
+  gap: 2rem 1.5rem; /* Row and column gap */
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(160, 174, 192, 0.2); /* Separator line */
+}
+
+/* Responsive grid layout */
+@media (min-width: 640px) {
+  .footer-top {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on small screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-top {
+    grid-template-columns: 2fr 1fr 1fr 1fr; /* Four columns on large screens */
+  }
+}
+
+.footer-section {
+  /* Spacing handled by grid gap */
+}
+
+.footer-company .footer-logo {
+  height: 35px; /* Adjust logo size */
+  margin-bottom: 1rem;
+  display: block; /* Ensure logo is block */
+}
+
+.footer-title,
+.footer-company-name { /* Style section titles */
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #fff; /* White title */
+}
+
+.footer-company-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 1rem; /* Space below description */
+}
+
+.footer-links,
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li,
+.footer-contact li {
+  margin-bottom: 0.6rem;
+}
+
+.footer-links a {
+  color: #a0aec0; /* Light text for links */
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-links a:hover {
+  color: #fff; /* White on hover */
+  text-decoration: underline;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.footer-contact-item i {
+  margin-left: 0.75rem; /* Space for icon (RTL) */
+  margin-right: 0;
+  font-size: 1rem;
+  color: #4299e1; /* Accent color for icons */
+  width: 20px; /* Fixed width for alignment */
+  text-align: center;
+}
+
+.footer-contact-item span {
+    flex: 1; /* Allow text to take remaining space */
+}
+
+
+.footer-bottom {
+  padding-top: 1.5rem; /* Space above bottom content */
+  display: flex;
+  flex-direction: column; /* Stack on mobile */
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row; /* Side-by-side on larger screens */
+    justify-content: space-between;
+    text-align: right; /* Align text right (RTL) */
+  }
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem; /* Space between icons */
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .footer-social {
+    margin-bottom: 0;
+    order: 1; /* Move social icons to the left in RTL */
+  }
+}
+
+.footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(160, 174, 192, 0.1); /* Subtle background */
+  color: #e2e8f0; /* Light icon color */
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  text-decoration: none;
+}
+
+.footer-social-link:hover {
+  background-color: #4299e1; /* Accent color on hover */
+  color: #fff;
+}
+
+.footer-copyright {
+  font-size: 0.8rem; /* Smaller copyright text */
+  color: #a0aec0;
+}
+
+@media (min-width: 768px) {
+  .footer-copyright {
+    order: 0; /* Ensure copyright is on the right in RTL */
+  }
+}

@@ -1,0 +1,5 @@
+[flake8]
+# E501: Line too long (handled by black)
+# W503: Line break before binary operator (black prefers this)
+# W291: Trailing whitespace (ignore for now)
+ignore = E501, W503, W291

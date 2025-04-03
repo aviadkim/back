@@ -1,0 +1,225 @@
+.financial-metrics-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03);
+  border: 1px solid #e2e8f0;
+  overflow: hidden; /* Ensure consistency */
+}
+
+.financial-metrics-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 16px;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.financial-metrics-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-filter label {
+  font-size: 0.875rem; /* 14px */
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.category-filter select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  background-color: #fff;
+  font-size: 0.875rem;
+  color: #4a5568;
+  outline: none;
+  min-width: 150px; /* Ensure select has some width */
+}
+
+.metrics-panels {
+  padding: 16px;
+  display: grid;
+  gap: 1.5rem; /* Space between panels */
+}
+
+/* Default to single column, adjust with media queries */
+.metrics-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden; /* Clip content if needed */
+}
+
+.metrics-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: #f9fafb; /* Slightly different panel header bg */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.metrics-panel-header i {
+  color: #3182ce; /* Accent color for icon */
+  font-size: 1.1em;
+  width: 20px; /* Fixed width for alignment */
+  text-align: center;
+}
+
+.metrics-panel-header h4 {
+  font-size: 0.95rem; /* 15px */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.metrics-panel-body {
+  padding: 12px;
+  display: grid;
+  /* Grid layout for metrics */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 16px; /* Row and column gap */
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* Align baseline of text */
+  padding: 6px 0;
+  border-bottom: 1px dashed #edf2f7; /* Dashed separator */
+  font-size: 0.875rem; /* 14px */
+}
+.metric-item:last-child {
+    border-bottom: none; /* Remove border for last item */
+}
+
+
+.metric-label {
+  color: #4a5568; /* Medium gray */
+  margin-left: 8px; /* Space between label and value (RTL) */
+  word-break: break-word; /* Break long labels */
+}
+
+.metric-value {
+  font-weight: 500;
+  color: #2d3748; /* Darker text for value */
+  text-align: left; /* Align value left */
+  white-space: nowrap; /* Prevent value wrapping */
+}
+
+/* Specific styling for value types */
+.metric-item.currency-metric .metric-value {
+  color: #38a169; /* Green for currency */
+  font-weight: 600;
+}
+.metric-item.percentage-metric .metric-value {
+  color: #3182ce; /* Blue for percentage */
+  font-weight: 600;
+}
+.metric-item.date-metric .metric-value {
+  color: #718096; /* Lighter for dates */
+}
+
+
+/* Preview Mode adjustments */
+.financial-metrics-container.preview-mode {
+    box-shadow: none;
+    border: none;
+    background: none;
+    padding: 0;
+}
+.preview-grid {
+    padding: 0;
+    gap: 1rem;
+}
+.preview-grid .metrics-panel {
+    border: none;
+    background: none;
+    padding: 0;
+}
+.preview-grid .metrics-panel-header {
+    display: none; /* Hide panel header in preview */
+}
+.preview-grid .metrics-panel-body {
+    padding: 0;
+    display: block; /* Stack items vertically in preview */
+}
+.preview-grid .metric-item {
+    padding: 4px 0;
+    font-size: 0.85rem; /* Slightly smaller in preview */
+}
+.preview-more {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+
+/* Loading and Empty States */
+.financial-metrics-loading,
+.financial-metrics-empty {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03); */
+  color: #718096;
+  padding: 1rem;
+  text-align: center;
+}
+
+.financial-metrics-loading .loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #e2e8f0;
+  border-radius: 50%;
+  border-top-color: #3182ce;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.financial-metrics-empty i {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+  color: #cbd5e0;
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+  .metrics-panels {
+    /* Potentially use multiple columns for panels */
+    /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
+  }
+  .metrics-panel-body {
+      /* Adjust columns for panel body */
+      /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
+  }
+}
+
+@media (max-width: 640px) {
+  .financial-metrics-header {
+      flex-direction: column;
+      align-items: stretch;
+  }
+  .category-filter select {
+      width: 100%; /* Full width select on small screens */
+  }
+  .metrics-panel-body {
+      grid-template-columns: 1fr; /* Single column on small screens */
+  }
+}

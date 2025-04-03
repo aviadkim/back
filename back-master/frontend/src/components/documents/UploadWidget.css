@@ -1,0 +1,247 @@
+.upload-widget {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03);
+  border: 1px solid #e2e8f0;
+  overflow: hidden; /* Keep content contained */
+}
+
+.upload-widget-header {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 16px;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.upload-widget-header h3 {
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-selector label {
+  font-size: 0.875rem; /* 14px */
+  color: #4a5568;
+  font-weight: 500;
+  white-space: nowrap; /* Prevent label wrapping */
+}
+
+.language-selector select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  background-color: #fff;
+  font-size: 0.875rem;
+  color: #4a5568;
+  outline: none;
+  cursor: pointer;
+}
+.language-selector select:disabled {
+    background-color: #f7fafc;
+    cursor: not-allowed;
+}
+
+
+.dropzone {
+  padding: 30px 20px; /* Adjust padding */
+  border: 2px dashed #cbd5e0; /* Slightly darker dashed border */
+  border-radius: 6px;
+  background-color: #f9fafb; /* Slightly different background */
+  margin: 16px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  text-align: center;
+  min-height: 150px; /* Ensure minimum height */
+  display: flex; /* Use flex to center content */
+  justify-content: center;
+  align-items: center;
+}
+
+.dropzone:hover {
+  border-color: #3182ce; /* Accent color */
+  background-color: #f0f4f8; /* Lighter background */
+}
+
+.dropzone.active {
+  border-color: #3182ce;
+  background-color: #ebf8ff; /* Light accent */
+  border-style: solid; /* Solid border when active */
+}
+
+.dropzone.uploading,
+.dropzone:disabled { /* Style disabled state */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.dropzone.uploading:hover,
+.dropzone:disabled:hover {
+    border-color: #cbd5e0; /* No hover effect when disabled/uploading */
+    background-color: #f9fafb;
+}
+
+/* Different states within the dropzone */
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4a5568;
+  width: 100%; /* Take full width */
+}
+.dropzone-content.idle { /* Specific styles for idle state */
+    color: #718096;
+}
+.dropzone-content.file-selected {
+    color: #2d3748;
+}
+.dropzone-content.uploading {
+    color: #4a5568;
+}
+.dropzone-content.success {
+    color: #38a169; /* Success color */
+}
+.dropzone-content.error {
+    color: #e53e3e; /* Error color */
+}
+
+
+.dropzone-icon {
+  font-size: 2.5rem; /* 40px */
+  margin-bottom: 1rem;
+}
+.dropzone-content.idle .dropzone-icon { color: #a0aec0; }
+.dropzone-content.file-selected .dropzone-icon { color: #3182ce; }
+.dropzone-content.success .success-icon { color: #38a169; }
+.dropzone-content.error .error-icon { color: #e53e3e; }
+
+
+.dropzone-content p {
+  margin: 4px 0;
+  font-size: 1rem; /* 16px */
+  line-height: 1.5;
+}
+
+.browse-button { /* Style the "browse" text as a button */
+  color: #3182ce;
+  font-weight: 500;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.browse-button:hover {
+    color: #2c5282;
+}
+
+
+.dropzone-hint {
+  font-size: 0.875rem !important; /* 14px */
+  color: #a0aec0; /* Lighter hint text */
+  margin-top: 8px !important;
+}
+
+/* Uploading State */
+.progress-container {
+  width: 80%;
+  max-width: 300px;
+  height: 6px; /* Thinner progress bar */
+  background-color: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 1rem 0 0.5rem 0; /* Adjust spacing */
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #3182ce; /* Accent color */
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.upload-percentage {
+  font-size: 0.9rem; /* 14px */
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 0.5rem;
+}
+
+/* Success State */
+.dropzone-content.success p {
+    font-weight: 500;
+}
+.file-name { /* Used in success and error states */
+  font-size: 0.875rem;
+  color: #718096;
+  margin-top: 0.5rem;
+  font-weight: normal;
+  word-break: break-all; /* Break long file names */
+}
+
+/* Error State */
+.error-message-text {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+.try-again-button {
+  margin-top: 1rem;
+  padding: 6px 14px;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+.try-again-button:hover {
+  background-color: #c53030; /* Darker red */
+}
+
+/* Action Buttons Area */
+.upload-actions {
+  display: flex;
+  justify-content: center; /* Center button(s) */
+  padding: 12px 16px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f9fafb; /* Slightly different background */
+}
+
+/* Use general button styles and add icon spacing */
+.upload-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+}
+.upload-actions button i {
+  /* margin-left: 8px; */ /* Replaced by gap */
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .upload-widget-header {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items */
+  }
+  .language-selector {
+    margin-top: 12px;
+    justify-content: space-between; /* Space out label and select */
+  }
+  .dropzone {
+      padding: 20px 15px;
+  }
+  .dropzone-content p {
+      font-size: 0.95rem;
+  }
+}

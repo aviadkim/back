@@ -1,0 +1,295 @@
+<!-- Add this before the closing </body> tag in your frontend/build/index.html -->
+
+<div class="panel">
+    <h2>Advanced Analysis</h2>
+    <button id="runAnalysisButton" disabled>Run Portfolio Analysis</button>
+    <div id="analysisLoader" class="loader hidden"></div>
+    <div id="analysisResult" class="hidden">
+        <h3>Portfolio Analysis</h3>
+        <div id="portfolioSummary"></div>
+        
+        <h4>Asset Allocation</h4>
+        <div id="assetAllocation"></div>
+        
+        <h4>Top Holdings</h4>
+        <div id="topHoldings"></div>
+    </div>
+    
+    <h2>Custom Tables</h2>
+    <div>
+        <h3>Create Custom Table</h3>
+        <div>
+            <label>Select Columns:</label>
+            <div id="columnSelection"></div>
+        </div>
+        <div style="margin-top: 10px;">
+            <label>Filter By:</label>
+            <select id="filterColumn">
+                <option value="">No Filter</option>
+            </select>
+            <input type="text" id="filterValue" placeholder="Filter value">
+        </div>
+        <div style="margin-top: 10px;">
+            <label>Sort By:</label>
+            <select id="sortColumn">
+                <option value="">No Sort</option>
+            </select>
+            <select id="sortOrder">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="generateTableButton" disabled>Generate Custom Table</button>
+        </div>
+    </div>
+    <div id="customTableLoader" class="loader hidden"></div>
+    <div id="customTableResult" class="hidden">
+        <h3>Custom Table</h3>
+        <div id="customTableContainer"></div>
+    </div>
+</div>
+
+<script>
+// Add JavaScript for advanced analysis and custom tables
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to format numbers for display
+    function formatNumber(num) {
+        if (num === undefined || num === null) return 'N/A';
+        return new Intl.NumberFormat().format(num);
+    }
+    
+    // Format column name for display
+    function formatColumnName(column) {
+        return column
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    // Add event listener for the Run Analysis button
+    const runAnalysisButton = document.getElementById('runAnalysisButton');
+    if (runAnalysisButton) {
+        runAnalysisButton.addEventListener('click', async function() {
+            if (!currentDocumentId) {
+                alert('Please select a document first.');
+                return;
+            }
+            
+            showLoader('analysisLoader');
+            document.getElementById('analysisResult').classList.add('hidden');
+            
+            try {
+                const response = await fetch(`/api/documents/${currentDocumentId}/advanced_analysis`);
+                const result = await response.json();
+                
+                // Display portfolio summary
+                const summaryHtml = `
+                    <p><strong>Total Value:</strong> ${formatNumber(result.analysis.total_value)}</p>
+                    <p><strong>Number of Securities:</strong> ${result.analysis.security_count}</p>
+                `;
+                document.getElementById('portfolioSummary').innerHTML = summaryHtml;
+                
+                // Display asset allocation
+                let allocationHtml = '<table>';
+                allocationHtml += '<tr><th>Asset Type</th><th>Value</th><th>Percentage</th></tr>';
+                
+                for (const [assetType, data] of Object.entries(result.analysis.asset_allocation || {})) {
+                    allocationHtml += `<tr>
+                        <td>${assetType || 'Unknown'}</td>
+                        <td>${formatNumber(data.value)}</td>
+                        <td>${data.percentage.toFixed(2)}%</td>
+                    </tr>`;
+                }
+                
+                allocationHtml += '</table>';
+                document.getElementById('assetAllocation').innerHTML = allocationHtml;
+                
+                // Display top holdings
+                let holdingsHtml = '<table>';
+                holdingsHtml += '<tr><th>Name</th><th>ISIN</th><th>Value</th><th>Percentage</th></tr>';
+                
+                for (const holding of result.analysis.top_holdings || []) {
+                    holdingsHtml += `<tr>
+                        <td>${holding.name || 'Unknown'}</td>
+                        <td>${holding.isin}</td>
+                        <td>${formatNumber(holding.market_value)}</td>
+                        <td>${holding.percentage.toFixed(2)}%</td>
+                    </tr>`;
+                }
+                
+                holdingsHtml += '</table>';
+                document.getElementById('topHoldings').innerHTML = holdingsHtml;
+                
+                document.getElementById('analysisResult').classList.remove('hidden');
+                
+                // Populate column selection for custom tables
+                populateColumnSelection(result.analysis);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('portfolioSummary').innerHTML = '<p>Error loading analysis: ' + error.message + '</p>';
+                document.getElementById('analysisResult').classList.remove('hidden');
+            } finally {
+                hideLoader('analysisLoader');
+            }
+        });
+    }
+
+    // Populate column selection based on available data
+    function populateColumnSelection(analysis) {
+        const columnSelection = document.getElementById('columnSelection');
+        const filterColumn = document.getElementById('filterColumn');
+        const sortColumn = document.getElementById('sortColumn');
+        
+        if (!columnSelection || !filterColumn || !sortColumn) return;
+        
+        // Clear existing options
+        columnSelection.innerHTML = '';
+        
+        // Keep only the No Filter/Sort options
+        filterColumn.innerHTML = '<option value="">No Filter</option>';
+        sortColumn.innerHTML = '<option value="">No Sort</option>';
+        
+        // Add standard columns
+        const columns = ['isin', 'name', 'security_type', 'quantity', 'price', 'market_value', 'currency', 'percentage'];
+        
+        columns.forEach(column => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <input type="checkbox" id="col_${column}" name="columns" value="${column}">
+                <label for="col_${column}">${formatColumnName(column)}</label>
+            `;
+            columnSelection.appendChild(div);
+            
+            // Add to filter and sort dropdowns
+            const option1 = document.createElement('option');
+            option1.value = column;
+            option1.textContent = formatColumnName(column);
+            filterColumn.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = column;
+            option2.textContent = formatColumnName(column);
+            sortColumn.appendChild(option2);
+        });
+        
+        // Enable the generate button
+        const generateTableButton = document.getElementById('generateTableButton');
+        if (generateTableButton) {
+            generateTableButton.disabled = false;
+        }
+    }
+
+    // Generate custom table
+    const generateTableButton = document.getElementById('generateTableButton');
+    if (generateTableButton) {
+        generateTableButton.addEventListener('click', async function() {
+            if (!currentDocumentId) {
+                alert('Please select a document first.');
+                return;
+            }
+            
+            // Get selected columns
+            const selectedColumns = Array.from(
+                document.querySelectorAll('input[name="columns"]:checked')
+            ).map(input => input.value);
+            
+            if (selectedColumns.length === 0) {
+                alert('Please select at least one column.');
+                return;
+            }
+            
+            // Get filter
+            const filterColumn = document.getElementById('filterColumn').value;
+            const filterValue = document.getElementById('filterValue').value;
+            
+            // Get sort
+            const sortColumn = document.getElementById('sortColumn').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+            
+            // Build table spec
+            const tableSpec = {
+                columns: selectedColumns
+            };
+            
+            if (filterColumn && filterValue) {
+                tableSpec.filters = {};
+                tableSpec.filters[filterColumn] = filterValue;
+            }
+            
+            if (sortColumn) {
+                tableSpec.sort_by = sortColumn;
+                tableSpec.sort_order = sortOrder;
+            }
+            
+            showLoader('customTableLoader');
+            document.getElementById('customTableResult').classList.add('hidden');
+            
+            try {
+                const response = await fetch(`/api/documents/${currentDocumentId}/custom_table`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(tableSpec)
+                });
+                
+                const result = await response.json();
+                
+                // Display the custom table
+                let tableHtml = '<table>';
+                
+                // Header row
+                tableHtml += '<tr>';
+                for (const column of result.table.columns) {
+                    tableHtml += `<th>${formatColumnName(column)}</th>`;
+                }
+                tableHtml += '</tr>';
+                
+                // Data rows
+                for (const row of result.table.data) {
+                    tableHtml += '<tr>';
+                    for (const column of result.table.columns) {
+                        let value = row[column];
+                        if (typeof value === 'number') {
+                            value = formatNumber(value);
+                        } else if (value === null || value === undefined) {
+                            value = 'N/A';
+                        }
+                        tableHtml += `<td>${value}</td>`;
+                    }
+                    tableHtml += '</tr>';
+                }
+                
+                tableHtml += '</table>';
+                document.getElementById('customTableContainer').innerHTML = tableHtml;
+                document.getElementById('customTableResult').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('customTableContainer').innerHTML = '<p>Error generating table: ' + error.message + '</p>';
+                document.getElementById('customTableResult').classList.remove('hidden');
+            } finally {
+                hideLoader('customTableLoader');
+            }
+        });
+    }
+
+    // Modify the existing loadDocumentInfo function to enable analysis buttons
+    const originalLoadDocumentInfo = window.loadDocumentInfo;
+    if (typeof originalLoadDocumentInfo === 'function') {
+        window.loadDocumentInfo = function(documentId) {
+            // Call the original function
+            originalLoadDocumentInfo(documentId);
+            
+            // Enable the analysis buttons
+            if (runAnalysisButton) {
+                runAnalysisButton.disabled = false;
+            }
+            if (generateTableButton) {
+                generateTableButton.disabled = false;
+            }
+        };
+    }
+});
+</script>

@@ -1,0 +1,57 @@
+6.6.0
+
+Financial Document Analysis System - Refactored & Enhanced
+
+Release Date: April 1, 2025
+Developed by: Aviad Kim
+
+Major Changes (v6.6.0):
+- Next version
+
+Major Changes (v6.5.0):
+- Redesigned frontend UI using Tailwind CSS.
+- Replaced Material UI components with Tailwind-based structure.
+- Configured Tailwind CSS and removed old CSS files.
+
+Major Changes (v6.4.0):
+- Implemented ISIN detection (`pdf_processor/analysis/isin_detector.py`).
+- Implemented enhanced table extraction (`pdf_processor/tables/enhanced_table_extractor.py`).
+- Implemented main PDF processor (`pdf_processor/processor.py`).
+- Implemented Hebrew table detection (`pdf_processor/tables/hebrew_table_detector.py`).
+- Added frontend components: `CustomDashboardBuilder`, `NaturalLanguageQueryInterface`, `DocumentViewer`, `Dashboard`.
+- Added corresponding CSS files for frontend components.
+
+Major Changes (v6.3.0):
+- Added placeholder frontend component for Custom Table Builder.
+- Added PaddleOCR processor class for enhanced OCR.
+- Added paddleocr dependency to requirements.txt.
+
+Major Changes (v6.2.0):
+- Refined backend error handling in text/table extractors and document processor.
+- Updated configuration loading and usage in `app.py`.
+- Implemented database interactions in `routes/document.py`.
+- Added frontend pages: `HomePage`, `NotFoundPage`, `UploadPage`, `DocumentsPage`, `DocumentViewPage`.
+- Refined frontend components: `Layout`, `DocumentUpload`, `DocumentsList`, `Dashboard`.
+- Updated `docker-compose.yml` to include frontend service.
+- Updated `Dockerfile` for consistency.
+- Fixed linter errors in frontend components.
+
+Major Changes (v6.1.0):
+- Upgraded PyPDF2 to pypdf dependency.
+- Added opencv-python-headless dependency.
+- Fixed test setup issues (conftest.py, test imports, API endpoints).
+- Created placeholder service files to resolve import errors during testing.
+
+Major Changes (v6.0.0):
+- Standardized configuration management (`config/configuration.py`, `.env` files).
+- Unified document processing entry point (`pdf_processor/document_processor.py`).
+- Added enhanced OCR capabilities module (`pdf_processor/extraction/enhanced_ocr.py`).
+- Added enhanced table detection module (`pdf_processor/tables/enhanced_table_detection.py`).
+- Added Hebrew language handling module (`pdf_processor/language/hebrew_handler.py`).
+- Standardized API routes (`routes/document.py`, `routes/api.py`).
+- Updated main application (`app.py`) to use new config and routes.
+- Created standardized frontend API client (`frontend/src/api/api.js`).
+- Created frontend document upload component (`frontend/src/components/DocumentUpload.js`).
+- Added Docker configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.production.yml`).
+- Created unified deployment script (`deploy.sh`).
+- Updated test configurations (`tests/conftest.py`, test files).

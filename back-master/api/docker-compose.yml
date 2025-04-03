@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  bank-api:
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
+    container_name: bank-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # תיקייה עבור תוצאות ההשוואה
+      - ../benchmark_results:/app/benchmark_results
+    environment:
+      - PYTHONPATH=/app
+      - TRANSFORMERS_CACHE=/app/.cache
+      - HF_HOME=/app/.cache
+    restart: unless-stopped 

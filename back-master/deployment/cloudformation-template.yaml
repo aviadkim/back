@@ -1,0 +1,227 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Financial Document Analysis System'
+
+Parameters:
+  EnvironmentName:
+    Description: Environment name
+    Type: String
+    Default: dev
+  
+  DockerImageUri:
+    Description: URI of Docker image
+    Type: String
+    Default: '{{resolve:ssm:/financial-docs/docker-image-uri:1}}'
+  
+  MongoDbUri:
+    Description: MongoDB connection string
+    Type: String
+    NoEcho: true
+    Default: '{{resolve:ssm:/financial-docs/mongodb-uri:1}}'
+  
+  HuggingFaceApiKey:
+    Description: Hugging Face API key
+    Type: String
+    NoEcho: true
+    Default: '{{resolve:ssm:/financial-docs/huggingface-api-key:1}}'
+  
+  SecretKey:
+    Description: Secret key for Flask
+    Type: String
+    NoEcho: true
+    Default: '{{resolve:ssm:/financial-docs/secret-key:1}}'
+  
+  JwtSecret:
+    Description: JWT secret
+    Type: String
+    NoEcho: true
+    Default: '{{resolve:ssm:/financial-docs/jwt-secret:1}}'
+
+Resources:
+  # VPC and Networking
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-vpc
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet-1
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet-2
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-igw
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-route-table
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  # Security Groups
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP/HTTPS and SSH
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+
+  # EC2 Instance
+  ApplicationInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-04e5276abb41f6370 # Amazon Linux 2 AMI (HVM), SSD Volume Type
+      SecurityGroupIds:
+        - !Ref WebServerSecurityGroup
+      SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-financial-docs-app
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y
+          amazon-linux-extras install docker -y
+          service docker start
+          usermod -a -G docker ec2-user
+          chkconfig docker on
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Create app directory
+          mkdir -p /app
+          cd /app
+          
+          # Clone repository
+          yum install -y git
+          git clone https://github.com/aviadkim/back.git .
+          
+          # Create env file
+          cat > .env << 'ENVFILE'
+          FLASK_ENV=production
+          PORT=5000
+          HUGGINGFACE_API_KEY=${HuggingFaceApiKey}
+          MONGO_URI=${MongoDbUri}
+          SECRET_KEY=${SecretKey}
+          JWT_SECRET=${JwtSecret}
+          DEFAULT_LANGUAGE=he
+          ENVFILE
+          
+          # Create docker-compose file
+          cat > docker-compose.yml << 'DOCKERCOMPOSE'
+          version: '3'
+          services:
+            app:
+              build: .
+              ports:
+                - "5000:5000"
+              env_file:
+                - .env
+              volumes:
+                - ./uploads:/app/uploads
+                - ./data:/app/data
+                - ./logs:/app/logs
+          DOCKERCOMPOSE
+          
+          # Start application
+          docker-compose up -d
+
+  # Elastic IP for EC2 instance
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref ApplicationInstance
+
+Outputs:
+  ApplicationURL:
+    Description: URL of the application
+    Value: !Sub http://${ElasticIP}:5000
+    Export:
+      Name: !Sub ${EnvironmentName}-Application-URL
+  
+  InstanceId:
+    Description: EC2 Instance ID
+    Value: !Ref ApplicationInstance
+    Export:
+      Name: !Sub ${EnvironmentName}-Instance-ID
+  
+  ElasticIP:
+    Description: Elastic IP of the application
+    Value: !Ref ElasticIP
+    Export:
+      Name: !Sub ${EnvironmentName}-Elastic-IP

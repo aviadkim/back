@@ -1,0 +1,444 @@
+{
+  "file": "test_documents/2. Messos 28.02.2025.pdf",
+  "language": "heb+eng",
+  "text_extraction": {
+    "status": "success",
+    "page_count": 20,
+    "text_samples": {
+      "0": "DI\n\nCorner\n\nValuation\nas of 28.02.2025\n\nMESSOS ENTERPRISES LTD.\n\nClient Number // 366223\nValuation currency // USD\nInvestment profile // Undefined\nRisk Profile // Medium-high\n\nCorner Banca SA // Tédis...",
+      "1": "Corner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nIndex\n\nCornér Banca SA // Tédistrasse 27 // Postfach 1640 // 8027 Ziirich_Switzerland // Hauptsitz Via Canova 16, 6901 Lugano_Switzerland\n\n-\nTel. ...",
+      "2": "e\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nSummary\nAssets Countervalue USD Weight in %\nLiquidity 47'850 0.25%\nBonds 11'558'957 59.24%\nEquities 27'406 0.14%\nMixed funds...",
+      "3": "e\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nAssets and Liabilities Structure\n\nLiabilities and obligations Countervalue USD\n\nLiabilities\nCash accounts\nFixed advance\nProf...",
+      "4": "e\n\nCorner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nCurrency allocation\nLiquidity 47°850 0.25% 0.25%\nCash accounts 47'850 0.25% 0.25%\n\nMoney Market\nFixed deposits and fiduciaries\n\nBonds 177 59.24...",
+      "5": "e\n\nMESSOS ENTERPRISES LTD.\n\nValuation as of 28.02.2025\nClient Number 366223\n\nPerformance Overview/Evolution\n\nin%\n\n1.76%\n0.00%\n1.76%\n0.36%\n\n10/2025 4\n11/2025 4\n12/2025 4\n\n09/2025 +\n\n08/2025 +\n\nPrint da...",
+      "6": "e\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nLiquidity and liabilities\n\nValuation in price currency in %\n\nThereof accruals of assets\nCountervalue USD\n\n47'850 0.25%\n\nUSD ...",
+      "7": "Corner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nBonds\n\nCurrency Nominal/ Description Average Acquisition price Actual Price Perf YTD Perf Total Valuation in price currency in%\nQuantity Average A...",
+      "8": "Corner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nBonds\n\nCurrency Nominal/ Description Average Acquisition price Actual Price Perf YTD Perf Total Valuation in price currency in%\n\nQuantity Average ...",
+      "9": "Corner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nBonds\n\nCurrency Nominal/ Description Average Acquisition price Actual Price Perf YTD Perf Total Valuation in price currency in%\n\nQuantity Average ...",
+      "10": "e\n\nMESSOS ENTERPRISES LTD.\n\nValuation as of 28.02.2025\nClient Number 366223\n\nBonds\n\nValuation in price currency in %\n\nThereof accruals of assets\nCountervalue USD\n\n187'094 0.96%\n44'560\n\n11'558'957 59.2...",
+      "11": "e\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nEquities\n\nValuation in price currency in %\n\nThereof accruals of assets\nCountervalue USD\n\n24'720 0.14%\n\n27'406\nUSD 27°406 0.1...",
+      "12": "MESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nCormer\n\nStructured products\n\nin%\n\nof assets\n\n1.01%\n\n2.55%\n\n6.03%\n\n3.72%\n\n2.54%\n\n8.32%\n\n2.52%\n\nValuation in price currency\nThere...",
+      "13": "Cormer MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nStructured products\n\nCurrency Nominal/ Description Average Acquisition price Actual Price Perf YTD Perf Total Valuation in price currency in %\n\nQu...",
+      "14": "Cormer MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nStructured products\n\nCurrency Nominal/ Description Average Acquisition price Actual Price Perf YTD Perf Total Valuation in price currency in %\n\nQu...",
+      "15": "e\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nOther assets\n\nPerf YTD Perf Total Valuation in price currency in %\n\nPerf Market Thereof accruals of assets\nPerf Currency Cou...",
+      "16": "Corner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nExpected Cash Flows (Overview)\nNext 12 months\n\nAt sight 03 2025 04 2025 05 2025 06 2025 07 2025 08 2025 09 2025 10 2025 11 2025 12 2025 01 2026 02...",
+      "17": "=\n\nMESSOS ENTERPRISES LTD.\nValuation as of 28.02.2025\nClient Number 366223\n\nGlossary\n\nLiquidity consists of assets deposited in current accounts, as well as time deposits, fiduciary and money market i...",
+      "18": "=\n\nCorner MESSOS ENTERPRISES LTD.\n\nClient Number 366223\n\nGlossary\n\nProduct Risk Classifier (PRC)\n\nThe PRC (Product Risk Classifier) is a risk indicator, provided by third parties, which is based on qu...",
+      "19": "MESSOS ENTERPRISES LTD\n\n—_\nComer Valaion eof 2022025\nClient Number 366223\n\nNotices and other information\n\nThe present valuation is for information purposes only. The valuation of the assets in this st..."
+    },
+    "potentially_financial": true
+  },
+  "tables": {
+    "status": "success",
+    "page_count": 16,
+    "table_counts": {
+      "0": 2,
+      "1": 1,
+      "2": 1,
+      "6": 1,
+      "7": 2,
+      "8": 2,
+      "9": 2,
+      "10": 2,
+      "11": 2,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "17": 5,
+      "18": 1,
+      "19": 1
+    },
+    "first_table_shape": [
+      3,
+      11
+    ],
+    "first_table_sample": [
+      {
+        "Column_1": "Swift CBLUCH",
+        "Column_2": "2280",
+        "Column_3": "A // Clearing",
+        "Column_4": "8490",
+        "Column_5": "// CHE-",
+        "Column_6": "105.962.409",
+        "Column_7": "IVA",
+        "Column_8": null,
+        "Column_9": null,
+        "Column_10": null,
+        "Column_11": null
+      },
+      {
+        "Column_1": "Tel. +",
+        "Column_2": "41",
+        "Column_3": "44",
+        "Column_4": "218",
+        "Column_5": "10",
+        "Column_6": "20",
+        "Column_7": "// Fax +",
+        "Column_8": "41",
+        "Column_9": "44218",
+        "Column_10": "1029",
+        "Column_11": "// info@corner.ch // corner.ch"
+      },
+      {
+        "Column_1": "Cornèr Banca SA // Tödistrasse",
+        "Column_2": "27",
+        "Column_3": "// Postfach",
+        "Column_4": "1640",
+        "Column_5": "//",
+        "Column_6": "8027",
+        "Column_7": "Zürich_Switzerland // Hauptsitz Via Canova",
+        "Column_8": "16",
+        "Column_9": ",",
+        "Column_10": "6901",
+        "Column_11": "Lugano_Switzerland"
+      }
+    ]
+  },
+  "financial_analysis": {
+    "metrics": {
+      "currency_values": [
+        28.02,
+        202.0,
+        5.0,
+        366.0,
+        223.0,
+        27.0,
+        164.0,
+        0.0,
+        802.0,
+        7.0
+      ],
+      "percentages": [
+        0.25,
+        59.24,
+        0.14,
+        40.24,
+        0.13,
+        100.0,
+        99.86,
+        0.14,
+        100.0,
+        0.25
+      ],
+      "isins": [
+        {
+          "code": "CH1908490000",
+          "details": {
+            "country_code": "CH",
+            "is_valid": false
+          }
+        },
+        {
+          "code": "XS2530201644",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2588105036",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2665592833",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2692298537",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2754416860",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2761230684",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2736388732",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2782869916",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2824054402",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2567543397",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2110079584",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2848820754",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2829712830",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2912278723",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2381723902",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2829752976",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2953741100",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2381717250",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2481066111",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2964611052",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "LU2228214107",
+          "details": {
+            "country_code": "LU",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "CH1269060229",
+          "details": {
+            "country_code": "CH",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS0461497009",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2746319610",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "CH0244767585",
+          "details": {
+            "country_code": "CH",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2519369867",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2315191069",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2792098779",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2714429128",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2105981117",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2838389430",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2631782468",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS1700087403",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2594173093",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2407295554",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2518123653",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XS2252299883",
+          "details": {
+            "country_code": "XS",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "CH1259345242",
+          "details": {
+            "country_code": "CH",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "CH1259344831",
+          "details": {
+            "country_code": "CH",
+            "is_valid": true
+          }
+        },
+        {
+          "code": "XD0466760473",
+          "details": {
+            "country_code": "XD",
+            "is_valid": true
+          }
+        }
+      ]
+    },
+    "status": "success",
+    "first_table_type": "unknown",
+    "table_analysis": {
+      "table_type": "unknown",
+      "columns": 11,
+      "rows": 3,
+      "statistics": {
+        "Column_2": {
+          "mean": 782.6666666666666,
+          "min": 27.0,
+          "max": 2280.0
+        },
+        "Column_4": {
+          "mean": 3449.3333333333335,
+          "min": 218.0,
+          "max": 8490.0
+        },
+        "Column_8": {
+          "mean": 28.5,
+          "min": 16.0,
+          "max": 41.0
+        },
+        "Column_10": {
+          "mean": 3965.0,
+          "min": 1029.0,
+          "max": 6901.0
+        }
+      }
+    }
+  }
+}

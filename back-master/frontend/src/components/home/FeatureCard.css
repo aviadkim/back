@@ -1,0 +1,33 @@
+/* Placeholder for FeatureCard styles */
+.feature-card {
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #fff;
+}
+.feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #3182ce; /* Accent color */
+}
+.feature-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.feature-description {
+    font-size: 0.9rem;
+    color: #718096; /* Light text */
+    margin-bottom: 1rem;
+}
+.feature-link {
+    font-size: 0.9rem;
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 500;
+}
+.feature-link:hover {
+    text-decoration: underline;
+}
+/* Add other styles as needed */

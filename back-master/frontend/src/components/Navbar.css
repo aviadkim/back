@@ -1,0 +1,115 @@
+.navbar {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky; /* Keep navbar at the top */
+  top: 0;
+  left: 0; /* Ensure it spans full width */
+  right: 0; /* Ensure it spans full width */
+  z-index: 1000; /* High z-index to stay on top */
+  height: 60px; /* Fixed height */
+  display: flex;
+  align-items: center; /* Vertically center content */
+}
+
+/* Use the general container class for alignment */
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Ensure container takes full width */
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* Remove underline from logo link */
+}
+
+.navbar-logo img {
+  height: 35px; /* Adjust logo size */
+  width: auto;
+  margin-left: 8px; /* Space between logo and text (RTL) */
+}
+
+.navbar-logo-text { /* Optional: Add text next to logo */
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a365d; /* Primary color */
+}
+
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Spacing between links */
+}
+
+.navbar-link {
+  padding: 0.5rem 0.75rem; /* Adjust padding */
+  color: #4a5568; /* Text light */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  font-size: 0.95rem; /* Slightly larger font */
+  position: relative; /* For active indicator */
+  border-radius: 4px; /* Slight rounding on hover */
+}
+
+.navbar-link:hover {
+  color: #3182ce; /* Accent color */
+  background-color: #f0f4f8; /* Light background on hover */
+}
+
+/* Style for the active link (using NavLink from react-router-dom is better) */
+.navbar-link.active { /* Assuming NavLink adds 'active' class */
+  color: #3182ce;
+  font-weight: 600;
+}
+
+/* Underline for active link (optional) */
+/*
+.navbar-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 10%;
+  left: 10%;
+  height: 2px;
+  background-color: #3182ce;
+}
+*/
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Use general button styles from App.css */
+/* .navbar-actions .btn-primary { ... } */
+
+
+/* Mobile Menu Button (Hamburger) */
+.navbar-menu-button {
+  display: none; /* Hidden by default */
+  background: none;
+  border: none;
+  font-size: 1.8rem; /* Larger icon */
+  color: #4a5568;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .navbar-links,
+  .navbar-actions {
+    display: none; /* Hide links and actions */
+  }
+
+  .navbar-menu-button {
+    display: block; /* Show hamburger button */
+  }
+
+  /* Styles for the mobile menu itself would go here if implemented */
+  /* e.g., .mobile-menu.open { display: block; ... } */
+}

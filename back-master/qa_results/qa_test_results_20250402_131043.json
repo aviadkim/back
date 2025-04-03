@@ -1,0 +1,140 @@
+{
+  "document_id": "doc_5800399a",
+  "document_info": {
+    "document_id": "doc_5800399a",
+    "filename": "doc_de0c7654_2._Messos_28.02.2025.pdf",
+    "language": "heb+eng",
+    "path": "/workspaces/back/uploads/doc_5800399a_doc_de0c7654_2._Messos_28.02.2025.pdf",
+    "status": "uploaded",
+    "upload_date": "2025-04-02T13:07:52.766469"
+  },
+  "test_date": "2025-04-02T13:10:43.942126",
+  "model_results": {
+    "fallback": [
+      {
+        "question": "What type of document is this?",
+        "answer": "Based on the context information provided, the document appears to be a **financial portfolio document** or a **securities holdings report**. It contains details about securities (such as Apple, Microsoft, and Amazon) along with their ISINs and the total portfolio value as of a specific date. \n\nIf you were expecting a more specific document type (e.g., a prospectus, a brokerage statement, etc.), the context does not provide enough details to confirm that.",
+        "timestamp": "2025-04-02T13:09:16.281008"
+      },
+      {
+        "question": "Summarize this document in a few sentences.",
+        "answer": "The document with ID doc_5800399a contains financial information about securities from Apple Inc. (ISIN US0378331005), Microsoft (ISIN US5949181045), and Amazon (ISIN US0231351067). The total portfolio value is $1,500,000 as of March 15, 2025.",
+        "timestamp": "2025-04-02T13:09:18.270130"
+      },
+      {
+        "question": "What is the total portfolio value?",
+        "answer": "The total portfolio value is $1,500,000 as of March 15, 2025.",
+        "timestamp": "2025-04-02T13:09:26.501250"
+      },
+      {
+        "question": "What companies are mentioned in this document?",
+        "answer": "The companies mentioned in the document are:  \n\n1. Apple Inc. (ISIN: US0378331005)  \n2. Microsoft (ISIN: US5949181045)  \n3. Amazon (ISIN: US0231351067)",
+        "timestamp": "2025-04-02T13:09:31.255857"
+      },
+      {
+        "question": "What is the asset allocation?",
+        "answer": "The context information provided does not specify detailed asset allocation percentages for the securities mentioned (Apple Inc., Microsoft, and Amazon). It only lists the portfolio value as $1,500,000 as of March 15, 2025, without breaking down the allocations for each security. Therefore, the asset allocation cannot be determined from the given context.",
+        "timestamp": "2025-04-02T13:09:34.026823"
+      },
+      {
+        "question": "When was this document created or dated?",
+        "answer": "The document is dated as of **March 15, 2025**, based on the context information provided about the portfolio value.",
+        "timestamp": "2025-04-02T13:09:36.092945"
+      },
+      {
+        "question": "Are there any ISINs mentioned in the document?",
+        "answer": "Yes, the following ISINs are mentioned in the document:  \n\n- Apple Inc.: US0378331005  \n- Microsoft: US5949181045  \n- Amazon: US0231351067",
+        "timestamp": "2025-04-02T13:09:38.038716"
+      },
+      {
+        "question": "What currencies are mentioned in this document?",
+        "answer": "The only currency mentioned in the document is the US dollar ($), as indicated by the portfolio value of \"$1,500,000.\" No other currencies are mentioned.",
+        "timestamp": "2025-04-02T13:09:39.772871"
+      }
+    ],
+    "openrouter": [
+      {
+        "question": "What type of document is this?",
+        "answer": "The document appears to be a financial portfolio report or summary, as it contains information about securities (such as Apple Inc., Microsoft, and Amazon) along with their ISINs and the total portfolio value as of a specific date. \n\nAnswer: This is a financial portfolio document.",
+        "timestamp": "2025-04-02T13:09:41.896341"
+      },
+      {
+        "question": "Summarize this document in a few sentences.",
+        "answer": "The document (ID doc_5800399a) contains financial information about a portfolio valued at $1,500,000 as of March 15, 2025. It includes details on securities such as Apple Inc. (ISIN US0378331005), Microsoft (ISIN US5949181045), and Amazon (ISIN US0231351067).",
+        "timestamp": "2025-04-02T13:09:44.086694"
+      },
+      {
+        "question": "What is the total portfolio value?",
+        "answer": "The total portfolio value is $1,500,000 as of March 15, 2025.",
+        "timestamp": "2025-04-02T13:09:45.689313"
+      },
+      {
+        "question": "What companies are mentioned in this document?",
+        "answer": "The companies mentioned in the document are:\n\n1. Apple Inc. (ISIN: US0378331005)  \n2. Microsoft (ISIN: US5949181045)  \n3. Amazon (ISIN: US0231351067)",
+        "timestamp": "2025-04-02T13:09:47.810722"
+      },
+      {
+        "question": "What is the asset allocation?",
+        "answer": "The context information does not provide specific details about the asset allocation, such as the percentage or value breakdown for each security (Apple Inc., Microsoft, Amazon) within the portfolio. It only lists the securities and the total portfolio value ($1,500,000). \n\nAnswer: The asset allocation cannot be determined from the given context.",
+        "timestamp": "2025-04-02T13:09:49.631060"
+      },
+      {
+        "question": "When was this document created or dated?",
+        "answer": "The document is dated as of **March 15, 2025**, based on the context information provided about the portfolio value.",
+        "timestamp": "2025-04-02T13:09:50.738275"
+      },
+      {
+        "question": "Are there any ISINs mentioned in the document?",
+        "answer": "Yes, the following ISINs are mentioned in the document:  \n\n- Apple Inc.: US0378331005  \n- Microsoft: US5949181045  \n- Amazon: US0231351067",
+        "timestamp": "2025-04-02T13:09:52.357594"
+      },
+      {
+        "question": "What currencies are mentioned in this document?",
+        "answer": "The only currency mentioned in the document is the US dollar ($), as indicated by the portfolio value of \"$1,500,000.\" No other currencies are mentioned.",
+        "timestamp": "2025-04-02T13:09:53.931942"
+      }
+    ],
+    "huggingface": [
+      {
+        "question": "What type of document is this?",
+        "answer": "The document appears to be a financial or portfolio statement, as it contains information about securities (such as Apple Inc., Microsoft, and Amazon) along with their ISINs and a portfolio value as of a specific date. \n\nAnswer: This is a financial or portfolio statement.",
+        "timestamp": "2025-04-02T13:10:05.854475"
+      },
+      {
+        "question": "Summarize this document in a few sentences.",
+        "answer": "This document (ID doc_5800399a) contains financial information about a portfolio valued at $1,500,000 as of March 15, 2025. It includes details about securities from Apple Inc. (ISIN US0378331005), Microsoft (ISIN US5949181045), and Amazon (ISIN US0231351067).",
+        "timestamp": "2025-04-02T13:10:18.816476"
+      },
+      {
+        "question": "What is the total portfolio value?",
+        "answer": "The total portfolio value is $1,500,000 as of March 15, 2025.",
+        "timestamp": "2025-04-02T13:10:26.370134"
+      },
+      {
+        "question": "What companies are mentioned in this document?",
+        "answer": "The companies mentioned in the document are Apple Inc., Microsoft, and Amazon.",
+        "timestamp": "2025-04-02T13:10:28.123789"
+      },
+      {
+        "question": "What is the asset allocation?",
+        "answer": "The context provided does not include specific details about the asset allocation (e.g., the percentage or value breakdown of each security in the portfolio). It only lists some securities and the total portfolio value. \n\nAnswer: The asset allocation cannot be determined from the given context.",
+        "timestamp": "2025-04-02T13:10:30.591046"
+      },
+      {
+        "question": "When was this document created or dated?",
+        "answer": "The document is dated as of March 15, 2025, as indicated by the context information.",
+        "timestamp": "2025-04-02T13:10:38.628909"
+      },
+      {
+        "question": "Are there any ISINs mentioned in the document?",
+        "answer": "Yes, the following ISINs are mentioned in the document:  \n\n- Apple Inc.: US0378331005  \n- Microsoft: US5949181045  \n- Amazon: US0231351067",
+        "timestamp": "2025-04-02T13:10:42.256748"
+      },
+      {
+        "question": "What currencies are mentioned in this document?",
+        "answer": "The only currency mentioned in the document is the US dollar ($), as indicated by the portfolio value of \"$1,500,000.\"",
+        "timestamp": "2025-04-02T13:10:43.942083"
+      }
+    ]
+  }
+}

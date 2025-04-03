@@ -1,0 +1,21 @@
+// Color scheme variables
+$primary-color: #3b82f6; // blue-500
+$secondary-color: #64748b; // slate-500
+$success-color: #10b981; // emerald-500
+$warning-color: #f59e0b; // amber-500
+$danger-color: #ef4444; // red-500
+$light-color: #f8fafc; // slate-50
+$dark-color: #1e293b; // slate-800
+
+// Text colors
+$text-primary: $dark-color;
+$text-secondary: $secondary-color;
+$text-light: $light-color;
+
+// Background colors
+$bg-primary: $light-color;
+$bg-secondary: #e2e8f0; // slate-200
+$bg-dark: $dark-color;
+
+// Border colors
+$border-color: #cbd5e1; // slate-300
