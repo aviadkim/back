@@ -2,7 +2,8 @@ import logging
 import json
 from flask import jsonify
 import os
-
+import google.generativeai as genai
+from config import Config # Import Config to access API keys
 # Import other services for routing
 try:
     from agent_framework.coordinator import AgentCoordinator
@@ -19,7 +20,7 @@ class CopilotRouterService:
     """
     
     def __init__(self):
-        """Initialize the router service."""
+        """Initialize the router service and Gemini client."""
         self.agent_coordinator = None
         if AgentCoordinator:
             try:
@@ -29,9 +30,21 @@ class CopilotRouterService:
                 logger.error(f"Failed to initialize AgentCoordinator: {e}")
         else:
             logger.warning("AgentCoordinator not available, document-based chat will be limited")
-        
+
         # Cache for document content
         self.document_cache = {}
+
+        # Configure Gemini
+        self.gemini_model = None
+        if Config.GEMINI_API_KEY:
+            try:
+                genai.configure(api_key=Config.GEMINI_API_KEY)
+                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash') # Or another suitable model
+                logger.info("Gemini client configured successfully.")
+            except Exception as e:
+                logger.error(f"Failed to configure Gemini client: {e}")
+        else:
+            logger.warning("GEMINI_API_KEY not found in environment. General chat LLM capabilities disabled.")
     
     def route_request(self, message, context=None):
         """
@@ -106,49 +119,66 @@ class CopilotRouterService:
     
     def _route_to_general_chat(self, message, language):
         """
-        Route to general chat when no documents are provided.
-        
+        Route to general chat using LLM when no documents are provided.
+
         Args:
             message (str): User message
-            language (str): Language code
-        
+            language (str): Language code ('he' or 'en')
+
         Returns:
             flask.Response: JSON response
         """
-        # Default responses for demo
-        if language == 'he':
-            response = "אני עוזר מסמכים חכם. אנא העלה מסמך פיננסי כדי שאוכל לעזור לך לנתח אותו ולענות על שאלות ספציפיות."
-            suggested_questions = [
-                "איך להעלות מסמך?",
-                "אילו סוגי מסמכים אתה יכול לנתח?",
-                "מה אתה יכול לעשות עם מסמכים פיננסיים?"
-            ]
-        else:
-            response = "I'm a smart document assistant. Please upload a financial document so I can help you analyze it and answer specific questions."
-            suggested_questions = [
-                "How do I upload a document?",
-                "What types of documents can you analyze?",
-                "What can you do with financial documents?"
-            ]
-        
-        # Additional handling for common queries
-        lower_message = message.lower()
-        
-        # Simple Q&A for basic questions
-        if any(term in lower_message for term in ['hello', 'hi', 'שלום', 'היי']):
-            if language == 'he':
-                response = "שלום! אני עוזר המסמכים החכם שלך. אני יכול לעזור לך לנתח מסמכים פיננסיים ולענות על שאלות לגביהם."
-            else:
-                response = "Hello! I'm your smart document assistant. I can help you analyze financial documents and answer questions about them."
-        
-        elif any(term in lower_message for term in ['help', 'עזרה']):
-            if language == 'he':
-                response = "אני יכול לעזור לך לנתח מסמכים פיננסיים. פשוט העלה מסמך (PDF, Excel או CSV) ואשתמש בבינה מלאכותית כדי לחלץ מידע חשוב ולענות על שאלות לגביו."
-            else:
-                response = "I can help you analyze financial documents. Simply upload a document (PDF, Excel, or CSV) and I'll use AI to extract important information and answer questions about it."
-        
+        logger.info(f"Routing to general chat LLM for message: {message[:50]}...")
+
+        # Default fallback responses
+        default_response_he = "אני עוזר מסמכים חכם. אנא העלה מסמך פיננסי כדי שאוכל לעזור לך לנתח אותו ולענות על שאלות ספציפיות."
+        default_suggested_he = ["איך להעלות מסמך?", "אילו סוגי מסמכים אתה יכול לנתח?", "מה אתה יכול לעשות עם מסמכים פיננסיים?"]
+        default_response_en = "I'm a smart document assistant. Please upload a financial document so I can help you analyze it and answer specific questions."
+        default_suggested_en = ["How do I upload a document?", "What types of documents can you analyze?", "What can you do with financial documents?"]
+
+        response_text = default_response_he if language == 'he' else default_response_en
+        suggested_questions = default_suggested_he if language == 'he' else default_suggested_en
+
+        if not self.gemini_model:
+            logger.warning("Gemini model not available. Returning default response.")
+            return jsonify({
+                'response': response_text,
+                'suggested_questions': suggested_questions
+            })
+
+        try:
+            # Construct the prompt for Gemini
+            prompt = f"""System Prompt: You are a helpful assistant for 'FinDoc Analyzer', a financial document analysis application. The user is interacting with you before uploading any specific documents. Your goal is to provide a welcoming and informative response, guiding them on how to use the application. Respond in {'Hebrew' if language == 'he' else 'English'}.
+
+User Message: {message}
+
+Task: Generate a concise and helpful response to the user's message. Also, provide 3 relevant follow-up questions a user might ask in this context. Structure your output STRICTLY as a JSON object with keys "response" (string) and "suggested_questions" (a list of 3 strings). Example JSON: {{"response": "...", "suggested_questions": ["...", "...", "..."]}}
+"""
+            # Call Gemini API
+            gemini_response = self.gemini_model.generate_content(prompt)
+
+            # Attempt to parse the JSON response from Gemini
+            try:
+                # Clean potential markdown code block fences
+                cleaned_text = gemini_response.text.strip().removeprefix('```json').removesuffix('```').strip()
+                llm_output = json.loads(cleaned_text)
+                response_text = llm_output.get('response', response_text) # Use LLM response or fallback
+                suggested_questions = llm_output.get('suggested_questions', suggested_questions) # Use LLM suggestions or fallback
+                # Ensure suggested_questions is a list of strings
+                if not isinstance(suggested_questions, list) or not all(isinstance(q, str) for q in suggested_questions):
+                    suggested_questions = default_suggested_he if language == 'he' else default_suggested_en
+                logger.info("Successfully parsed response from Gemini.")
+
+            except (json.JSONDecodeError, AttributeError, TypeError) as parse_error:
+                logger.error(f"Failed to parse JSON response from Gemini: {parse_error}. Raw response: {gemini_response.text}")
+                # Fallback to default if parsing fails
+
+        except Exception as e:
+            logger.error(f"Error calling Gemini API: {e}")
+            # Fallback to default response on API error
+
         return jsonify({
-            'response': response,
+            'response': response_text,
             'suggested_questions': suggested_questions
         })
 

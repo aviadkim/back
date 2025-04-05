@@ -3,9 +3,10 @@ from langchain_community.document_loaders import PyPDFLoader # Updated import
 from langchain_text_splitters import RecursiveCharacterTextSplitter # Updated import
 from langchain.chains import create_extraction_chain # Keep for now, consider LCEL later
 from langchain_core.pydantic_v1 import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import os
-
+import numpy as np # Added for sentiment aggregation
+from project_organized.features.financial_analysis.sentiment_analyzer import SentimentAnalyzer # Added import
 class FinancialInstrument(BaseModel):
     """מודל נתונים למכשיר פיננסי שחולץ ממסמך."""
     isin: str = Field(description="ISIN code of the financial instrument")
@@ -27,7 +28,16 @@ class FinancialDocumentProcessor:
             model="mistral-small",  # Free tier model
             mistral_api_key=self.mistral_api_key
         )
-        
+
+        # Initialize Sentiment Analyzer
+        try:
+            self.sentiment_analyzer = SentimentAnalyzer()
+            if not self.sentiment_analyzer.model:
+                 print("Warning: Sentiment Analyzer model failed to load. Sentiment analysis will be skipped.")
+                 self.sentiment_analyzer = None # Ensure it's None if loading failed
+        except Exception as e:
+            print(f"Warning: Failed to initialize SentimentAnalyzer: {e}. Sentiment analysis will be skipped.")
+            self.sentiment_analyzer = None
     def process_document(self, pdf_path):
         """עיבוד מסמך PDF והוצאת מידע פיננסי מובנה."""
         # Load document using your existing PDF extractor
@@ -44,9 +54,19 @@ class FinancialDocumentProcessor:
         all_text = self._combine_document_and_tables(document, tables)
         
         # Process with LLM to extract structured financial data
-        results = self._extract_financial_instruments(all_text)
-        
-        return results
+        instruments = self._extract_financial_instruments(all_text)
+
+        # Analyze overall document sentiment using raw text
+        sentiment_result = None
+        if self.sentiment_analyzer:
+             # Use the raw text from the document before combining with tables
+             raw_text_content = "\n".join([page_data['text'] for page_num, page_data in document.items()])
+             sentiment_result = self._analyze_document_sentiment(raw_text_content)
+
+        return {
+            "instruments": instruments,
+            "sentiment": sentiment_result
+        }
     
     def _combine_document_and_tables(self, document, tables):
         """שילוב טקסט המסמך והטבלאות לפורמט אחיד."""
@@ -99,6 +119,59 @@ class FinancialDocumentProcessor:
         
         return list(unique_instruments.values())
 
+    def _analyze_document_sentiment(self, text: str) -> Optional[Dict[str, Any]]:
+        """
+        Analyzes the overall sentiment of the document text chunk by chunk.
+
+        Args:
+            text: The raw text content of the document.
+
+        Returns:
+            A dictionary with the dominant sentiment label and average score,
+            or None if analysis cannot be performed.
+            Example: {'dominant_label': 'neutral', 'average_score': 0.65, 'label_distribution': {'positive': 2, 'negative': 1, 'neutral': 5}}
+        """
+        if not self.sentiment_analyzer or not text:
+            return None
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500, # Use smaller chunks for sentiment analysis
+            chunk_overlap=50
+        )
+        chunks = text_splitter.split_text(text)
+
+        sentiments = []
+        for chunk in chunks:
+            result = self.sentiment_analyzer.analyze_sentiment(chunk)
+            if result:
+                sentiments.append(result)
+
+        if not sentiments:
+            return None
+
+        # Aggregate results
+        label_counts = {'positive': 0, 'negative': 0, 'neutral': 0}
+        label_scores = {'positive': [], 'negative': [], 'neutral': []}
+
+        for sentiment in sentiments:
+            label = sentiment['label']
+            score = sentiment['score']
+            if label in label_counts:
+                label_counts[label] += 1
+                label_scores[label].append(score)
+
+        # Find dominant label
+        dominant_label = max(label_counts, key=label_counts.get)
+
+        # Calculate average score for the dominant label
+        avg_score = np.mean(label_scores[dominant_label]) if label_scores[dominant_label] else 0.0
+
+        return {
+            "dominant_label": dominant_label,
+            "average_score": float(avg_score), # Ensure float for JSON serialization
+            "label_distribution": label_counts
+        }
+
 
 # Example usage
 if __name__ == "__main__":
@@ -114,9 +187,25 @@ if __name__ == "__main__":
     # Test with a sample PDF
     sample_pdf = "path/to/sample.pdf"
     if os.path.exists(sample_pdf):
-        results = processor.process_document(sample_pdf)
-        print(f"Extracted {len(results)} financial instruments:")
-        for instrument in results:
-            print(f" - {instrument.name} ({instrument.type}): {instrument.value} {instrument.currency}")
+        analysis_results = processor.process_document(sample_pdf)
+        instruments = analysis_results.get("instruments", [])
+        sentiment = analysis_results.get("sentiment")
+
+        print(f"Extracted {len(instruments)} financial instruments:")
+        for instrument in instruments:
+             # Ensure attributes exist before printing
+             name = getattr(instrument, 'name', 'N/A')
+             itype = getattr(instrument, 'type', 'N/A')
+             value = getattr(instrument, 'value', 'N/A')
+             currency = getattr(instrument, 'currency', 'N/A')
+             print(f" - {name} ({itype}): {value} {currency}")
+
+        if sentiment:
+            print("\nDocument Sentiment Analysis:")
+            print(f"  Dominant Label: {sentiment.get('dominant_label', 'N/A')}")
+            print(f"  Average Score: {sentiment.get('average_score', 'N/A'):.4f}")
+            print(f"  Label Distribution: {sentiment.get('label_distribution', {})}")
+        else:
+            print("\nSentiment analysis was skipped or failed.")
     else:
         print(f"Sample PDF not found: {sample_pdf}")

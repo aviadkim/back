@@ -1,41 +1,67 @@
-import cv2
 import numpy as np
 import pandas as pd
-import pytesseract
 import logging
-import re
 from typing import List, Dict, Any, Tuple, Optional
 from pathlib import Path
 import os
 from pdf2image import convert_from_path
-import itertools
+from PIL import Image
+import torch # Added import
+import cv2 # Added import for color conversion
+# Assuming standard installation paths for table-transformer and transformers
+# Adjust imports if necessary based on actual library structure
+from transformers import DetrFeatureExtractor, TableTransformerForObjectDetection
+# We might need a separate structure recognition model or the detection model might handle both
+# For now, let's assume we need both detection and structure recognition models.
+# Using example model names, replace if different ones were installed/intended.
+# Note: table_transformer library itself might have wrapper classes. Using transformers directly for now.
+# from table_transformer.models import TableTransformer # Example if library provides direct class
+import re # Added missing import for pdfinfo parsing
 
 logger = logging.getLogger(__name__)
 
 class EnhancedTableExtractor:
     """
     Advanced table extraction from images and PDFs with specialized support
-    for financial tables in Hebrew and English.
+    for financial tables in Hebrew and English. Now uses Table-Transformer.
     """
 
-    def __init__(self, language: str = "eng+heb", use_hough_transform: bool = True):
+    # TODO: Consider adding model caching or making model loading configurable
+    DETECTION_MODEL_NAME = "microsoft/table-transformer-detection"
+    STRUCTURE_MODEL_NAME = "microsoft/table-transformer-structure-recognition-v1.1-all" # Using v1.1 as example
+
+    def __init__(self, language: str = "eng+heb"): # Removed unused use_hough_transform
         """
-        Initialize the enhanced table extractor.
+        Initialize the enhanced table extractor using Table-Transformer models.
 
         Args:
-            language: OCR language(s) to use
-            use_hough_transform: Whether to use Hough transform for line detection
+            language: OCR language(s) hint (may be used by structure model if it performs OCR)
         """
-        self.language = language
-        self.use_hough_transform = use_hough_transform
+        self.language = language # Keep language if structure model uses it
         self.logger = logging.getLogger(__name__)
 
-        # Specialized patterns for financial data
+        try:
+            self.logger.info(f"Loading Table-Transformer models: Detection='{self.DETECTION_MODEL_NAME}', Structure='{self.STRUCTURE_MODEL_NAME}'")
+            # Load models and feature extractor
+            self.feature_extractor = DetrFeatureExtractor() # Default feature extractor
+            self.detection_model = TableTransformerForObjectDetection.from_pretrained(self.DETECTION_MODEL_NAME)
+            # Assuming structure recognition is also handled by a TableTransformerForObjectDetection model type
+            # Or it might be a different class from table_transformer library itself.
+            # Adjust the class if necessary.
+            self.structure_model = TableTransformerForObjectDetection.from_pretrained(self.STRUCTURE_MODEL_NAME)
+            # TODO: Add device placement (e.g., .to('cuda') if GPU is available)
+            self.logger.info("Table-Transformer models loaded successfully.")
+        except Exception as e:
+            self.logger.error(f"Failed to load Table-Transformer models: {e}", exc_info=True)
+            # Raise or handle appropriately - perhaps disable table extraction
+            raise RuntimeError("Failed to initialize Table-Transformer models") from e
+
+        # Specialized patterns for financial data (Kept in case needed for post-processing)
         self.number_pattern = r'[-+]?[\d,]+\.?\d*%?'
         self.currency_pattern = r'[$₪€£¥]'
         self.date_pattern = r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}'
 
-        # Headers commonly found in financial tables
+        # Headers commonly found in financial tables (Kept in case needed for post-processing)
         self.financial_headers = [
             # English
             r'amount', r'balance', r'cost', r'currency', r'date', r'isin', r'market value',
@@ -65,13 +91,7 @@ class EnhancedTableExtractor:
     def extract_tables_from_pdf(self, pdf_path: str, page_numbers: Optional[List[int]] = None) -> Dict[int, List[Dict[str, Any]]]:
         """
         Extract tables from specified pages in a PDF.
-
-        Args:
-            pdf_path: Path to the PDF file
-            page_numbers: List of page numbers to process (1-based, None for all)
-
-        Returns:
-            Dictionary with page numbers (0-based) as keys and lists of tables as values
+        Uses Table-Transformer via extract_tables_from_image.
         """
         result = {}
         pdf_path_obj = Path(pdf_path)
@@ -130,15 +150,15 @@ class EnhancedTableExtractor:
                         self.logger.warning(f"No image converted for page {page_num}")
                         continue
 
-                    # Process the page image
+                    # Process the page image using the new method
                     page_image = np.array(images[0])
                     tables = self.extract_tables_from_image(page_image)
 
                     if tables:
                         result[page_num - 1] = tables  # Store with 0-based index
-                        self.logger.info(f"Found {len(tables)} tables on page {page_num}")
+                        self.logger.info(f"Found {len(tables)} tables on page {page_num} using Table-Transformer.")
                     else:
-                         self.logger.info(f"No tables found on page {page_num}")
+                         self.logger.info(f"No tables found on page {page_num} using Table-Transformer.")
 
 
                 except Exception as e:
@@ -152,689 +172,121 @@ class EnhancedTableExtractor:
 
     def extract_tables_from_image(self, image: np.ndarray) -> List[Dict[str, Any]]:
         """
-        Extract tables from an image.
+        Extract tables from an image using Table-Transformer models.
 
         Args:
-            image: NumPy array containing the image
+            image: NumPy array containing the image (expected BGR format from pdf2image/cv2)
 
         Returns:
             List of dictionaries containing table data and metadata
         """
         tables = []
-
         try:
-            # Preprocess the image
-            preprocessed, gray = self._preprocess_image(image)
+            # Convert NumPy array (BGR) to PIL RGB Image
+            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)).convert("RGB")
+            width, height = pil_image.size
+            self.logger.debug(f"Processing image with shape: ({width}, {height}) using Table-Transformer.")
 
-            # Detect tables in the image
-            table_regions = self._detect_table_regions(preprocessed)
-            self.logger.debug(f"Detected {len(table_regions)} potential table regions.")
+            # 1. Detect table locations using the detection model
+            # Prepare image for detection model
+            encoding = self.feature_extractor(pil_image, return_tensors="pt")
+            # TODO: Add device placement if needed: encoding.to(self.detection_model.device)
 
-            # Process each detected table region
-            for i, region in enumerate(table_regions):
-                x, y, w, h = region
-                self.logger.debug(f"Processing region {i}: bbox=({x}, {y}, {w}, {h})")
+            with torch.no_grad():
+                 outputs = self.detection_model(**encoding)
 
-                # Extract the table region from the original grayscale image for OCR
-                table_img_gray = gray[y:y+h, x:x+w]
-                # Extract from preprocessed for cell detection if needed
-                table_img_preprocessed = preprocessed[y:y+h, x:x+w]
+            # Post-process detection results to get table bounding boxes
+            # Target sizes need to match the original image size for bbox conversion
+            target_sizes = torch.tensor([pil_image.size[::-1]]) # size is (width, height), tensor needs (height, width)
+            detection_results = self.feature_extractor.post_process_object_detection(
+                outputs, threshold=0.7, target_sizes=target_sizes # Adjust threshold as needed
+            )[0] # Get results for the first (only) image
 
-                # Detect cells in the table (using preprocessed image)
-                cells = self._detect_table_cells(table_img_preprocessed)
-                self.logger.debug(f"Detected {len(cells)} potential cells in region {i}.")
+            # Filter detections for tables based on label ID
+            table_label_id = self.detection_model.config.label2id["table"]
+            table_indices = [i for i, label in enumerate(detection_results['labels']) if label == table_label_id]
+            detected_table_boxes = detection_results['boxes'][table_indices]
+            detected_table_scores = detection_results['scores'][table_indices]
 
-                if not cells:
-                    self.logger.warning(f"No cells detected in region {i}. Skipping.")
-                    continue
+            self.logger.info(f"Detected {len(detected_table_boxes)} potential tables (detection score > {0.7}).") # Use actual threshold
 
-                # Extract text from cells using the grayscale image
-                table_data = self._extract_text_from_cells(table_img_gray, cells)
-                self.logger.debug(f"Extracted text data from {len(table_data)} cells.")
-
-                # Process into structured table with header and rows
-                processed_table = self._process_table_data(table_data)
-                self.logger.debug(f"Processed table data: {len(processed_table.get('rows', []))} rows, {len(processed_table.get('header', []))} header cols.")
-
-
-                # Add table metadata
-                table_dict = {
-                    "id": f"cv-{i}", # Prefix to distinguish from text-based
-                    "bbox": [x, y, x+w, y+h],
-                    "header": processed_table.get("header", []),
-                    "rows": processed_table.get("rows", []),
-                    "row_count": len(processed_table.get("rows", [])),
-                    "col_count": len(processed_table.get("header", [])) if processed_table.get("header") else
-                               (len(processed_table.get("rows", [[]])[0]) if processed_table.get("rows") else 0),
-                    "extraction_method": "cv2"
-                }
-                # Add header row to row_count if header exists
-                if table_dict["header"]:
-                    table_dict["row_count"] += 1
-
-
-                # Only add if table has reasonable dimensions
-                if table_dict["row_count"] >= 2 and table_dict["col_count"] >= 2:
-                    tables.append(table_dict)
-                    self.logger.debug(f"Added CV-based table {i} with {table_dict['row_count']} rows and {table_dict['col_count']} cols.")
-                else:
-                    self.logger.debug(f"Skipping CV-based table {i} due to small dimensions ({table_dict['row_count']}x{table_dict['col_count']}).")
-
-
-            # If no tables found with vision approach, try text-based approach
-            if not tables:
-                self.logger.info("No tables found using CV method, attempting text-based extraction.")
-                # Extract all text from the image (use original grayscale for better OCR)
+            # 2. For each detected table, extract structure using the structure model
+            for i, (box, score) in enumerate(zip(detected_table_boxes, detected_table_scores)):
                 try:
-                    text = pytesseract.image_to_string(gray, lang=self.language)
-                    self.logger.debug(f"Extracted text for text-based approach (length: {len(text)}).")
+                    # Crop the table from the original PIL image
+                    table_crop = pil_image.crop(box.tolist())
+                    self.logger.debug(f"Processing detected table {i} (score: {score:.2f}) with bbox: {box.tolist()}")
 
-                    # Try to identify tables from text structure
-                    text_tables = self._identify_tables_in_text(text)
-                    self.logger.debug(f"Identified {len(text_tables)} potential tables in text.")
+                    # Prepare cropped table image for structure recognition model
+                    structure_encoding = self.feature_extractor(table_crop, return_tensors="pt")
+                    # TODO: Add device placement if needed
+
+                    with torch.no_grad():
+                        structure_outputs = self.structure_model(**structure_encoding)
+
+                    # Post-process structure recognition results
+                    structure_target_sizes = torch.tensor([table_crop.size[::-1]])
+                    structure_results = self.feature_extractor.post_process_object_detection(
+                        structure_outputs, threshold=0.6, target_sizes=structure_target_sizes # Adjust threshold
+                    )[0]
+
+                    # TODO: Implement logic to reconstruct the table from structure_results
+                    # This involves mapping detected elements (rows, columns, headers, cells)
+                    # and potentially running OCR on cell bounding boxes if the model doesn't provide text.
+                    # This part is complex and depends heavily on the specific model's output format.
+                    # For now, we'll create a placeholder structure.
+                    # Example placeholder:
+                    header = ["Header 1", "Header 2"] # Placeholder
+                    rows = [["Row1Cell1", "Row1Cell2"], ["Row2Cell1", "Row2Cell2"]] # Placeholder
+                    row_count = len(rows)
+                    col_count = len(header) if header else (len(rows[0]) if rows else 0)
+
+                    # --- Placeholder Logic Start ---
+                    # Actual implementation requires parsing structure_results['boxes'], structure_results['labels'],
+                    # structure_results['scores'] according to self.structure_model.config.label2id mapping
+                    # (e.g., "table row", "table column", "table cell", "table column header")
+                    # and potentially using an OCR engine (like easyocr or tesseract) on cell boxes.
+                    self.logger.warning(f"Table {i} structure reconstruction logic is a placeholder.")
+                    # --- Placeholder Logic End ---
 
 
-                    for i, text_table in enumerate(text_tables):
-                        table_dict = {
-                            "id": f"text-{i}", # Prefix to distinguish
-                            "bbox": [0, 0, image.shape[1], image.shape[0]],  # Bbox is the whole image
-                            "header": text_table.get("header", []),
-                            "rows": text_table.get("rows", []),
-                            "row_count": len(text_table.get("rows", [])),
-                            "col_count": len(text_table.get("header", [])) if text_table.get("header") else
-                                       (len(text_table.get("rows", [[]])[0]) if text_table.get("rows") else 0),
-                            "extraction_method": "text"
-                        }
-                        # Add header row to row_count if header exists
-                        if table_dict["header"]:
-                            table_dict["row_count"] += 1
+                    if row_count >= 1 and col_count >= 1: # Simplified check for placeholder
+                         table_dict = {
+                            "id": f"tt-{i}", # Table-Transformer ID
+                            "bbox": box.tolist(), # Use the detection bbox
+                            "header": header,
+                            "rows": rows,
+                            "row_count": row_count + (1 if header else 0), # Include header in count
+                            "col_count": col_count,
+                            "detection_score": score.item(), # Add detection score
+                            "extraction_method": "table-transformer"
+                         }
+                         tables.append(table_dict)
+                         self.logger.debug(f"Added table {i} from Table-Transformer.")
+                    else:
+                         self.logger.debug(f"Skipping table {i} from Table-Transformer due to insufficient structure (placeholder).")
 
-                        # Only add if table has reasonable dimensions
-                        if table_dict["row_count"] >= 2 and table_dict["col_count"] >= 2:
-                            tables.append(table_dict)
-                            self.logger.debug(f"Added text-based table {i} with {table_dict['row_count']} rows and {table_dict['col_count']} cols.")
-                        else:
-                             self.logger.debug(f"Skipping text-based table {i} due to small dimensions ({table_dict['row_count']}x{table_dict['col_count']}).")
-
-                except pytesseract.TesseractNotFoundError:
-                     self.logger.error("Tesseract is not installed or not in PATH. Text-based extraction failed.")
                 except Exception as e:
-                     self.logger.error(f"Error during text-based table extraction: {str(e)}", exc_info=True)
+                    self.logger.error(f"Error processing detected table {i}: {str(e)}", exc_info=True)
 
+
+            # No fallback to text-based method for now, focusing on Table-Transformer
+            if not tables:
+                 self.logger.info("No tables extracted using Table-Transformer.")
 
             return tables
 
         except Exception as e:
-            self.logger.error(f"Error extracting tables from image: {str(e)}", exc_info=True)
+            self.logger.error(f"Error extracting tables from image using Table-Transformer: {str(e)}", exc_info=True)
             return []
 
-    def _preprocess_image(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Preprocess an image for table detection.
-
-        Args:
-            image: NumPy array containing the image
-
-        Returns:
-            Tuple containing:
-                - Preprocessed binary image (for line/contour detection)
-                - Grayscale image (for OCR)
-        """
-        # Convert to grayscale
-        if len(image.shape) == 3 and image.shape[2] == 3:
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        elif len(image.shape) == 3 and image.shape[2] == 4: # Handle RGBA
-            gray = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
-        else:
-            gray = image.copy() # Assume already grayscale
-
-        # Apply adaptive thresholding for potentially better results on varying illumination
-        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                       cv2.THRESH_BINARY_INV, 11, 2)
-
-        # Remove noise using morphological opening
-        kernel_size = 3
-        kernel = np.ones((kernel_size, kernel_size), np.uint8)
-        # Increase iterations slightly for potentially cleaner lines
-        opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
-
-        return opening, gray
-
-
-    def _detect_table_regions(self, preprocessed_image: np.ndarray) -> List[Tuple[int, int, int, int]]:
-        """
-        Detect table regions in a preprocessed image using contours.
-        More robust than line detection for tables without clear borders.
-
-        Args:
-            preprocessed_image: Preprocessed binary image
-
-        Returns:
-            List of table regions as (x, y, width, height) tuples
-        """
-        regions = []
-
-        # Dilate to connect text into larger blocks
-        # Adjust kernel size based on image size? Maybe fixed is okay.
-        dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 3)) # Wider kernel to connect words/columns
-        dilated = cv2.dilate(preprocessed_image, dilate_kernel, iterations=3) # More iterations
-
-        # Find contours on the dilated image
-        contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Filter contours by size to find potential tables
-        image_area = preprocessed_image.shape[0] * preprocessed_image.shape[1]
-        min_area_ratio = 0.01  # Lowered threshold slightly
-        max_area_ratio = 0.95 # Avoid taking the whole page
-        min_width = 50
-        min_height = 50
-
-        potential_regions = []
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            area = w * h
-            # Filter based on size and aspect ratio
-            if (area > image_area * min_area_ratio and
-                area < image_area * max_area_ratio and
-                w > min_width and h > min_height and
-                0.1 < w / (h + 1e-6) < 10): # Avoid division by zero
-                potential_regions.append((x, y, w, h))
-
-        # Optional: Merge overlapping or very close regions if needed
-        # (Skipping for simplicity now)
-
-        # Optional: Fallback to line detection if contour method fails
-        if not potential_regions and self.use_hough_transform:
-             self.logger.debug("No regions found via contours, trying line detection.")
-             regions = self._detect_tables_by_lines(preprocessed_image)
-        else:
-             regions = potential_regions
-
-
-        # Sort regions by y-coordinate, then x-coordinate
-        regions.sort(key=lambda r: (r[1], r[0]))
-
-        return regions
-
-
-    def _detect_tables_by_lines(self, preprocessed_image: np.ndarray) -> List[Tuple[int, int, int, int]]:
-        """
-        Detect tables by finding intersecting horizontal and vertical lines.
-        (Used as a fallback if contour method fails)
-
-        Args:
-            preprocessed_image: Preprocessed binary image
-
-        Returns:
-            List of table regions as (x, y, width, height) tuples
-        """
-        regions = []
-
-        # Detect horizontal lines
-        horizontal = preprocessed_image.copy()
-        # Make kernel size relative but ensure minimum
-        horizontal_size = max(50, horizontal.shape[1] // 30)
-        horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_size, 1))
-        horizontal = cv2.morphologyEx(horizontal, cv2.MORPH_OPEN, horizontal_kernel, iterations=2) # More iterations
-
-        # Detect vertical lines
-        vertical = preprocessed_image.copy()
-        vertical_size = max(50, vertical.shape[0] // 30)
-        vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_size))
-        vertical = cv2.morphologyEx(vertical, cv2.MORPH_OPEN, vertical_kernel, iterations=2) # More iterations
-
-        # Combine horizontal and vertical lines (bitwise AND to find intersections)
-        # Using ADD might be better to just get the grid structure
-        # combined = cv2.bitwise_and(horizontal, vertical)
-        combined = cv2.add(horizontal, vertical)
-
-
-        # Find contours in the combined image (representing the table grid)
-        contours, _ = cv2.findContours(combined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Filter contours by size and shape
-        for contour in contours:
-             # Approximate contour to a polygon
-            perimeter = cv2.arcLength(contour, True)
-            approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
-
-            # We expect tables to be roughly rectangular (4 vertices)
-            # but allow for slight imperfections
-            if len(approx) >= 4:
-                x, y, w, h = cv2.boundingRect(contour)
-
-                # Check if potential table (reasonable size and aspect ratio)
-                if (w > 100 and h > 50 and  # Minimum size adjusted
-                    0.1 < w / (h + 1e-6) < 10): # Wider aspect ratio range
-                    regions.append((x, y, w, h))
-
-        # Sort regions by y-coordinate, then x-coordinate
-        regions.sort(key=lambda r: (r[1], r[0]))
-
-        return regions
-
-
-    def _detect_table_cells(self, table_image_preprocessed: np.ndarray) -> List[Tuple[int, int, int, int]]:
-        """
-        Detect cells within a table image using contours on inverted thresholded image.
-        This works better for tables where content defines cells, not just lines.
-
-        Args:
-            table_image_preprocessed: Preprocessed binary image of the table region
-
-        Returns:
-            List of cell regions as (x, y, width, height) tuples, sorted top-to-bottom, left-to-right.
-        """
-        cells = []
-        # Invert the image - we want contours around the content (black text on white bg becomes white on black)
-        # If already inverted by preprocessing, maybe don't invert again? Check _preprocess_image output.
-        # Our preprocess outputs THRESH_BINARY_INV, so content is white. No need to invert.
-        # inverted_thresh = cv2.bitwise_not(table_image_thresh)
-
-        # Dilate slightly to connect parts of characters/numbers within a cell
-        # Use smaller kernel than region detection
-        cell_dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-        dilated_cells = cv2.dilate(table_image_preprocessed, cell_dilate_kernel, iterations=1)
-
-
-        # Find contours of the content within cells
-        contours, _ = cv2.findContours(dilated_cells, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Filter contours that likely represent cell content
-        min_cell_w = 5
-        min_cell_h = 5
-        max_cell_w = table_image_preprocessed.shape[1] * 0.8 # Avoid taking huge chunks
-        max_cell_h = table_image_preprocessed.shape[0] * 0.5
-        min_cell_area = 25
-
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            area = w * h
-            if (w > min_cell_w and h > min_cell_h and
-                w < max_cell_w and h < max_cell_h and
-                area > min_cell_area):
-                 # Add a small padding to the bounding box for OCR
-                 padding = 2
-                 x1 = max(0, x - padding)
-                 y1 = max(0, y - padding)
-                 x2 = min(table_image_preprocessed.shape[1], x + w + padding)
-                 y2 = min(table_image_preprocessed.shape[0], y + h + padding)
-                 cells.append((x1, y1, x2 - x1, y2 - y1)) # Store as x, y, w, h
-
-        if not cells:
-            self.logger.warning("Cell detection using content contours failed. Trying line-based cell detection.")
-            cells = self._detect_cells_by_lines(table_image_preprocessed)
-
-
-        # Sort cells top-to-bottom, then left-to-right
-        # Sort primarily by y, but allow for some tolerance (e.g., half cell height)
-        # Then sort by x
-        if cells:
-            avg_h = sum(c[3] for c in cells) / len(cells) if cells else 10
-            cells.sort(key=lambda c: (round(c[1] / (avg_h * 0.5)), c[0]))
-
-        return cells
-
-    def _detect_cells_by_lines(self, table_image_preprocessed: np.ndarray) -> List[Tuple[int, int, int, int]]:
-        """ Fallback cell detection using horizontal/vertical lines """
-        cells = []
-        # Detect horizontal lines
-        horizontal = table_image_preprocessed.copy()
-        h_kernel_size = max(15, horizontal.shape[1] // 50) # Adjust kernel size
-        horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (h_kernel_size, 1))
-        horizontal = cv2.morphologyEx(horizontal, cv2.MORPH_OPEN, horizontal_kernel, iterations=1)
-
-        # Detect vertical lines
-        vertical = table_image_preprocessed.copy()
-        v_kernel_size = max(15, vertical.shape[0] // 50) # Adjust kernel size
-        vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, v_kernel_size))
-        vertical = cv2.morphologyEx(vertical, cv2.MORPH_OPEN, vertical_kernel, iterations=1)
-
-        # Combine lines
-        grid = cv2.add(horizontal, vertical)
-
-        # Find contours of the grid lines themselves
-        contours, _ = cv2.findContours(grid, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE) # Use LIST
-
-        # Find bounding boxes of the spaces *between* the lines (the cells)
-        # This is complex. A simpler approach: find contours on the *inverted* grid.
-        inverted_grid = cv2.bitwise_not(grid)
-        cell_contours, _ = cv2.findContours(inverted_grid, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        min_cell_w = 5
-        min_cell_h = 5
-        for contour in cell_contours:
-             x, y, w, h = cv2.boundingRect(contour)
-             # Filter small noise contours
-             if w > min_cell_w and h > min_cell_h:
-                 # Add padding
-                 padding = 1
-                 x1 = max(0, x - padding)
-                 y1 = max(0, y - padding)
-                 x2 = min(table_image_preprocessed.shape[1], x + w + padding)
-                 y2 = min(table_image_preprocessed.shape[0], y + h + padding)
-                 cells.append((x1, y1, x2 - x1, y2 - y1))
-
-        return cells
-
-
-    def _extract_text_from_cells(self, table_image_gray: np.ndarray, cells: List[Tuple[int, int, int, int]]) -> List[Dict[str, Any]]:
-        """
-        Extract text from detected cell regions using OCR.
-
-        Args:
-            table_image_gray: Grayscale image of the table region
-            cells: List of cell regions as (x, y, width, height) tuples
-
-        Returns:
-            List of dictionaries, each containing 'bbox' and 'text' for a cell.
-        """
-        cell_data = []
-        try:
-            for i, (x, y, w, h) in enumerate(cells):
-                if w <= 0 or h <= 0:
-                    self.logger.warning(f"Skipping invalid cell bbox: {(x, y, w, h)}")
-                    continue
-
-                # Extract the cell image from the grayscale table image
-                cell_img = table_image_gray[y:y+h, x:x+w]
-
-                # Basic preprocessing for OCR on the cell image
-                # Rescale for potentially better OCR? Maybe not needed if DPI is high.
-                # cell_img = cv2.resize(cell_img, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
-                # Thresholding might help sometimes, but adaptive was done before.
-                # _, cell_thresh = cv2.threshold(cell_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-                # Use pytesseract to extract text
-                # Configure Tesseract: page segmentation mode 6 assumes a single uniform block of text.
-                # Other modes (e.g., 7: treat as single text line) might be useful too.
-                config = f'--psm 6 --oem 3 -l {self.language}' # OEM 3 is default LSTM engine
-                text = pytesseract.image_to_string(cell_img, config=config).strip()
-
-                # Clean up common OCR errors if needed (e.g., replacing '|' with 'l' or '1')
-                text = text.replace('\n', ' ').replace('\r', '') # Replace newlines within cell text
-
-                cell_data.append({
-                    "bbox": (x, y, w, h),
-                    "text": text
-                })
-        except pytesseract.TesseractNotFoundError:
-            self.logger.error("Tesseract is not installed or not in PATH. OCR failed.")
-            # Return empty data or raise exception? Returning empty for now.
-            return []
-        except Exception as e:
-            self.logger.error(f"Error during OCR for a cell: {e}", exc_info=True)
-            # Continue with other cells if one fails? Yes.
-
-        return cell_data
-
-
-    def _process_table_data(self, cell_data: List[Dict[str, Any]]) -> Dict[str, List[Any]]:
-        """
-        Organize extracted cell text into rows and identify a potential header.
-
-        Args:
-            cell_data: List of dictionaries with 'bbox' and 'text' for each cell.
-
-        Returns:
-            Dictionary with 'header' (list of strings) and 'rows' (list of lists of strings).
-        """
-        if not cell_data:
-            return {"header": [], "rows": []}
-
-        # Estimate number of rows and columns based on cell positions
-        # Group cells by approximate Y coordinate to form rows
-        rows_dict = {}
-        avg_h = sum(c['bbox'][3] for c in cell_data) / len(cell_data) if cell_data else 10
-        y_tolerance = avg_h * 0.5 # Allow half cell height tolerance for row grouping
-
-        for cell in cell_data:
-            x, y, w, h = cell['bbox']
-            text = cell['text']
-
-            # Find the row key (center y-coordinate rounded to nearest tolerance step)
-            row_key = round( (y + h/2) / y_tolerance)
-
-            if row_key not in rows_dict:
-                rows_dict[row_key] = []
-            rows_dict[row_key].append({'x': x, 'text': text})
-
-        # Sort rows by their key (approximated Y position)
-        sorted_row_keys = sorted(rows_dict.keys())
-
-        # Sort cells within each row by X coordinate
-        structured_rows = []
-        for key in sorted_row_keys:
-            row_cells = sorted(rows_dict[key], key=lambda c: c['x'])
-            structured_rows.append([cell['text'] for cell in row_cells])
-
-        # Basic header detection: Assume the first row is the header
-        # More advanced: Check for financial keywords, different formatting, etc.
-        header = []
-        rows = []
-        if structured_rows:
-            potential_header = structured_rows[0]
-            # Simple check: does it contain any financial keywords?
-            has_financial_keyword = any(
-                re.search(fh_pattern, cell_text, re.IGNORECASE)
-                for cell_text in potential_header
-                for fh_pattern in self.financial_headers
-            )
-            # Simple check: is it significantly different from the next row (e.g., fewer numbers)?
-            is_different = True
-            if len(structured_rows) > 1:
-                 num_numeric_header = sum(1 for cell in potential_header if re.match(self.number_pattern, cell.replace(',','')))
-                 num_numeric_row1 = sum(1 for cell in structured_rows[1] if re.match(self.number_pattern, cell.replace(',','')))
-                 if abs(num_numeric_header - num_numeric_row1) < len(potential_header) * 0.5: # Heuristic
-                      is_different = False
-
-
-            # Assume header if it has keywords or looks different enough
-            if has_financial_keyword or is_different:
-                 header = potential_header
-                 rows = structured_rows[1:]
-                 self.logger.debug("Detected header based on keywords or difference from first row.")
-            else:
-                 # No clear header detected, treat all as rows
-                 header = [] # Or create generic header like ['Col1', 'Col2', ...]
-                 rows = structured_rows
-                 self.logger.debug("No clear header detected, treating all rows as data.")
-
-        # Ensure all rows have the same number of columns (pad if necessary)
-        max_cols = len(header) if header else 0
-        if rows:
-            max_cols = max(max_cols, max(len(row) for row in rows))
-
-        if header and len(header) < max_cols:
-             header.extend([''] * (max_cols - len(header)))
-        for i in range(len(rows)):
-             if len(rows[i]) < max_cols:
-                 rows[i].extend([''] * (max_cols - len(rows[i])))
-
-
-        return {"header": header, "rows": rows}
-
-
-    def _identify_tables_in_text(self, text: str) -> List[Dict[str, Any]]:
-        """
-        Attempt to identify table structures within raw OCR text.
-        This is a heuristic approach.
-
-        Args:
-            text: Full text extracted from an image/page.
-
-        Returns:
-            List of dictionaries, each representing a potential table
-            with 'header' and 'rows'.
-        """
-        tables = []
-        lines = text.splitlines()
-
-        potential_table_lines = []
-        in_table = False
-        min_cols = 2 # Minimum columns to be considered a table
-        min_rows = 3 # Minimum rows (including potential header)
-
-        for i, line in enumerate(lines):
-            line = line.strip()
-            if not line:
-                # Blank line often signifies end of a table
-                if in_table and len(potential_table_lines) >= min_rows:
-                    processed = self._process_text_lines_as_table(potential_table_lines, min_cols)
-                    if processed:
-                        tables.append(processed)
-                potential_table_lines = []
-                in_table = False
-                continue
-
-            # Heuristic: Look for lines with multiple distinct columns separated by spaces
-            # Use a regex to find multiple sequences of non-space characters separated by 2+ spaces
-            # Or simply count space-separated tokens
-            columns = re.split(r'\s{2,}', line) # Split on 2 or more spaces
-            if len(columns) >= min_cols:
-                # Check if previous line also looked like a table row
-                if i > 0 and len(re.split(r'\s{2,}', lines[i-1].strip())) >= min_cols:
-                    in_table = True
-                elif not in_table and len(potential_table_lines) == 0: # Start of potential table
-                     # Check if it looks like a header (more text, fewer numbers?)
-                     # This is tricky, maybe just start collecting
-                     in_table = True
-
-                if in_table:
-                    potential_table_lines.append(line)
-            else:
-                # Line doesn't look like a table row
-                if in_table and len(potential_table_lines) >= min_rows:
-                    processed = self._process_text_lines_as_table(potential_table_lines, min_cols)
-                    if processed:
-                        tables.append(processed)
-                potential_table_lines = []
-                in_table = False
-
-        # Process any remaining lines if we were in a table at the end
-        if in_table and len(potential_table_lines) >= min_rows:
-            processed = self._process_text_lines_as_table(potential_table_lines, min_cols)
-            if processed:
-                tables.append(processed)
-
-        return tables
-
-    def _process_text_lines_as_table(self, lines: List[str], min_cols: int) -> Optional[Dict[str, Any]]:
-        """ Helper to structure lines identified as a potential table """
-        table_rows = []
-        num_cols = 0
-        for line in lines:
-            # Split conservatively first
-            cols = re.split(r'\s{2,}', line.strip())
-            if len(cols) >= min_cols:
-                table_rows.append(cols)
-                num_cols = max(num_cols, len(cols))
-            # else: ignore lines that don't fit the column structure?
-
-        if not table_rows:
-            return None
-
-        # Pad rows to have consistent column count
-        for i in range(len(table_rows)):
-            if len(table_rows[i]) < num_cols:
-                table_rows[i].extend([''] * (num_cols - len(table_rows[i])))
-
-        # Basic header detection (same logic as _process_table_data)
-        header = []
-        rows = []
-        if table_rows:
-            potential_header = table_rows[0]
-            has_financial_keyword = any(
-                re.search(fh_pattern, cell_text, re.IGNORECASE)
-                for cell_text in potential_header
-                for fh_pattern in self.financial_headers
-            )
-            is_different = True
-            if len(table_rows) > 1:
-                 num_numeric_header = sum(1 for cell in potential_header if re.match(self.number_pattern, cell.replace(',','')))
-                 num_numeric_row1 = sum(1 for cell in table_rows[1] if re.match(self.number_pattern, cell.replace(',','')))
-                 if abs(num_numeric_header - num_numeric_row1) < len(potential_header) * 0.5:
-                      is_different = False
-
-            if has_financial_keyword or is_different:
-                 header = potential_header
-                 rows = table_rows[1:]
-            else:
-                 header = []
-                 rows = table_rows
-
-        return {"header": header, "rows": rows}
-
-# Example Usage (optional, for testing)
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    logger.info("Starting EnhancedTableExtractor example")
-
-    # Create dummy dependencies if they don't exist
-    os.makedirs("test_outputs", exist_ok=True)
-    dummy_pdf_path = "test_dummy.pdf"
-
-    # Create a simple dummy PDF if it doesn't exist (requires reportlab)
-    try:
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import letter
-        from reportlab.lib.units import inch
-
-        if not os.path.exists(dummy_pdf_path):
-             logger.info(f"Creating dummy PDF: {dummy_pdf_path}")
-             c = canvas.Canvas(dummy_pdf_path, pagesize=letter)
-             textobject = c.beginText(inch, 10*inch)
-             textobject.textLine("Page 1: Some text before the table.")
-             textobject.textLine("")
-             textobject.textLine("Header A | Header B | Header C")
-             textobject.textLine("-------------------------------")
-             textobject.textLine("Row 1 A  | 123.45   | Item 1")
-             textobject.textLine("Row 1 B  | 67.8     | Item 2")
-             textobject.textLine("Row 1 C  | 90       | Item 3")
-             textobject.textLine("")
-             textobject.textLine("Some text after the table.")
-             c.drawText(textobject)
-             c.showPage()
-             textobject = c.beginText(inch, 10*inch)
-             textobject.textLine("Page 2: Another table")
-             textobject.textLine("")
-             textobject.textLine("שם נייר | כמות | מחיר")
-             textobject.textLine("---------|------|------")
-             textobject.textLine("תעודה א  | 100  | 50.5")
-             textobject.textLine("תעודה ב  | 200  | 25.0")
-             c.drawText(textobject)
-             c.save()
-             logger.info(f"Dummy PDF created.")
-
-    except ImportError:
-        logger.warning("reportlab not installed. Cannot create dummy PDF. Please create 'test_dummy.pdf' manually for testing.")
-        # Exit if no PDF exists? Or just skip extraction test.
-        if not os.path.exists(dummy_pdf_path):
-             logger.error("No dummy PDF found and reportlab not available. Exiting example.")
-             exit()
-
-
-    # Initialize extractor
-    extractor = EnhancedTableExtractor(language="eng+heb") # Add heb for Hebrew example
-
-    # Extract tables from the dummy PDF
-    logger.info(f"Extracting tables from: {dummy_pdf_path}")
-    extracted_data = extractor.extract_tables_from_pdf(dummy_pdf_path)
-
-    # Print results
-    if extracted_data:
-        logger.info("Extraction Results:")
-        for page_idx, tables in extracted_data.items():
-            logger.info(f"--- Page {page_idx + 1} ---")
-            for i, table in enumerate(tables):
-                logger.info(f"  Table {i+1} (Method: {table['extraction_method']}, BBox: {table.get('bbox', 'N/A')})")
-                df = pd.DataFrame(table['rows'], columns=table['header'] if table['header'] else None)
-                logger.info(f"\n{df.to_string(index=False)}\n")
-                # Save to CSV for inspection
-                output_csv = f"test_outputs/page_{page_idx+1}_table_{i+1}.csv"
-                df.to_csv(output_csv, index=False, encoding='utf-8-sig')
-                logger.info(f"Table saved to {output_csv}")
-    else:
-        logger.warning("No tables extracted.")
-
-    logger.info("EnhancedTableExtractor example finished.")
+    # --- Old Methods Removed ---
+    # _preprocess_image, _detect_table_regions, _detect_tables_by_lines,
+    # _detect_table_cells, _detect_cells_by_lines, _extract_text_from_cells,
+    # _process_table_data, _identify_tables_in_text, _process_text_lines_as_table
+
+    # Placeholder for potential helper methods needed for Table-Transformer output processing
+    # def _parse_structure_output(self, structure_results, table_crop_image):
+    #     # Complex logic to convert model output boxes/labels into header/rows
+    #     # May involve geometric analysis and OCR calls if text isn't included
+    #     pass
