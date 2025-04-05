@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="app.title">מערכת ניתוח פיננסי Pro</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <style>
+      @font-face {
+        font-family: 'LucideIcons';
+        src: url(https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.ttf) format('truetype');
+      }
+      .lucide {
+        font-family: 'LucideIcons';
+        font-size: 1.15rem; /* גודל אייקון מעט מוגדל */
+        line-height: 1;
+        vertical-align: middle;
+        display: inline-block;
+      }
+      body {
+          font-family: 'Inter var', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          background-color: #f8fafc; /* slate-50 - רקע כללי מעט בהיר יותר */
+      }
+      .space-x-reverse > :not([hidden]) ~ :not([hidden]) { --tw-space-x-reverse: 1; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .75s linear infinite; }
+      /* שיפור מראה הגלילה */
+       ::-webkit-scrollbar { width: 6px; height: 6px; } /* סרגל גלילה דק יותר */
+      ::-webkit-scrollbar-track { background: transparent; } /* רקע שקוף */
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } /* slate-300 */
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; } /* slate-400 */
+      /* מחלקה להסתרת אלמנטים שאינם בשפה הנוכחית (יופעל ע"י JS של i18n) */
+      .lang-hidden { display: none; }
+      /* שיפור פוקוס לכפתורים ואינפוטים */
+      *:focus-visible {
+        outline: 2px solid rgb(99 102 241 / 60%); /* indigo-500 with opacity */
+        outline-offset: 2px;
+        border-radius: 6px; /* התאמת רדיוס הפוקוס */
+      }
+      /* הסרת טבעת פוקוס ברירת מחדל */
+      *:focus {
+        outline: none;
+      }
+      /* --- IMPROVEMENT: View Transition --- */
+      @keyframes viewFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .main-view {
+        animation: viewFadeIn 0.4s ease-out forwards;
+      }
+      /* --- IMPROVEMENT: Table Zebra Striping --- */
+      #documents-table-body-content tr:nth-child(even) {
+        background-color: #f8fafc; /* slate-50 */
+      }
+      #documents-table-body-content tr:hover {
+        background-color: #f1f5f9; /* slate-100 - Slightly darker hover for contrast */
+      }
+      /* --- IMPROVEMENT: Chat Fade-in --- */
+      @keyframes fadeInChat { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+      .fade-in-chat { animation: fadeInChat 0.4s ease-out forwards; }
+
+    </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+<body class="text-slate-900">
+    <div class="flex h-screen">
+        <aside class="w-64 bg-slate-900 text-slate-300 shadow-xl flex flex-col p-4 fixed inset-y-0 right-0 z-10 border-l border-slate-700/50">
+            <div class="flex items-center mb-10 pt-3 px-2">
+                <span class="lucide text-indigo-400 text-3xl mr-3">layers</span>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-100" data-translate-key="sidebar.app_name">ניתוח Pro</h1>
+            </div>
+            <nav class="flex-1 space-y-1.5">
+                <a href="#" class="nav-link group active" onclick="showView('dashboard')">
+                    <span class="lucide mr-3 w-5 h-5">layout-dashboard</span>
+                    <span data-translate-key="sidebar.dashboard">לוח מחוונים</span>
+                </a>
+                <a href="#" class="nav-link group" onclick="showView('documents')">
+                    <span class="lucide mr-3 w-5 h-5">files</span>
+                    <span data-translate-key="sidebar.documents">מסמכים</span>
+                </a>
+                <a href="#" class="nav-link group" onclick="showView('chatbot')">
+                    <span class="lucide mr-3 w-5 h-5">message-circle</span>
+                    <span data-translate-key="sidebar.chatbot">צ'אטבוט AI</span>
+                </a>
+                <a href="#" class="nav-link group" onclick="showView('explore')">
+                    <span class="lucide mr-3 w-5 h-5">bar-chart-3</span>
+                    <span data-translate-key="sidebar.explore">חקירת נתונים</span>
+                </a>
+                 <a href="#" class="nav-link group" onclick="showView('admin')">
+                    <span class="lucide mr-3 w-5 h-5">sliders-horizontal</span>
+                    <span data-translate-key="sidebar.admin">ניהול</span>
+                </a>
+            </nav>
+            <div class="mt-auto border-t border-slate-700/50 pt-4 space-y-1.5">
+                <a href="#" class="nav-link group">
+                    <span class="lucide mr-3 w-5 h-5">settings</span>
+                    <span data-translate-key="sidebar.settings">הגדרות חשבון</span>
+                </a>
+                 <!-- --- IMPROVEMENT: Added hover effect to language button --- -->
+                 <button onclick="toggleLanguage()" class="nav-link group w-full text-right hover:border-slate-500 border border-transparent">
+                    <span class="lucide mr-3 w-5 h-5">languages</span>
+                    <span data-translate-key="sidebar.language">שפה</span> (<span id="current-lang">עב</span>)
+                 </button>
+                 <a href="#" class="nav-link group">
+                    <span class="lucide mr-3 w-5 h-5">life-buoy</span>
+                    <span data-translate-key="sidebar.support">תמיכה</span>
+                </a>
+                <a href="#" id="logout-button" class="nav-link group">
+                    <span class="lucide mr-3 w-5 h-5">log-out</span>
+                    <span data-translate-key="sidebar.logout">התנתקות</span>
+                </a>
+            </div>
+            <style>
+                .nav-link {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.625rem 0.75rem; /* 10px 12px */
+                    font-size: 0.9rem; /* גודל פונט מעט קטן יותר */
+                    border-radius: 0.5rem; /* 8px */
+                    color: #cbd5e1; /* slate-300 */
+                    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Added border transition */
+                }
+                .nav-link:hover {
+                    background-color: #334155; /* slate-700 */
+                    color: #f1f5f9; /* slate-100 */
+                }
+                .nav-link.active {
+                    background-color: #4f46e5; /* indigo-600 */
+                    color: #ffffff; /* white */
+                    font-weight: 600; /* Slightly bolder */
+                    box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.7); /* Inner highlight */
+                }
+                html[dir="ltr"] .nav-link.active {
+                     box-shadow: inset -3px 0 0 rgba(255, 255, 255, 0.7); /* Adjust highlight for LTR */
+                }
+                .nav-link .lucide {
+                    color: inherit; /* אייקון יורש צבע מהטקסט */
+                }
+            </style>
+        </aside>
+
+        <!-- --- FIX: Added w-full to main element --- -->
+        <main class="flex-1 pr-64 overflow-y-auto bg-slate-50 w-full">
+            <div class="p-6 md:p-8 lg:p-10">
+
+                <div id="dashboard-view" class="main-view">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 mb-6 md:mb-8" data-translate-key="dashboard.title">לוח מחוונים</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6" id="dashboard-cards">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-medium text-slate-500" data-translate-key="dashboard.analyzed_docs">מסמכים שנותחו</h3>
+                                <span class="lucide text-blue-500">file-check-2</span>
+                            </div>
+                            <p class="text-3xl font-bold text-slate-800" id="analyzed-docs-count">142</p>
+                            <p class="text-xs text-green-600 flex items-center mt-1.5" id="analyzed-docs-trend">+5 בשבוע האחרון <span class="lucide ml-1 text-[10px]">trending-up</span></p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-medium text-slate-500" data-translate-key="dashboard.ai_insights">תובנות AI שנוצרו</h3>
+                                <span class="lucide text-purple-500">brain-circuit</span>
+                            </div>
+                            <p class="text-3xl font-bold text-slate-800">89</p>
+                             <p class="text-xs text-slate-500 mt-1.5">3 תובנות חדשות היום</p>
+                        </div>
+                         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-medium text-slate-500" data-translate-key="dashboard.active_alerts">התראות פעילות</h3>
+                                <span class="lucide text-orange-500">alert-circle</span> </div>
+                            <p class="text-3xl font-bold text-slate-800">3</p>
+                             <p class="text-xs text-slate-500 mt-1.5">2 קריטיות, 1 אזהרה</p>
+                        </div>
+                         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-medium text-slate-500" data-translate-key="dashboard.system_status">סטטוס מערכת</h3>
+                                <span class="lucide text-teal-500">shield-check</span>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">תקין</p>
+                             <p class="text-xs text-slate-500 mt-1.5">כל השירותים פעילים</p>
+                        </div>
+
+                        <div class="sm:col-span-2 lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-slate-200/80">
+                            <h3 class="text-lg font-semibold text-slate-800 mb-5" data-translate-key="dashboard.main_trends">מגמות פיננסיות מרכזיות</h3>
+                            <div class="h-72 relative">
+                                <canvas id="mainFinancialChart"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm hidden" id="chart-loader">
+                                    <span class="spinner text-indigo-600 text-xl"></span>
+                                    <span class="ml-2 text-slate-600 text-sm" data-translate-key="dashboard.loading_data">טוען נתונים...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-2 lg:col-span-1 bg-white p-6 rounded-lg shadow-sm border border-slate-200/80 flex flex-col">
+                             <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                                <span class="lucide text-purple-500 mr-2">sparkles</span>
+                                <span data-translate-key="dashboard.latest_insights">תובנות AI</span>
+                             </h3>
+                             <!-- --- CLARIFICATION: Added explanation for AI insights --- -->
+                             <p class="text-xs text-slate-500 mb-3 -mt-2">דוגמאות לתובנות שנוצרו אוטומטית על ידי ה-AI מהמסמכים שנותחו.</p>
+                             <div class="space-y-3 flex-1 overflow-y-auto pr-1 -mr-1" id="latest-insights-list">
+                                <div class="p-3 bg-purple-50/70 rounded-md border border-purple-200/80">
+                                    <p class="text-sm font-medium text-purple-800">עלייה בהוצאות שיווק</p>
+                                    <p class="text-xs text-purple-700 mt-1">זוהתה עלייה של 25% בהוצאות שיווק ברבעון האחרון.</p>
+                                </div>
+                                 <div class="p-3 bg-green-50/70 rounded-md border border-green-200/80">
+                                    <p class="text-sm font-medium text-green-800">שיפור ברווח הגולמי</p>
+                                    <p class="text-xs text-green-700 mt-1">שיעור הרווח הגולמי עלה ל-58% בדוח השנתי 2024.</p>
+                                </div>
+                                 <div class="p-3 bg-orange-50/70 rounded-md border border-orange-200/80"> <p class="text-sm font-medium text-orange-800">סיכון תזרים מזומנים</p>
+                                    <p class="text-xs text-orange-700 mt-1">יחס כיסוי החוב קצר המועד ירד מתחת ל-1.2.</p>
+                                </div>
+                             </div>
+                             <button class="mt-4 w-full text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center justify-center py-1.5 rounded-md hover:bg-indigo-50 transition-colors">
+                                <span data-translate-key="dashboard.show_all_insights">הצג את כל התובנות</span>
+                                <span class="lucide ml-1 text-xs">arrow-left</span>
+                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="documents-view" class="hidden main-view">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-8 gap-4">
+                        <h2 class="text-2xl md:text-3xl font-semibold text-slate-800" data-translate-key="documents.title">ניהול מסמכים</h2>
+                        <div class="flex items-center gap-3">
+                             <div class="relative">
+                                <input type="text" placeholder="חיפוש מסמכים..." data-translate-placeholder="documents.search_placeholder" class="form-input w-full md:w-64 rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 pl-10 text-sm py-2">
+                                <span class="lucide text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4">search</span>
+                            </div>
+                            <!-- --- CLARIFICATION: Added explanation for upload button --- -->
+                            <div class="flex flex-col items-end">
+                                <button id="upload-doc-button-main" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md flex items-center shadow-sm hover:shadow-md transition-all duration-300 text-sm">
+                                    <span class="lucide mr-2 w-4 h-4">upload-cloud</span>
+                                    <span data-translate-key="documents.upload_button">העלאת מסמך</span>
+                                </button>
+                                <p class="text-xs text-slate-500 mt-1">לחץ כאן לבחירת קבצים (.pdf, .xlsx, .csv וכו')</p>
+                            </div>
+                            <input type="file" id="file-input-hidden" class="hidden" multiple accept=".pdf,.xlsx,.csv,.docx,.jpg,.png,.tiff">
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200/80 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th scope="col" class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider" data-translate-key="documents.table.name">שם המסמך</th>
+                                    <th scope="col" class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider" data-translate-key="documents.table.upload_date">תאריך העלאה</th>
+                                    <th scope="col" class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider" data-translate-key="documents.table.status">סטטוס</th>
+                                    <th scope="col" class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider" data-translate-key="documents.table.entities">ישויות שזוהו</th>
+                                    <th scope="col" class="px-5 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider" data-translate-key="documents.table.actions">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-100" id="documents-table-body-content">
+                                <tr class="transition-colors duration-150">
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-slate-700 flex items-center">
+                                        <span class="lucide text-red-500 mr-2.5 w-4 h-4 flex-shrink-0">file-text</span>
+                                        <span class="truncate">דוח רווח והפסד שנתי 2024 ארוך מאוד.pdf</span>
+                                    </td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-500">01/04/2025, 10:30</td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                            <span class="lucide mr-1 text-[10px]">check-circle</span> <span data-translate-key="documents.status.success">נותח בהצלחה</span>
+                                        </span>
+                                    </td>
+                                     <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="lucide text-blue-500 w-4 h-4" title="חברה">building-2</span> 3
+                                            <span class="lucide text-green-500 ml-2 w-4 h-4" title="סכום">dollar-sign</span> 15
+                                            <span class="lucide text-yellow-500 ml-2 w-4 h-4" title="תאריך">calendar</span> 8
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                        <div class="flex justify-center items-center space-x-reverse space-x-3">
+                                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" title="צפייה במסמך" data-translate-title="documents.action.view"><span class="lucide w-4 h-4">eye</span></button>
+                                            <button class="text-slate-400 hover:text-blue-600 transition-colors" title="שיחה עם הבוט" data-translate-title="documents.action.chat"><span class="lucide w-4 h-4">message-circle</span></button>
+                                            <button class="text-slate-400 hover:text-purple-600 transition-colors" title="ניתוח מחדש" data-translate-title="documents.action.reanalyze"><span class="lucide w-4 h-4">refresh-cw</span></button>
+                                            <button class="text-slate-400 hover:text-red-600 transition-colors" title="מחיקה" data-translate-title="documents.action.delete"><span class="lucide w-4 h-4">trash-2</span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="transition-colors duration-150">
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-slate-700 flex items-center">
+                                        <span class="lucide text-yellow-500 mr-2.5 w-4 h-4 flex-shrink-0">file-spreadsheet</span>
+                                        <span class="truncate">תחזית מכירות Q2.xlsx</span>
+                                    </td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-500">30/03/2025, 15:00</td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm">
+                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                            <span class="spinner mr-1 w-2.5 h-2.5"></span> <span data-translate-key="documents.status.processing">בתהליך ניתוח...</span>
+                                        </span>
+                                    </td>
+                                     <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-400">-</td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                        <div class="flex justify-center items-center space-x-reverse space-x-3">
+                                             <button class="text-slate-300 cursor-not-allowed" title="צפייה במסמך" data-translate-title="documents.action.view" disabled><span class="lucide w-4 h-4">eye</span></button>
+                                            <button class="text-slate-300 cursor-not-allowed" title="שיחה עם הבוט" data-translate-title="documents.action.chat" disabled><span class="lucide w-4 h-4">message-circle</span></button>
+                                            <button class="text-slate-300 cursor-not-allowed" title="ניתוח מחדש" data-translate-title="documents.action.reanalyze" disabled><span class="lucide w-4 h-4">refresh-cw</span></button>
+                                            <button class="text-slate-400 hover:text-red-600 transition-colors" title="מחיקה" data-translate-title="documents.action.delete"><span class="lucide w-4 h-4">trash-2</span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="transition-colors duration-150">
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-slate-700 flex items-center">
+                                        <span class="lucide text-blue-500 mr-2.5 w-4 h-4 flex-shrink-0">file-image</span>
+                                        <span class="truncate">קבלה חשובה.png</span>
+                                    </td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-500">29/03/2025, 09:15</td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                            <span class="lucide mr-1 text-[10px]">check-circle</span> <span data-translate-key="documents.status.success">נותח בהצלחה</span>
+                                        </span>
+                                    </td>
+                                     <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="lucide text-green-500 w-4 h-4" title="סכום">dollar-sign</span> 2
+                                            <span class="lucide text-yellow-500 ml-2 w-4 h-4" title="תאריך">calendar</span> 1
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                        <div class="flex justify-center items-center space-x-reverse space-x-3">
+                                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" title="צפייה במסמך" data-translate-title="documents.action.view"><span class="lucide w-4 h-4">eye</span></button>
+                                            <button class="text-slate-400 hover:text-blue-600 transition-colors" title="שיחה עם הבוט" data-translate-title="documents.action.chat"><span class="lucide w-4 h-4">message-circle</span></button>
+                                            <button class="text-slate-400 hover:text-purple-600 transition-colors" title="ניתוח מחדש" data-translate-title="documents.action.reanalyze"><span class="lucide w-4 h-4">refresh-cw</span></button>
+                                            <button class="text-slate-400 hover:text-red-600 transition-colors" title="מחיקה" data-translate-title="documents.action.delete"><span class="lucide w-4 h-4">trash-2</span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                        </table>
+                        <div id="no-documents-message" class="text-center py-10 text-slate-500 hidden">
+                            <span class="lucide text-4xl mb-3 block mx-auto">folder-open</span>
+                            <span data-translate-key="documents.no_documents">לא נמצאו מסמכים. נסה להעלות מסמך חדש.</span>
+                        </div>
+                    </div>
+                     <div id="upload-progress-area-container" class="mt-6 bg-white p-4 rounded-lg shadow-sm border border-slate-200/80 hidden">
+                        <h3 class="text-base font-medium text-slate-700 mb-3" data-translate-key="documents.upload_progress_title">העלאות פעילות</h3>
+                        <div class="space-y-3" id="upload-progress-list-items">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="chatbot-view" class="hidden h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)] flex flex-col main-view">
+                     <!-- --- CLARIFICATION: Added explanation for AI Chatbot --- -->
+                     <div class="flex items-center justify-between mb-4">
+                         <h2 class="text-2xl md:text-3xl font-semibold text-slate-800" data-translate-key="chatbot.title">שיחה עם ה-AI הפיננסי</h2>
+                         <p class="text-sm text-slate-500">שאל שאלות על המסמכים שנותחו, בקש סיכומים או תובנות.</p>
+                     </div>
+                     <div class="flex-1 bg-white rounded-lg shadow-sm border border-slate-200/80 p-4 md:p-6 overflow-y-auto mb-4 scroll-smooth" id="chatbox-messages-container">
+                        <div class="space-y-5">
+                            <div class="text-center text-xs text-slate-400 my-4" data-translate-key="chatbot.encrypted_message">~ השיחה מוצפנת מקצה לקצה ~</div>
+                            <div class="flex justify-start items-end gap-2.5 fade-in-chat">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs shadow-inner">AI</span>
+                                <div class="bg-slate-100 text-slate-700 p-3 rounded-lg rounded-bl-none max-w-lg shadow-xs border border-slate-200/80 text-sm" data-translate-key="chatbot.welcome_message">
+                                    שלום! אני ה-AI הפיננסי שלך. כיצד אוכל לסייע לך היום? תוכל לשאול אותי על המסמכים שנותחו, לבקש סיכומים או לזהות מגמות.
+                                </div>
+                            </div>
+                            <div class="flex justify-end items-end gap-2.5 fade-in-chat">
+                                <div class="bg-indigo-600 text-white p-3 rounded-lg rounded-br-none max-w-lg shadow-sm text-sm">
+                                    מה היו ההכנסות ברבעון האחרון לפי דוח רווח והפסד 2024?
+                                </div>
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-semibold text-xs shadow-inner">אני</span>
+                            </div>
+                            <div class="flex justify-start items-end gap-2.5 fade-in-chat">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs shadow-inner">AI</span>
+                                 <div class="bg-slate-100 text-slate-700 p-3 rounded-lg rounded-bl-none max-w-lg shadow-xs border border-slate-200/80 text-sm">
+                                    על פי ניתוח <a href="#" class="text-indigo-600 hover:underline font-medium">דוח רווח והפסד 2024.pdf (עמ' 3)</a>, ההכנסות ברבעון האחרון (Q4 2024) עמדו על **₪5.2 מיליון**. זה מייצג עלייה של 8% בהשוואה לרבעון הקודם (Q3 2024).
+                                    <div class="mt-2 text-xs text-slate-500">
+                                        מקורות: דוח רווח והפסד 2024.pdf
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="flex justify-start items-end gap-2.5 hidden" id="typing-indicator-element">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs shadow-inner">AI</span>
+                                <div class="bg-slate-100 text-slate-700 p-3 rounded-lg rounded-bl-none max-w-lg shadow-xs border border-slate-200/80">
+                                    <span class="inline-block w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce mr-1" style="animation-delay: 0s;"></span>
+                                    <span class="inline-block w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce mr-1" style="animation-delay: 0.1s;"></span>
+                                    <span class="inline-block w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></span>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="bg-white rounded-lg shadow-sm border border-slate-200/80 p-2.5 flex items-center gap-2">
+                        <button class="text-slate-500 hover:text-indigo-600 p-2 rounded-md transition-colors hover:bg-slate-100" title="צרף קובץ" data-translate-title="chatbot.attach_file">
+                            <span class="lucide w-5 h-5">paperclip</span>
+                        </button>
+                        <input type="text" id="chat-input-field" placeholder="שאל את ה-AI הפיננסי..." data-translate-placeholder="chatbot.input_placeholder" class="flex-1 form-input border-0 focus:ring-0 bg-transparent p-2 placeholder-slate-400 text-sm">
+                        <button id="send-chat-button-action" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-2 rounded-md flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" onclick="sendChatMessage()" title="שלח הודעה" data-translate-title="chatbot.send_button">
+                            <span class="lucide transform rotate-180 w-5 h-5">send</span>
+                        </button>
+                     </div>
+                </div>
+
+                 <div id="explore-view" class="hidden main-view">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 mb-6 md:mb-8" data-translate-key="explore.title">חקירת נתונים וויזואליזציה</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200/80">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                            <h3 class="text-lg font-semibold text-slate-700" data-translate-key="explore.explorer_title">סייר הנתונים האינטראקטיבי</h3>
+                             <div class="flex items-center gap-3">
+                                <select class="form-select rounded-md border-slate-300 text-sm shadow-sm py-1.5">
+                                    <option data-translate-key="explore.select_document">בחר מסמך...</option>
+                                    <option>דוח רווח והפסד 2024</option>
+                                    <option>מאזן שנתי 2023</option>
+                                </select>
+                                <button class="text-slate-500 hover:text-indigo-600 p-1.5 rounded-md transition-colors flex items-center text-sm hover:bg-slate-100">
+                                    <span class="lucide mr-1 text-xs">filter</span> <span data-translate-key="explore.filter_data">סנן נתונים</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- --- CLARIFICATION: Enhanced placeholder text --- -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="border border-dashed border-slate-300/80 rounded-lg p-6 h-80 flex flex-col items-center justify-center text-center bg-slate-50/50">
+                                <span class="lucide text-slate-400 text-4xl mb-4">bar-chart-horizontal</span>
+                                <h4 class="text-slate-600 font-medium mb-1" data-translate-key="explore.interactive_chart">גרף אינטראקטיבי</h4>
+                                <p class="text-sm text-slate-500" data-translate-key="explore.chart_placeholder">בחר מסמך למעלה כדי להציג גרפים של הנתונים שחולצו.</p>
+                            </div>
+                             <div class="border border-dashed border-slate-300/80 rounded-lg p-6 h-80 flex flex-col items-center justify-center text-center bg-slate-50/50">
+                                <span class="lucide text-slate-400 text-4xl mb-4">table-2</span>
+                                <h4 class="text-slate-600 font-medium mb-1" data-translate-key="explore.data_table">טבלת נתונים</h4>
+                                <p class="text-sm text-slate-500" data-translate-key="explore.table_placeholder">בחר מסמך למעלה כדי להציג טבלאות נתונים שחולצו למיון וסינון.</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-6 text-center" data-translate-key="explore.footer_text">השתמש בכלים אלו כדי לצלול לעומק הנתונים הפיננסיים שלך, לזהות קשרים ולייצא ויזואליזציות מותאמות אישית.</p>
+                    </div>
+                </div>
+
+                 <div id="admin-view" class="hidden main-view">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 mb-6 md:mb-8" data-translate-key="admin.title">ניהול מערכת</h2>
+                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 flex flex-col">
+                            <div class="flex items-center mb-3">
+                               <span class="lucide text-slate-500 mr-3">users</span>
+                               <h3 class="text-base font-semibold text-slate-700" data-translate-key="admin.user_management">ניהול משתמשים</h3>
+                            </div>
+                            <p class="text-sm text-slate-600 flex-1 mb-4" data-translate-key="admin.user_management_desc">הוספה, עריכה והסרה של משתמשים, ניהול הרשאות וקבוצות עבודה.</p>
+                            <!-- --- IMPROVEMENT: Added icon to admin button --- -->
+                            <button class="mt-auto w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium py-2 px-3 rounded-md transition-colors flex items-center justify-center">
+                                <span class="lucide mr-2 text-xs">arrow-right</span> <span data-translate-key="admin.open_user_management">פתח ניהול</span>
+                            </button>
+                        </div>
+                         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 flex flex-col">
+                            <div class="flex items-center mb-3">
+                               <span class="lucide text-slate-500 mr-3">settings-2</span>
+                               <h3 class="text-base font-semibold text-slate-700" data-translate-key="admin.system_settings">הגדרות מערכת</h3>
+                            </div>
+                            <p class="text-sm text-slate-600 flex-1 mb-4" data-translate-key="admin.system_settings_desc">תצורת API, מודלי שפה, הגדרות OCR, אינטגרציות ושאר הגדרות מתקדמות.</p>
+                            <!-- --- IMPROVEMENT: Added icon to admin button --- -->
+                            <button class="mt-auto w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium py-2 px-3 rounded-md transition-colors flex items-center justify-center">
+                                <span class="lucide mr-2 text-xs">arrow-right</span> <span data-translate-key="admin.open_system_settings">פתח הגדרות</span>
+                            </button>
+                        </div>
+                         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200/80 flex flex-col">
+                            <div class="flex items-center mb-3">
+                               <span class="lucide text-slate-500 mr-3">shield-alert</span>
+                               <h3 class="text-base font-semibold text-slate-700" data-translate-key="admin.security_audit">אבטחה וביקורת</h3>
+                            </div>
+                            <p class="text-sm text-slate-600 flex-1 mb-4" data-translate-key="admin.security_audit_desc">ניהול יומני ביקורת (Audit Logs), הגדרות הצפנה, אימות דו-שלבי (2FA).</p>
+                            <!-- --- IMPROVEMENT: Added icon to admin button --- -->
+                            <button class="mt-auto w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium py-2 px-3 rounded-md transition-colors flex items-center justify-center">
+                                <span class="lucide mr-2 text-xs">arrow-right</span> <span data-translate-key="admin.open_security_settings">פתח אבטחה</span>
+                            </button>
+                        </div>
+                         <div class="md:col-span-2 lg:col-span-3 bg-white p-5 rounded-lg shadow-sm border border-slate-200/80">
+                            <h3 class="text-base font-semibold text-slate-700 mb-3 flex items-center">
+                               <span class="lucide text-slate-500 mr-2">clipboard-list</span>
+                               <span data-translate-key="admin.activity_log">יומן פעילות אחרונה</span>
+                            </h3>
+                            <div class="h-48 overflow-y-auto pr-2 text-xs text-slate-600 space-y-1.5" id="activity-log-list-container">
+                                <p><span class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded mr-1.5">01/04 18:10:05</span> משתמש 'אביעד' התחבר למערכת.</p>
+                                <p><span class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded mr-1.5">01/04 18:07:15</span> ה-AI ענה לשאלה של 'אביעד' לגבי הכנסות.</p>
+                                <p><span class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded mr-1.5">01/04 18:06:22</span> המערכת סיימה לנתח את 'דוח שנתי.pdf' בהצלחה.</p>
+                                <p><span class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded mr-1.5">01/04 18:05:30</span> משתמש 'אביעד' העלה מסמך 'דוח שנתי.pdf'.</p>
+                            </div>
+                         </div>
+                     </div>
+                </div>
+
+            </div> </main>
+    </div>
+
+    <script>
+        // ==================== לוגיקת החלפת תצוגות ====================
+        let currentViewId = 'dashboard';
+
+        function showView(viewId) {
+            if (viewId === currentViewId) return;
+            const currentViewElement = document.getElementById(currentViewId + '-view');
+            if (currentViewElement) currentViewElement.classList.add('hidden');
+
+            const nextViewElement = document.getElementById(viewId + '-view');
+            if (nextViewElement) {
+                 nextViewElement.classList.remove('hidden', 'main-view');
+                 void nextViewElement.offsetWidth; // Force reflow for animation
+                 nextViewElement.classList.add('main-view');
+            } else {
+                console.error("View element not found: " + viewId + "-view");
+                const dashboardView = document.getElementById('dashboard-view');
+                dashboardView.classList.remove('hidden', 'main-view');
+                void dashboardView.offsetWidth;
+                dashboardView.classList.add('main-view');
+                viewId = 'dashboard';
+            }
+            currentViewId = viewId;
+            updateActiveNavUI(viewId);
+            // Example: if (viewId === 'documents') loadDocumentsData();
+        }
+
+        function updateActiveNavUI(activeViewId) {
+             const navLinks = document.querySelectorAll('aside nav a.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick') === `showView('${activeViewId}')`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+         // ==================== לוגיקת צ'אטבוט (דמה משופרת) ====================
+        const chatMessagesContainer = document.getElementById('chatbox-messages-container');
+        const chatInputField = document.getElementById('chat-input-field');
+        const typingIndicatorElement = document.getElementById('typing-indicator-element');
+        const sendChatButtonElement = document.getElementById('send-chat-button-action');
+
+        function appendChatMessage(sender, message, isUser, source = null) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.classList.add('flex', 'items-end', 'gap-2.5', 'fade-in-chat');
+            messageWrapper.classList.add(isUser ? 'justify-end' : 'justify-start');
+
+            const avatar = document.createElement('span');
+            avatar.classList.add('flex-shrink-0', 'w-8', 'h-8', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-white', 'font-semibold', 'text-xs', 'shadow-inner');
+            avatar.classList.add(isUser ? 'bg-slate-200 text-slate-500' : 'bg-gradient-to-br from-indigo-500 to-purple-600');
+            avatar.textContent = isUser ? 'אני' : 'AI'; // Needs i18n
+
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('p-3', 'rounded-lg', 'max-w-lg', 'shadow-xs', 'text-sm', 'border');
+            messageBubble.classList.add(isUser ? 'bg-indigo-600 text-white rounded-br-none border-transparent' : 'bg-slate-100 text-slate-700 rounded-bl-none border-slate-200/80');
+
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = message;
+            let processedMessage = tempDiv.innerHTML.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            messageBubble.innerHTML = processedMessage;
+
+            if (source) {
+                const sourceElement = document.createElement('div');
+                sourceElement.classList.add('mt-2', 'text-xs');
+                sourceElement.classList.add(isUser ? 'text-indigo-200' : 'text-slate-500');
+                sourceElement.innerHTML = `מקור: <a href="#" class="${isUser ? 'text-indigo-100 underline' : 'text-indigo-600 hover:underline font-medium'}">${source}</a>`; // Needs i18n
+                messageBubble.appendChild(sourceElement);
+            }
+
+            if (isUser) {
+                messageWrapper.appendChild(messageBubble);
+                messageWrapper.appendChild(avatar);
+            } else {
+                 messageWrapper.appendChild(avatar);
+                 messageWrapper.appendChild(messageBubble);
+            }
+
+            chatMessagesContainer.querySelector('.space-y-5').appendChild(messageWrapper);
+            requestAnimationFrame(() => {
+                 chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+            });
+        }
+
+        async function getSimulatedBotResponse(userMessage) {
+            // --- This simulates a backend call. Replace with actual API call. ---
+            console.log("Sending to backend (simulated):", userMessage);
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    let botResponse = "מצטער, לא הבנתי את הבקשה. תוכל לנסח מחדש?";
+                    let source = null;
+                    if (userMessage.toLowerCase().includes("הכנסות")) {
+                        botResponse = "ההכנסות בשנה האחרונה עמדו על **₪18.5 מיליון**.";
+                        source = "דוח שנתי 2024.pdf (עמ' 5)";
+                    } else if (userMessage.toLowerCase().includes("סיכום")) {
+                         botResponse = "בוודאי, הנה סיכום קצר של 'דוח רווח והפסד 2024': הכנסות **₪18.5מ'**, רווח גולמי **₪10.1מ'**, רווח תפעולי **₪3.5מ'**.";
+                         source = "דוח רווח והפסד 2024.pdf";
+                    } else if (userMessage.toLowerCase().includes("שלום") || userMessage.toLowerCase().includes("היי")) {
+                        botResponse = "שלום! במה אוכל לעזור לך היום?";
+                    }
+                    resolve({ message: botResponse, source: source });
+                }, 1200);
+            });
+            // --- End Simulation ---
+        }
+
+        async function sendChatMessage() {
+            const message = chatInputField.value.trim();
+            if (!message) return;
+
+            appendChatMessage('User', message, true);
+            chatInputField.value = '';
+            chatInputField.disabled = true;
+            sendChatButtonElement.disabled = true;
+            typingIndicatorElement.classList.remove('hidden');
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+            try {
+                // --- Call the (simulated) backend ---
+                const response = await getSimulatedBotResponse(message);
+                appendChatMessage('AI', response.message, false, response.source);
+                // Add to chat history if implementing
+            } catch (error) {
+                console.error("Error getting bot response:", error);
+                appendChatMessage('System', 'אירעה שגיאה בתקשורת עם ה-AI.', false); // Needs i18n
+            } finally {
+                typingIndicatorElement.classList.add('hidden');
+                chatInputField.disabled = false;
+                sendChatButtonElement.disabled = false;
+                chatInputField.focus();
+            }
+        }
+
+        sendChatButtonElement.addEventListener('click', sendChatMessage);
+        chatInputField.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                 e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        // ==================== אתחול גרף דמה (Chart.js) ====================
+        let mainDashboardChart = null;
+        function initializeDashboardChart() {
+             const canvasCtx = document.getElementById('mainFinancialChart')?.getContext('2d');
+             const chartLoaderElement = document.getElementById('chart-loader');
+             if (!canvasCtx) return;
+             if (mainDashboardChart) mainDashboardChart.destroy();
+
+             if(chartLoaderElement) chartLoaderElement.classList.remove('hidden');
+             setTimeout(() => {
+                 if(chartLoaderElement) chartLoaderElement.classList.add('hidden');
+                 // --- Chart data should come from backend ---
+                 mainDashboardChart = new Chart(canvasCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['ינו', 'פבר', 'מרץ', 'אפר', 'מאי', 'יונ', 'יול', 'אוג', 'ספט', 'אוק', 'נוב', 'דצמ'],
+                        datasets: [{
+                            label: 'הכנסות', data: [65, 59, 80, 81, 56, 55, 90, 95, 88, 76, 82, 98], fill: true, borderColor: 'rgb(79, 70, 229)', backgroundColor: 'rgba(79, 70, 229, 0.05)', tension: 0.4, pointBackgroundColor: 'rgb(79, 70, 229)', pointRadius: 0, pointHoverRadius: 5, pointHitRadius: 10, borderWidth: 2
+                        }, {
+                            label: 'הוצאות', data: [45, 48, 40, 59, 66, 50, 70, 75, 68, 60, 65, 72], fill: true, borderColor: 'rgb(219, 39, 119)', backgroundColor: 'rgba(219, 39, 119, 0.05)', tension: 0.4, pointBackgroundColor: 'rgb(219, 39, 119)', pointRadius: 0, pointHoverRadius: 5, pointHitRadius: 10, borderWidth: 2, borderDash: [5, 5]
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: false, grid: { color: '#e2e8f0', borderDash: [2, 4] }, ticks: { color: '#64748b', font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'bottom', align: 'start', labels: { color: '#334155', boxWidth: 12, padding: 15, font: { size: 11 } } },
+                            tooltip: { enabled: true, mode: 'index', intersect: false, backgroundColor: '#0f172a', titleColor: '#f1f5f9', bodyColor: '#cbd5e1', padding: 10, cornerRadius: 4, titleFont: { weight: 'bold' }, bodyFont: { size: 11 }, displayColors: true, boxPadding: 4 }
+                        },
+                        interaction: { intersect: false, mode: 'index' },
+                        hover: { mode: 'nearest', intersect: true }
+                    }
+                 });
+             }, 800);
+        }
+
+        // ==================== לוגיקת i18n (דמה בסיסית) ====================
+        let currentSelectedLanguage = 'he';
+        const languageTranslations = {
+            he: { /* ... Hebrew translations ... */
+                "app.title": "מערכת ניתוח פיננסי Pro", "sidebar.app_name": "ניתוח Pro", "sidebar.dashboard": "לוח מחוונים", "sidebar.documents": "מסמכים", "sidebar.chatbot": "צ'אטבוט AI", "sidebar.explore": "חקירת נתונים", "sidebar.admin": "ניהול", "sidebar.settings": "הגדרות חשבון", "sidebar.language": "שפה", "sidebar.support": "תמיכה", "sidebar.logout": "התנתקות", "dashboard.title": "לוח מחוונים", "dashboard.analyzed_docs": "מסמכים שנותחו", "dashboard.ai_insights": "תובנות AI שנוצרו", "dashboard.active_alerts": "התראות פעילות", "dashboard.system_status": "סטטוס מערכת", "dashboard.main_trends": "מגמות פיננסיות מרכזיות", "dashboard.loading_data": "טוען נתונים...", "dashboard.latest_insights": "תובנות AI", "dashboard.show_all_insights": "הצג את כל התובנות", "documents.title": "ניהול מסמכים", "documents.search_placeholder": "חיפוש מסמכים...", "documents.upload_button": "העלאת מסמך", "documents.table.name": "שם המסמך", "documents.table.upload_date": "תאריך העלאה", "documents.table.status": "סטטוס", "documents.table.entities": "ישויות שזוהו", "documents.table.actions": "פעולות", "documents.status.success": "נותח בהצלחה", "documents.status.processing": "בתהליך ניתוח...", "documents.status.failed": "ניתוח נכשל", "documents.action.view": "צפייה במסמך", "documents.action.chat": "שיחה עם הבוט", "documents.action.reanalyze": "ניתוח מחדש", "documents.action.delete": "מחיקה", "documents.upload_progress_title": "העלאות פעילות", "chatbot.title": "שיחה עם ה-AI הפיננסי", "chatbot.encrypted_message": "~ השיחה מוצפנת מקצה לקצה ~", "chatbot.welcome_message": "שלום! אני ה-AI הפיננסי שלך. כיצד אוכל לסייע לך היום?", "chatbot.input_placeholder": "שאל את ה-AI הפיננסי...", "chatbot.attach_file": "צרף קובץ", "chatbot.send_button": "שלח הודעה", "explore.title": "חקירת נתונים וויזואליזציה", "explore.explorer_title": "סייר הנתונים האינטראקטיבי", "explore.select_document": "בחר מסמך...", "explore.filter_data": "סנן נתונים", "explore.interactive_chart": "גרף אינטראקטיבי", "explore.chart_placeholder": "בחר מסמך למעלה כדי להציג גרפים של הנתונים שחולצו.", "explore.data_table": "טבלת נתונים", "explore.table_placeholder": "בחר מסמך למעלה כדי להציג טבלאות נתונים שחולצו למיון וסינון.", "explore.footer_text": "השתמש בכלים אלו לצלול לעומק הנתונים.", "admin.title": "ניהול מערכת", "admin.user_management": "ניהול משתמשים", "admin.user_management_desc": "הוספה, עריכה והסרה של משתמשים.", "admin.open_user_management": "פתח ניהול", "admin.system_settings": "הגדרות מערכת", "admin.system_settings_desc": "תצורת API, מודלי שפה, OCR.", "admin.open_system_settings": "פתח הגדרות", "admin.security_audit": "אבטחה וביקורת", "admin.security_audit_desc": "ניהול יומני ביקורת, הצפנה, 2FA.", "admin.open_security_settings": "פתח אבטחה", "admin.activity_log": "יומן פעילות אחרונה", "documents.no_documents": "לא נמצאו מסמכים. נסה להעלות מסמך חדש."
+            },
+            en: { /* ... English translations ... */
+                "app.title": "Financial Analysis Pro", "sidebar.app_name": "Analysis Pro", "sidebar.dashboard": "Dashboard", "sidebar.documents": "Documents", "sidebar.chatbot": "AI Chatbot", "sidebar.explore": "Data Exploration", "sidebar.admin": "Admin", "sidebar.settings": "Account Settings", "sidebar.language": "Language", "sidebar.support": "Support", "sidebar.logout": "Logout", "dashboard.title": "Dashboard", "dashboard.analyzed_docs": "Documents Analyzed", "dashboard.ai_insights": "AI Insights Generated", "dashboard.active_alerts": "Active Alerts", "dashboard.system_status": "System Status", "dashboard.main_trends": "Key Financial Trends", "dashboard.loading_data": "Loading data...", "dashboard.latest_insights": "Latest AI Insights", "dashboard.show_all_insights": "Show All Insights", "documents.title": "Document Management", "documents.search_placeholder": "Search documents...", "documents.upload_button": "Upload Document", "documents.table.name": "Document Name", "documents.table.upload_date": "Upload Date", "documents.table.status": "Status", "documents.table.entities": "Entities Detected", "documents.table.actions": "Actions", "documents.status.success": "Analyzed Successfully", "documents.status.processing": "Processing...", "documents.status.failed": "Analysis Failed", "documents.action.view": "View Document", "documents.action.chat": "Chat with Bot", "documents.action.reanalyze": "Re-analyze", "documents.action.delete": "Delete", "documents.upload_progress_title": "Active Uploads", "chatbot.title": "Chat with Financial AI", "chatbot.encrypted_message": "~ Conversation is end-to-end encrypted ~", "chatbot.welcome_message": "Hello! I'm your financial AI assistant. How can I help you today?", "chatbot.input_placeholder": "Ask the Financial AI...", "chatbot.attach_file": "Attach file", "chatbot.send_button": "Send Message", "explore.title": "Data Exploration & Visualization", "explore.explorer_title": "Interactive Data Explorer", "explore.select_document": "Select document...", "explore.filter_data": "Filter Data", "explore.interactive_chart": "Interactive Chart", "explore.chart_placeholder": "Select a document above to display charts of extracted data.", "explore.data_table": "Data Table", "explore.table_placeholder": "Select a document above to display extracted data tables for sorting/filtering.", "explore.footer_text": "Use these tools to dive deep into your financial data.", "admin.title": "System Administration", "admin.user_management": "User Management", "admin.user_management_desc": "Add, edit, remove users, manage roles.", "admin.open_user_management": "Open Management", "admin.system_settings": "System Settings", "admin.system_settings_desc": "Configure APIs, language models, OCR.", "admin.open_system_settings": "Open Settings", "admin.security_audit": "Security & Audit", "admin.security_audit_desc": "Manage audit logs, encryption, 2FA.", "admin.open_security_settings": "Open Security", "admin.activity_log": "Latest Activity Log", "documents.no_documents": "No documents found. Try uploading a new document."
+            }
+        };
+
+        function applyAllTranslations(lang) {
+            const translations = languageTranslations[lang];
+            if (!translations) return;
+
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                if (translations[key]) el.textContent = translations[key];
+            });
+            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-translate-placeholder');
+                 if (translations[key]) el.placeholder = translations[key];
+            });
+             document.querySelectorAll('[data-translate-title]').forEach(el => {
+                const key = el.getAttribute('data-translate-title');
+                 if (translations[key]) el.title = translations[key];
+            });
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.getElementById('current-lang').textContent = lang === 'he' ? 'עב' : 'En';
+
+             // --- FIX: Logic for sidebar/main padding based on direction ---
+             const mainElement = document.querySelector('main');
+             const sidebarElement = document.querySelector('aside');
+             if (lang === 'he') { // RTL
+                 mainElement.classList.remove('pl-64');
+                 mainElement.classList.add('pr-64');
+                 sidebarElement.classList.remove('left-0', 'border-r');
+                 sidebarElement.classList.add('right-0', 'border-l');
+             } else { // LTR
+                 mainElement.classList.remove('pr-64');
+                 mainElement.classList.add('pl-64');
+                 sidebarElement.classList.remove('right-0', 'border-l');
+                 sidebarElement.classList.add('left-0', 'border-r');
+             }
+             // Ensure active nav link style updates correctly on language switch
+             updateActiveNavUI(currentViewId);
+        }
+
+        function toggleLanguage() {
+            currentSelectedLanguage = currentSelectedLanguage === 'he' ? 'en' : 'he';
+            // Example: localStorage.setItem('preferredLanguage', currentSelectedLanguage);
+            applyAllTranslations(currentSelectedLanguage);
+            // Reload language-dependent data if necessary
+            // reloadLanguageDependentData();
+        }
+
+        // ==================== לוגיקת העלאת קבצים (דמה) ====================
+        const mainUploadButton = document.getElementById('upload-doc-button-main');
+        const hiddenFileInput = document.getElementById('file-input-hidden');
+        const uploadAreaContainer = document.getElementById('upload-progress-area-container');
+        const uploadItemsList = document.getElementById('upload-progress-list-items');
+
+        mainUploadButton.addEventListener('click', () => hiddenFileInput.click());
+
+        hiddenFileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                uploadAreaContainer.classList.remove('hidden');
+                for (const file of files) {
+                    simulateFileUpload(file);
+                }
+                hiddenFileInput.value = ''; // Reset file input
+            }
+        });
+
+        function simulateFileUpload(file) {
+            // --- This simulates frontend progress and backend confirmation ---
+            const uploadId = 'upload-' + Date.now() + Math.random().toString(36).substring(2, 7);
+            const progressItemHTML = `
+                <div class="text-sm" data-upload-id="${uploadId}">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs text-slate-700 truncate pr-2">${file.name}</span>
+                        <span class="upload-percentage text-xs text-slate-500">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-1.5">
+                        <div class="upload-progress-bar bg-indigo-500 h-1.5 rounded-full transition-width duration-300 ease-linear" style="width: 0%"></div>
+                    </div>
+                </div>`;
+            uploadItemsList.insertAdjacentHTML('beforeend', progressItemHTML);
+            const progressItemElement = uploadItemsList.querySelector(`[data-upload-id="${uploadId}"]`);
+            const percentageElement = progressItemElement.querySelector('.upload-percentage');
+            const progressBarElement = progressItemElement.querySelector('.upload-progress-bar');
+
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    percentageElement.textContent = 'מעבד...'; // Needs i18n
+                    progressBarElement.classList.remove('bg-indigo-500');
+                    progressBarElement.classList.add('bg-green-500');
+                    // --- Simulate backend processing and confirmation ---
+                    setTimeout(() => {
+                        progressItemElement.remove();
+                        if (uploadItemsList.children.length === 0) {
+                            uploadAreaContainer.classList.add('hidden');
+                        }
+                        // --- Refresh document list after successful upload ---
+                        // loadDocumentsData();
+                        console.log(`Simulated upload complete for ${file.name}`);
+                    }, 2500);
+                }
+                if (percentageElement && progress < 100) percentageElement.textContent = `${Math.round(progress)}%`;
+                if (progressBarElement) progressBarElement.style.width = `${progress}%`;
+            }, 300);
+            // --- Actual API call to upload the file would start here ---
+        }
+
+
+        // ==================== אתחול בעת טעינת הדף ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Example: currentSelectedLanguage = localStorage.getItem('preferredLanguage') || 'he';
+            applyAllTranslations(currentSelectedLanguage);
+            const initialView = document.getElementById(currentViewId + '-view');
+            if(initialView) initialView.classList.add('main-view'); // Apply initial animation
+
+            // Set initial active nav link based on currentViewId
+            updateActiveNavUI(currentViewId);
+
+            initializeDashboardChart();
+            // Load initial data from backend if needed
+            // loadInitialDashboardData();
+        });
+    </script>
+
+</body>
+</html>
