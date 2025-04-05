@@ -31,6 +31,8 @@ tiktoken>=0.7 # Updated to resolve conflict with langchain-openai
 # spacy==3.7.4 # Temporarily commented out due to build issues (requires C compiler for blis)
 # sentence-transformers==2.3.1 # Temporarily commented out (depends on transformers)
 
+google-cloud-vision
+google-cloud-aiplatform
 # Data handling
 numpy==1.26.4
 # scipy==1.13.0 # Temporarily commented out due to build issues (requires Fortran compiler)
@@ -38,6 +40,9 @@ nltk==3.8.1
 beautifulsoup4==4.12.3
 # lxml==5.2.0 # Temporarily commented out due to build issues (requires libxml2/libxslt system libraries)
 
+
+# Financial Data
+yfinance
 # Testing
 pytest==8.3.5
 pytest-flask==1.3.0

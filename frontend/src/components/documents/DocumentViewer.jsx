@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
-import LoadingSpinner from '../ui/LoadingSpinner';
-import '../../styles/DocumentViewer.css';
+import LoadingSpinner from '../ui/LoadingSpinner'; // Restored with placeholder
+import './DocumentViewer.css';
 
 // Initialize PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -51,7 +51,7 @@ const DocumentViewer = ({ document }) => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner />; // Restored with placeholder
   }
 
   if (error) {

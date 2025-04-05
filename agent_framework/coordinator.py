@@ -7,6 +7,15 @@ import logging
 import uuid
 from datetime import datetime
 
+# Import Financial Agents
+from agents.financial.document_processing_agent import DocumentProcessingAgent
+from agents.financial.portfolio_analysis_agent import PortfolioAnalysisAgent
+from agents.financial.financial_advisor_agent import FinancialAdvisorAgent
+from agents.financial.consolidated_reports_agent import ConsolidatedReportsAgent
+from agents.financial.budget_tracking_agent import BudgetTrackingAgent
+from agents.financial.report_comparison_agent import ReportComparisonAgent
+
+
 logger = logging.getLogger(__name__)
 
 class AgentCoordinator:
@@ -30,8 +39,26 @@ class AgentCoordinator:
         self.document_chunks = {}
         # אחסון בזיכרון של סשנים - במערכת אמיתית זה היה במסד נתונים
         self.sessions = {}
+
+        # Instantiate agents
+        self.document_processing_agent = DocumentProcessingAgent()
+        self.portfolio_analysis_agent = PortfolioAnalysisAgent()
+        self.financial_advisor_agent = FinancialAdvisorAgent()
+        self.consolidated_reports_agent = ConsolidatedReportsAgent()
+        self.budget_tracking_agent = BudgetTrackingAgent()
+        self.report_comparison_agent = ReportComparisonAgent()
         
-        logger.info(f"Agent Coordinator initialized with models: {self.models_config['available']}")
+        # TODO: Implement agent registration/mapping if a more formal mechanism is needed
+        self.registered_agents = {
+            "document_processing": self.document_processing_agent,
+            "portfolio_analysis": self.portfolio_analysis_agent,
+            "financial_advice": self.financial_advisor_agent,
+            "consolidated_reports": self.consolidated_reports_agent,
+            "budget_tracking": self.budget_tracking_agent,
+            "report_comparison": self.report_comparison_agent,
+        }
+        
+        logger.info(f"Agent Coordinator initialized with models: {self.models_config['available']} and agents: {list(self.registered_agents.keys())}")
     
     def process_document(self, document_path, options=None):
         """

@@ -2,14 +2,14 @@
 
 """Financial data extraction components"""
 
-from .financial_extractor import FinancialExtractor
-from .enhanced_financial_extractor import EnhancedFinancialExtractor
+from .financial_extractor import EnhancedFinancialExtractor
+# from .enhanced_financial_extractor import EnhancedFinancialExtractor # Removed redundant import
 from .advanced_financial_extractor import AdvancedFinancialExtractor
-from .financial_data_extractor import FinancialDataExtractor
+# from .financial_data_extractor import FinancialDataExtractor # Removed problematic import
 
 __all__ = [
-    'FinancialExtractor',
+    # 'FinancialExtractor', # Removed non-existent name
     'EnhancedFinancialExtractor',
     'AdvancedFinancialExtractor',
-    'FinancialDataExtractor'
+    # 'FinancialDataExtractor' # Removed non-existent name
 ]

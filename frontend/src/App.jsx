@@ -1,35 +1,34 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import Navbar from './components/layout/Navbar';
-import Sidebar from './components/layout/Sidebar';
-import DocumentList from './pages/DocumentList';
-import DocumentUploader from './pages/DocumentUploader';
-import DocumentDetail from './pages/DocumentDetail';
-import ChatInterface from './pages/ChatInterface';
-import TableGenerator from './pages/TableGenerator';
+import Navbar from './components/Navbar'; // Restored with correct path
+import Sidebar from './components/Sidebar'; // Restored with placeholder
+import DocumentsPage from './pages/DocumentsPage';
+import UploadPage from './pages/UploadPage'; // Renamed from DocumentUploader
+import DocumentDetailPage from './pages/DocumentDetailPage'; // Renamed from DocumentDetail
+// import ChatInterface from './pages/ChatInterface'; // Commented out - file missing
+import CustomTablesPage from './pages/CustomTablesPage'; // Renamed from TableGenerator
 import Dashboard from './pages/Dashboard';
 import { DocumentProvider } from './context/DocumentContext';
-import { AuthProvider } from './context/AuthContext';
-import './styles/index.css';
+// import { AuthProvider } from './context/AuthContext'; // Commented out - file missing
+import './index.css';
 
 function App() {
   return (
-    <AuthProvider>
       <DocumentProvider>
         <Router>
           <div className="app-container">
-            <Navbar />
+            <Navbar /> {/* Restored */}
             <div className="content-wrapper">
-              <Sidebar />
+              <Sidebar /> {/* Restored with placeholder */}
               <main className="main-content">
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/documents" element={<DocumentList />} />
-                  <Route path="/documents/:id" element={<DocumentDetail />} />
-                  <Route path="/upload" element={<DocumentUploader />} />
-                  <Route path="/chat" element={<ChatInterface />} />
-                  <Route path="/tables" element={<TableGenerator />} />
+                  <Route path="/documents" element={<DocumentsPage />} />
+                  <Route path="/documents/:id" element={<DocumentDetailPage />} />
+                  <Route path="/upload" element={<UploadPage />} />
+                  {/* <Route path="/chat" element={<ChatInterface />} /> */} {/* Commented out - component missing */}
+                  <Route path="/tables" element={<CustomTablesPage />} />
                 </Routes>
               </main>
             </div>
@@ -37,7 +36,6 @@ function App() {
           </div>
         </Router>
       </DocumentProvider>
-    </AuthProvider>
   );
 }
 

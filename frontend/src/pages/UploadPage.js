@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Paper, Grid } from '@mui/material';
 import Layout from '../components/Layout'; // Use main layout
-import DocumentUpload from '../components/DocumentUpload'; // Use the upload component
+import DocumentUploader from '../components/DocumentUploader'; // Use the upload component
 
 const UploadPage = () => {
   // Callback function for successful upload (optional)

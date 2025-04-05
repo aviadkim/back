@@ -3,7 +3,7 @@ import { Box, Typography, Button, Paper } from '@mui/material'; // Added Paper
 import { UploadFile as UploadIcon } from '@mui/icons-material'; // Renamed for clarity
 import { Link as RouterLink } from 'react-router-dom';
 import Layout from '../components/Layout'; // Use main layout
-import DocumentsList from '../components/DocumentsList'; // Use the list component
+import DocumentsList from '../components/documents/DocumentList'; // Use the list component
 
 const DocumentsPage = () => {
   return (

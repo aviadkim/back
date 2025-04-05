@@ -2,7 +2,7 @@
 echo "Installing critical dependencies manually..."
 
 # Install essential packages first
-pip install numpy==1.24.3 pandas==1.5.3
+# pip install numpy==1.24.3 pandas==1.5.3 # Handled by requirements.txt
 
 # Install specific LangChain packages
 pip install langchain==0.3.21 langchain-community==0.3.20 langchain-openai==0.3.11 boto3
